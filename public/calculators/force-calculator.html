@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Force Calculator - Newton's Second Law Calculator</title>
+    <meta name="description" content="Calculate force, mass, and acceleration using Newton's Second Law (F = m × a). Free mechanical engineering calculator with step-by-step solutions.">
+    <meta name="keywords" content="force calculator, newton second law, mass calculator, acceleration calculator, mechanical engineering">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Force Calculator - Newton's Second Law Calculator">
+    <meta property="og:description" content="Calculate force, mass, and acceleration using Newton's Second Law with step-by-step solutions.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/force-calculator.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Force Calculator",
+        "description": "Calculate force, mass, and acceleration using Newton's Second Law (F = m × a)",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Calculate force (F = m × a)",
+            "Calculate mass (m = F / a)", 
+            "Calculate acceleration (a = F / m)",
+            "Step-by-step solutions",
+            "Multiple unit support"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#mechanical">Mechanical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Force Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-arrow-right"></i>
+                <h1>Force & Motion Calculator</h1>
+            </div>
+            <p>Calculate force, mass, and acceleration using Newton's Second Law. Enter any two values to calculate the missing parameter with detailed step-by-step solutions.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input Parameters
+                    </h2>
+
+                    <!-- Formula Display -->
+                    <div class="formula-display">
+                        <div class="formula-name">Newton's Second Law</div>
+                        <div class="formula-equation">F = m × a</div>
+                        <div class="formula-description">Force (F) = Mass (m) × Acceleration (a)</div>
+                    </div>
+
+                    <!-- Input Fields -->
+                    <div class="input-group">
+                        <label class="input-label">Force (F) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="force" placeholder="Enter force value">
+                            <select class="unit-select" id="forceUnit">
+                                <option value="N">N</option>
+                                <option value="kN">kN</option>
+                                <option value="lbf">lbf</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Mass (m) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="mass" placeholder="Enter mass value">
+                            <select class="unit-select" id="massUnit">
+                                <option value="kg">kg</option>
+                                <option value="g">g</option>
+                                <option value="lb">lb</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Acceleration (a) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="acceleration" placeholder="Enter acceleration value">
+                            <select class="unit-select" id="accelerationUnit">
+                                <option value="m/s²">m/s²</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button class="calculate-btn" onclick="calculateForce()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="result-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Results & Analysis
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-chart-bar"></i>
+                            <p>Enter values and click Calculate to see results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="info-section" style="margin-top: 3rem;">
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h2 style="color: var(--charcoal); margin-bottom: 1rem;">About Newton's Second Law</h2>
+                    <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                        Newton's Second Law of Motion states that the acceleration of an object is directly proportional to the net force acting on it 
+                        and inversely proportional to its mass. This fundamental law is the basis for understanding motion and forces in mechanical engineering.
+                    </p>
+                    <h3 style="color: var(--charcoal); margin-bottom: 0.5rem;">Key Applications:</h3>
+                    <ul style="color: var(--text-gray); margin-left: 1.5rem;">
+                        <li>Calculating force required to accelerate objects</li>
+                        <li>Determining mass from force and acceleration measurements</li>
+                        <li>Finding acceleration given applied forces</li>
+                        <li>Structural analysis and design calculations</li>
+                        <li>Vehicle dynamics and collision analysis</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/power-calculator.html">Power Calculator</a></li>
+                        <li><a href="/calculators/force-calculator.html">Force Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/force-calculator.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
