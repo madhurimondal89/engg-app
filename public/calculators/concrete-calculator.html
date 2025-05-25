@@ -40,17 +40,81 @@
         <div class="container">
             <div class="calculator-grid">
                 <div class="input-panel">
-                    <h2 class="panel-title"><i class="fas fa-edit"></i> Input Parameters</h2>
-                    <div class="empty-state">
-                        <i class="fas fa-tools"></i>
-                        <p>Concrete calculator coming soon!</p>
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input Parameters
+                    </h2>
+
+                    <div class="formula-display">
+                        <div class="formula-name">Compressive Stress</div>
+                        <div class="formula-equation">σ = P / A</div>
+                        <div class="formula-description">Compressive stress in concrete</div>
                     </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Stress (σ) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="stress" placeholder="Enter stress value">
+                            <select class="unit-select" id="stressUnit">
+                                <option value="Pa">Pa</option>
+                                <option value="kPa">kPa</option>
+                                <option value="MPa" selected>MPa</option>
+                                <option value="psi">psi</option>
+                                <option value="N/mm²">N/mm²</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Load (P) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="load" placeholder="Enter load value">
+                            <select class="unit-select" id="loadUnit">
+                                <option value="N">N</option>
+                                <option value="kN" selected>kN</option>
+                                <option value="lbf">lbf</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Area (A) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="area" placeholder="Enter area value">
+                            <select class="unit-select" id="areaUnit">
+                                <option value="m²">m²</option>
+                                <option value="cm²" selected>cm²</option>
+                                <option value="mm²">mm²</option>
+                                <option value="in²">in²</option>
+                                <option value="ft²">ft²</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <button class="calculate-btn" onclick="calculateConcrete()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
                 </div>
+
                 <div class="result-panel">
-                    <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Results</h2>
-                    <div class="empty-state">
+                    <h2 class="panel-title">
                         <i class="fas fa-chart-bar"></i>
-                        <p>Calculator functionality in development</p>
+                        Results & Analysis
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-chart-bar"></i>
+                            <p>Enter values and click Calculate to see results</p>
+                        </div>
                     </div>
                 </div>
             </div>

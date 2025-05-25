@@ -40,17 +40,78 @@
         <div class="container">
             <div class="calculator-grid">
                 <div class="input-panel">
-                    <h2 class="panel-title"><i class="fas fa-edit"></i> Input Parameters</h2>
-                    <div class="empty-state">
-                        <i class="fas fa-tools"></i>
-                        <p>Inductance calculator coming soon!</p>
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input Parameters
+                    </h2>
+
+                    <div class="formula-display">
+                        <div class="formula-name">Inductor Energy</div>
+                        <div class="formula-equation">E = ½ × L × I²</div>
+                        <div class="formula-description">Energy stored in an inductor</div>
                     </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Inductance (L) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="inductance" placeholder="Enter inductance value">
+                            <select class="unit-select" id="inductanceUnit">
+                                <option value="H">H</option>
+                                <option value="mH" selected>mH</option>
+                                <option value="μH">μH</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Current (I) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="current" placeholder="Enter current value">
+                            <select class="unit-select" id="currentUnit">
+                                <option value="A">A</option>
+                                <option value="mA">mA</option>
+                                <option value="μA">μA</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Energy (E) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="energy" placeholder="Enter energy value">
+                            <select class="unit-select" id="energyUnit">
+                                <option value="J">J</option>
+                                <option value="mJ">mJ</option>
+                                <option value="kJ">kJ</option>
+                                <option value="Wh">Wh</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <button class="calculate-btn" onclick="calculateInductance()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
                 </div>
+
                 <div class="result-panel">
-                    <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Results</h2>
-                    <div class="empty-state">
+                    <h2 class="panel-title">
                         <i class="fas fa-chart-bar"></i>
-                        <p>Calculator functionality in development</p>
+                        Results & Analysis
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-chart-bar"></i>
+                            <p>Enter values and click Calculate to see results</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -64,6 +125,7 @@
             </div>
         </div>
     </footer>
+    <script src="/js/inductance-calculator.js"></script>
     <script src="/js/main.js"></script>
 </body>
 </html>
