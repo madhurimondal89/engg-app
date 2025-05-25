@@ -168,29 +168,7 @@
         </div>
     </footer>
 
-    <script>
-        function clearInputs() {
-            document.getElementById('voltage').value = '';
-            document.getElementById('current').value = '';
-            document.getElementById('resistance').value = '';
-            document.getElementById('power').value = '';
-            document.getElementById('resultsContainer').innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-chart-bar"></i>
-                    <p>Enter values and click Calculate to see results</p>
-                </div>
-            `;
-        }
-        
-        function calculatePower() {
-            document.getElementById('resultsContainer').innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-tools"></i>
-                    <p>Power calculator functionality coming soon!</p>
-                </div>
-            `;
-        }
-    </script>
+    <script src="/js/power-calculator.js"></script>
     <script src="/js/main.js"></script>
 </body>
 </html>

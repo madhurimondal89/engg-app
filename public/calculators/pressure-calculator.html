@@ -40,17 +40,82 @@
         <div class="container">
             <div class="calculator-grid">
                 <div class="input-panel">
-                    <h2 class="panel-title"><i class="fas fa-edit"></i> Input Parameters</h2>
-                    <div class="empty-state">
-                        <i class="fas fa-tools"></i>
-                        <p>Pressure calculator coming soon!</p>
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input Parameters
+                    </h2>
+
+                    <div class="formula-display">
+                        <div class="formula-name">Basic Pressure</div>
+                        <div class="formula-equation">P = F / A</div>
+                        <div class="formula-description">Pressure equals force divided by area</div>
                     </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Pressure (P) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="pressure" placeholder="Enter pressure value">
+                            <select class="unit-select" id="pressureUnit">
+                                <option value="Pa">Pa</option>
+                                <option value="kPa">kPa</option>
+                                <option value="MPa">MPa</option>
+                                <option value="psi">psi</option>
+                                <option value="bar">bar</option>
+                                <option value="atm">atm</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Force (F) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="force" placeholder="Enter force value">
+                            <select class="unit-select" id="forceUnit">
+                                <option value="N">N</option>
+                                <option value="kN">kN</option>
+                                <option value="lbf">lbf</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">Area (A) - Optional</label>
+                        <div class="input-row">
+                            <input type="number" class="input-field" id="area" placeholder="Enter area value">
+                            <select class="unit-select" id="areaUnit">
+                                <option value="m²">m²</option>
+                                <option value="cm²">cm²</option>
+                                <option value="mm²">mm²</option>
+                                <option value="in²">in²</option>
+                                <option value="ft²">ft²</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <button class="calculate-btn" onclick="calculatePressure()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
                 </div>
+
                 <div class="result-panel">
-                    <h2 class="panel-title"><i class="fas fa-chart-bar"></i> Results</h2>
-                    <div class="empty-state">
+                    <h2 class="panel-title">
                         <i class="fas fa-chart-bar"></i>
-                        <p>Calculator functionality in development</p>
+                        Results & Analysis
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-chart-bar"></i>
+                            <p>Enter values and click Calculate to see results</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -64,6 +129,7 @@
             </div>
         </div>
     </footer>
+    <script src="/js/pressure-calculator.js"></script>
     <script src="/js/main.js"></script>
 </body>
 </html>
