@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering Calculator Suite - Professional Calculators for Engineers</title>
+    <meta name="description" content="Comprehensive engineering calculator suite with electrical, mechanical, and civil engineering calculators. Calculate Ohm's law, power, force, and more with step-by-step solutions.">
+    <meta name="keywords" content="engineering calculator, electrical calculator, mechanical calculator, civil calculator, ohms law, power calculation, force calculation">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Engineering Calculator Suite - Professional Calculators for Engineers">
+    <meta property="og:description" content="Comprehensive engineering calculator suite with electrical, mechanical, and civil engineering calculators.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://engineering-calculators.replit.app">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Engineering Calculator Suite",
+        "description": "Professional engineering calculators for electrical, mechanical, and civil engineering",
+        "url": "https://engineering-calculators.replit.app",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://engineering-calculators.replit.app/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link active">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Professional Engineering Calculators</h2>
+                <p>Accurate calculations for electrical, mechanical, and civil engineering with step-by-step solutions</p>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search calculators..." id="searchInput">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Calculator Categories -->
+    <section class="categories">
+        <div class="container">
+            <h2>Calculator Categories</h2>
+            <div class="category-grid">
+                <!-- Electrical Engineering -->
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Electrical Engineering</h3>
+                    <p>Calculate voltage, current, resistance, power, and other electrical parameters</p>
+                    <div class="calculator-links">
+                        <a href="/calculators/ohms-law.html" class="calc-link">
+                            <i class="fas fa-bolt"></i> Ohm's Law Calculator
+                        </a>
+                        <a href="/calculators/power-calculator.html" class="calc-link">
+                            <i class="fas fa-flash"></i> Power Calculator
+                        </a>
+                        <a href="/calculators/capacitance.html" class="calc-link">
+                            <i class="fas fa-battery-full"></i> Capacitance Calculator
+                        </a>
+                        <a href="/calculators/inductance.html" class="calc-link">
+                            <i class="fas fa-magnet"></i> Inductance Calculator
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Mechanical Engineering -->
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h3>Mechanical Engineering</h3>
+                    <p>Calculate force, motion, torque, pressure, and mechanical properties</p>
+                    <div class="calculator-links">
+                        <a href="/calculators/force-calculator.html" class="calc-link">
+                            <i class="fas fa-arrow-right"></i> Force & Motion Calculator
+                        </a>
+                        <a href="/calculators/torque-calculator.html" class="calc-link">
+                            <i class="fas fa-sync-alt"></i> Torque Calculator
+                        </a>
+                        <a href="/calculators/pressure-calculator.html" class="calc-link">
+                            <i class="fas fa-compress"></i> Pressure Calculator
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Civil Engineering -->
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>Civil Engineering</h3>
+                    <p>Calculate beam properties, concrete design, and structural parameters</p>
+                    <div class="calculator-links">
+                        <a href="/calculators/beam-calculator.html" class="calc-link">
+                            <i class="fas fa-minus"></i> Beam Analysis Calculator
+                        </a>
+                        <a href="/calculators/concrete-calculator.html" class="calc-link">
+                            <i class="fas fa-cube"></i> Concrete Design Calculator
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2>Why Choose Our Calculators?</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <i class="fas fa-calculator"></i>
+                    <h3>Accurate Calculations</h3>
+                    <p>Professional-grade calculations with precision and reliability</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-list-ol"></i>
+                    <h3>Step-by-Step Solutions</h3>
+                    <p>Detailed explanations and formula breakdowns for learning</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-mobile-alt"></i>
+                    <h3>Mobile Friendly</h3>
+                    <p>Works perfectly on all devices - desktop, tablet, and mobile</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-exchange-alt"></i>
+                    <h3>Unit Conversion</h3>
+                    <p>Built-in unit conversion for international standards</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>What engineering disciplines are covered?</h3>
+                    <p>Our calculator suite covers electrical, mechanical, and civil engineering with plans to expand to other disciplines.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Are the calculations accurate?</h3>
+                    <p>Yes, all calculations are based on standard engineering formulas and are verified for accuracy. We provide step-by-step solutions for transparency.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Can I use this on mobile devices?</h3>
+                    <p>Absolutely! Our calculators are fully responsive and work seamlessly on smartphones, tablets, and desktops.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Do you support different unit systems?</h3>
+                    <p>Yes, we support both metric and imperial units with automatic conversion between different unit types.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/power-calculator.html">Power Calculator</a></li>
+                        <li><a href="/calculators/force-calculator.html">Force Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

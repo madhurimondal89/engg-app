@@ -1,0 +1,100 @@
+Each Calculator Page Should:
+Be on its own HTML page (e.g., /ohms-law-calculator.html)
+
+Include:
+
+A descriptive title tag
+
+Unique meta description
+
+H1 heading with the calculator name
+
+SEO-friendly URL (hyphen-separated keywords)
+
+Schema markup (e.g., FAQPage, WebPage)
+
+Mobile-friendly layout
+
+⚙️ 3. Functionality
+Simple input fields for user parameters
+
+Instant calculation on button click or input
+
+Display result below or beside input
+
+Use JavaScript for logic (no page reloads)
+
+Input validation with user-friendly error messages
+
+Option to clear/reset fields
+
+🎨 4. Design & UI
+Clean, minimalist UI with responsive design
+
+Use Bootstrap, TailwindCSS, or simple CSS Grid
+
+Left sidebar or top navbar for category navigation
+
+Consistent layout on every page
+
+Optional dark mode toggle
+
+🌐 5. SEO Optimization
+Proper HTML structure with semantic tags
+
+<title>, <meta name="description">, <meta name="keywords">
+
+Use structured data (Schema.org)
+
+<h1> for title, <h2> for subheadings
+
+Descriptive alt tags for any images
+
+Fast loading and mobile-first design
+
+🔗 6. Homepage Should Include:
+Introduction to the site’s purpose
+
+Links (cards or list) to each calculator page
+
+Search bar to find calculators
+
+Categories with brief descriptions
+
+SEO content like FAQs, common use cases, etc.
+
+🛠️ Tech Stack (Compatible with Replit):
+HTML, CSS, JavaScript
+
+Optional: Bootstrap/Tailwind for styling
+
+Optional: Firebase (if you want to add user login/favorites later)
+
+Optional: Markdown blog/articles for SEO ranking
+
+📁 Project Structure Suggestion (Replit-ready):
+bash
+Copy
+Edit
+/index.html                 --> Homepage
+/about.html                --> About the website
+/css/style.css             --> Main styling
+/js/calculators.js         --> Calculator logic (per calculator or modular)
+/calculators/ohms-law.html --> Individual calculator pages
+/calculators/stress-strain.html
+...
+/images/                   --> Icons or illustrations
+/sitemap.xml               --> SEO (optional later)
+/robots.txt                --> SEO (optional)
+🔄 Optional Features to Add Later:
+PDF export of results
+
+User accounts to save calculations
+
+Shareable result links
+
+Blog with SEO-rich articles on engineering topics
+
+Support for unit conversion (Imperial/Metric)
+
+Let me know if you want a starter template or example code for one of the calculators (like Ohm’s Law or Beam Deflection). I can also help set up navigation, SEO meta tags, and layout structure for Replit.
