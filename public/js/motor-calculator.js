@@ -354,6 +354,77 @@ function updateInputFields() {
                     </div>
                 </div>`;
             break;
+            
+        case 'stepper':
+            fieldsHTML = `
+                <div class="input-group">
+                    <label class="input-label">Supply Voltage (V)</label>
+                    <div class="input-row">
+                        <input type="number" class="input-field" id="voltage" placeholder="Enter supply voltage" step="any">
+                        <select class="unit-select" id="voltageUnit">
+                            <option value="V">V</option>
+                            <option value="mV">mV</option>
+                            <option value="kV">kV</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Phase Current (I)</label>
+                    <div class="input-row">
+                        <input type="number" class="input-field" id="current" placeholder="Enter phase current" step="any">
+                        <select class="unit-select" id="currentUnit">
+                            <option value="A">A</option>
+                            <option value="mA">mA</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Steps per Revolution</label>
+                    <div class="input-row">
+                        <input type="number" class="input-field" id="stepsPerRev" placeholder="Enter steps per revolution" step="1" min="1">
+                        <select class="unit-select">
+                            <option value="steps">steps</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Step Frequency (Hz)</label>
+                    <div class="input-row">
+                        <input type="number" class="input-field" id="stepFrequency" placeholder="Enter step frequency" step="any">
+                        <select class="unit-select" id="stepFrequencyUnit">
+                            <option value="Hz">Hz</option>
+                            <option value="kHz">kHz</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Holding Torque (T_h)</label>
+                    <div class="input-row">
+                        <input type="number" class="input-field" id="holdingTorque" placeholder="Enter holding torque" step="any">
+                        <select class="unit-select" id="torqueUnit">
+                            <option value="N⋅m">N⋅m</option>
+                            <option value="kN⋅m">kN⋅m</option>
+                            <option value="lb⋅ft">lb⋅ft</option>
+                            <option value="kg⋅m">kg⋅m</option>
+                            <option value="oz⋅in">oz⋅in</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Microstepping Factor</label>
+                    <div class="input-row">
+                        <input type="number" class="input-field" id="microstepFactor" placeholder="Enter microstepping factor" step="1" min="1" value="1">
+                        <select class="unit-select">
+                            <option value="factor">factor</option>
+                        </select>
+                    </div>
+                </div>`;
+            break;
     }
     
     inputContainer.innerHTML = fieldsHTML;
@@ -377,6 +448,9 @@ function calculateMotor() {
                 break;
             case 'universal':
                 results = calculateUniversalMotor();
+                break;
+            case 'stepper':
+                results = calculateStepperMotor();
                 break;
         }
         
@@ -820,6 +894,136 @@ function calculateUniversalMotor() {
     return results;
 }
 
+function calculateStepperMotor() {
+    const voltage = parseFloat(document.getElementById('voltage').value);
+    const current = parseFloat(document.getElementById('current').value);
+    const stepsPerRev = parseInt(document.getElementById('stepsPerRev').value);
+    const stepFrequency = parseFloat(document.getElementById('stepFrequency').value);
+    const holdingTorque = parseFloat(document.getElementById('holdingTorque').value);
+    const microstepFactor = parseInt(document.getElementById('microstepFactor').value);
+    
+    const voltageUnit = document.getElementById('voltageUnit').value;
+    const currentUnit = document.getElementById('currentUnit').value;
+    const stepFrequencyUnit = document.getElementById('stepFrequencyUnit').value;
+    const torqueUnit = document.getElementById('torqueUnit').value;
+    
+    // Validation
+    if (!voltage || !current || !stepsPerRev) {
+        return { errors: ['Please enter voltage, current, and steps per revolution'] };
+    }
+    
+    if (voltage <= 0 || current <= 0 || stepsPerRev <= 0) {
+        return { errors: ['All values must be positive'] };
+    }
+    
+    // Convert to base units
+    const V = convertToBaseUnit(voltage, voltageUnit, 'voltage');
+    const I = convertToBaseUnit(current, currentUnit, 'current');
+    const f_step = stepFrequency ? convertToBaseUnit(stepFrequency, stepFrequencyUnit, 'frequency') : null;
+    const T_h = holdingTorque ? convertToBaseUnit(holdingTorque, torqueUnit, 'torque') : null;
+    
+    // Calculate electrical power (assuming 2-phase stepper)
+    const electricalPower = V * I * 2; // 2 phases
+    
+    // Calculate step angle
+    const stepAngle = 360 / stepsPerRev;
+    
+    // Calculate effective steps per revolution with microstepping
+    const effectiveStepsPerRev = stepsPerRev * microstepFactor;
+    const effectiveStepAngle = stepAngle / microstepFactor;
+    
+    const results = {
+        motorType: 'Stepper Motor Analysis',
+        voltage: { value: V, formatted: formatValue(voltage, voltageUnit) },
+        current: { value: I, formatted: formatValue(current, currentUnit) },
+        stepsPerRev: { value: stepsPerRev, formatted: stepsPerRev.toString() },
+        stepAngle: { value: stepAngle, formatted: stepAngle.toFixed(4) + '°' },
+        microstepFactor: { value: microstepFactor, formatted: microstepFactor.toString() },
+        effectiveStepsPerRev: { value: effectiveStepsPerRev, formatted: effectiveStepsPerRev.toString() },
+        effectiveStepAngle: { value: effectiveStepAngle, formatted: effectiveStepAngle.toFixed(6) + '°' },
+        electricalPower: { value: electricalPower, formatted: formatValue(electricalPower, 'W') },
+        steps: []
+    };
+    
+    results.steps.push({
+        step: 1,
+        description: 'Calculate step angle',
+        formula: 'Step Angle = 360° / Steps per Revolution',
+        calculation: `Step Angle = 360° / ${stepsPerRev} = ${stepAngle.toFixed(4)}°`
+    });
+    
+    results.steps.push({
+        step: 2,
+        description: 'Calculate electrical power (2-phase)',
+        formula: 'P_electrical = V × I × 2',
+        calculation: `P_electrical = ${formatValue(voltage, voltageUnit)} × ${formatValue(current, currentUnit)} × 2 = ${formatValue(electricalPower, 'W')}`
+    });
+    
+    results.steps.push({
+        step: 3,
+        description: 'Calculate microstepping resolution',
+        formula: 'Effective Step Angle = Step Angle / Microstep Factor',
+        calculation: `Effective Step Angle = ${stepAngle.toFixed(4)}° / ${microstepFactor} = ${effectiveStepAngle.toFixed(6)}°`
+    });
+    
+    // Calculate speed and frequency relationships if step frequency is provided
+    if (f_step) {
+        const rotationalSpeed = (f_step * 60) / effectiveStepsPerRev; // RPM
+        const angularVelocity = (f_step * 2 * Math.PI) / effectiveStepsPerRev; // rad/s
+        
+        results.stepFrequency = { value: f_step, formatted: formatValue(stepFrequency, stepFrequencyUnit) };
+        results.rotationalSpeed = { value: rotationalSpeed, formatted: formatValue(rotationalSpeed, 'rpm') };
+        results.angularVelocity = { value: angularVelocity, formatted: formatValue(angularVelocity, 'rad/s') };
+        
+        results.steps.push({
+            step: 4,
+            description: 'Calculate rotational speed',
+            formula: 'RPM = (Step Frequency × 60) / Effective Steps per Rev',
+            calculation: `RPM = (${formatValue(stepFrequency, stepFrequencyUnit)} × 60) / ${effectiveStepsPerRev} = ${formatValue(rotationalSpeed, 'rpm')}`
+        });
+        
+        // Calculate available torque at speed (torque drops with frequency)
+        if (T_h) {
+            // Simplified torque-speed relationship for steppers
+            const torqueAtSpeed = T_h * Math.exp(-f_step / 1000); // Exponential decay approximation
+            results.holdingTorque = { value: T_h, formatted: formatValue(holdingTorque, torqueUnit) };
+            results.torqueAtSpeed = { value: torqueAtSpeed, formatted: formatValue(torqueAtSpeed, 'N⋅m') };
+            
+            results.steps.push({
+                step: 5,
+                description: 'Calculate torque at operating speed',
+                formula: 'T(f) ≈ T_holding × e^(-f/1000)',
+                calculation: `T(${formatValue(stepFrequency, stepFrequencyUnit)}) ≈ ${formatValue(holdingTorque, torqueUnit)} × e^(-${formatValue(stepFrequency, stepFrequencyUnit)}/1000) = ${formatValue(torqueAtSpeed, 'N⋅m')}`
+            });
+        }
+    } else if (T_h) {
+        results.holdingTorque = { value: T_h, formatted: formatValue(holdingTorque, torqueUnit) };
+    }
+    
+    // Calculate resolution and accuracy metrics
+    const linearResolution = effectiveStepAngle * Math.PI / 180; // radians per step
+    const positionAccuracy = effectiveStepAngle / 2; // ±half step angle
+    
+    results.linearResolution = { value: linearResolution, formatted: linearResolution.toExponential(3) + ' rad/step' };
+    results.positionAccuracy = { value: positionAccuracy, formatted: '±' + positionAccuracy.toFixed(6) + '°' };
+    
+    results.steps.push({
+        step: results.steps.length + 1,
+        description: 'Calculate positioning accuracy',
+        formula: 'Accuracy = ±(Effective Step Angle / 2)',
+        calculation: `Accuracy = ±(${effectiveStepAngle.toFixed(6)}° / 2) = ${positionAccuracy.toFixed(6)}°`
+    });
+    
+    // Stepper motor characteristics
+    results.characteristics = {
+        type: 'Stepper Motor',
+        advantages: ['Precise positioning', 'No feedback required', 'High holding torque', 'Digital control'],
+        applications: ['3D printers', 'CNC machines', 'Robotics', 'Camera autofocus']
+    };
+    
+    return results;
+}
+
 function displayResults(results) {
     const resultsContainer = document.getElementById('resultsContainer');
     let resultsHTML = '<div class="results-grid">';
@@ -912,7 +1116,19 @@ function getResultIcon(key) {
         efficiency: '<i class="fas fa-percentage"></i>',
         powerFactor: '<i class="fas fa-angle-double-right"></i>',
         slip: '<i class="fas fa-percentage"></i>',
-        losses: '<i class="fas fa-fire"></i>'
+        losses: '<i class="fas fa-fire"></i>',
+        stepsPerRev: '<i class="fas fa-step-forward"></i>',
+        stepAngle: '<i class="fas fa-compass"></i>',
+        stepFrequency: '<i class="fas fa-clock"></i>',
+        rotationalSpeed: '<i class="fas fa-tachometer-alt"></i>',
+        angularVelocity: '<i class="fas fa-sync-alt"></i>',
+        holdingTorque: '<i class="fas fa-anchor"></i>',
+        torqueAtSpeed: '<i class="fas fa-undo"></i>',
+        microstepFactor: '<i class="fas fa-expand-arrows-alt"></i>',
+        effectiveStepsPerRev: '<i class="fas fa-step-forward"></i>',
+        effectiveStepAngle: '<i class="fas fa-compass"></i>',
+        linearResolution: '<i class="fas fa-ruler-horizontal"></i>',
+        positionAccuracy: '<i class="fas fa-crosshairs"></i>'
     };
     return icons[key] || '<i class="fas fa-calculator"></i>';
 }
@@ -951,6 +1167,9 @@ function drawMotorDiagram(results) {
             break;
         case 'universal':
             drawUniversalDiagram(svg, results);
+            break;
+        case 'stepper':
+            drawStepperDiagram(svg, results);
             break;
     }
     
@@ -1202,6 +1421,156 @@ function drawUniversalDiagram(svg, results) {
         modeLabel.setAttribute('font-weight', 'bold');
         modeLabel.textContent = results.operationMode;
         svg.appendChild(modeLabel);
+    }
+}
+
+function drawStepperDiagram(svg, results) {
+    // Title
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    title.setAttribute('x', '200');
+    title.setAttribute('y', '25');
+    title.setAttribute('text-anchor', 'middle');
+    title.setAttribute('font-size', '16');
+    title.setAttribute('font-weight', 'bold');
+    title.setAttribute('fill', '#333');
+    title.textContent = 'Stepper Motor';
+    svg.appendChild(title);
+    
+    // Motor housing (square for stepper)
+    const housing = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    housing.setAttribute('x', '120');
+    housing.setAttribute('y', '70');
+    housing.setAttribute('width', '160');
+    housing.setAttribute('height', '160');
+    housing.setAttribute('fill', '#e9ecef');
+    housing.setAttribute('stroke', '#333');
+    housing.setAttribute('stroke-width', '3');
+    housing.setAttribute('rx', '10');
+    svg.appendChild(housing);
+    
+    // Rotor (center circle with teeth)
+    const rotor = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    rotor.setAttribute('cx', '200');
+    rotor.setAttribute('cy', '150');
+    rotor.setAttribute('r', '40');
+    rotor.setAttribute('fill', '#6c757d');
+    rotor.setAttribute('stroke', '#333');
+    rotor.setAttribute('stroke-width', '2');
+    svg.appendChild(rotor);
+    
+    // Rotor teeth (simplified)
+    for (let i = 0; i < 8; i++) {
+        const angle = (i * 2 * Math.PI) / 8;
+        const x1 = 200 + 35 * Math.cos(angle);
+        const y1 = 150 + 35 * Math.sin(angle);
+        const x2 = 200 + 45 * Math.cos(angle);
+        const y2 = 150 + 45 * Math.sin(angle);
+        
+        const tooth = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tooth.setAttribute('x1', x1);
+        tooth.setAttribute('y1', y1);
+        tooth.setAttribute('x2', x2);
+        tooth.setAttribute('y2', y2);
+        tooth.setAttribute('stroke', '#333');
+        tooth.setAttribute('stroke-width', '2');
+        svg.appendChild(tooth);
+    }
+    
+    // Windings (4 phases typical)
+    const windingColors = ['#dc3545', '#28a745', '#007bff', '#ffc107'];
+    const windingPositions = [
+        {x: 200, y: 90},  // Top
+        {x: 260, y: 150}, // Right
+        {x: 200, y: 210}, // Bottom
+        {x: 140, y: 150}  // Left
+    ];
+    
+    windingPositions.forEach((pos, i) => {
+        const winding = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        winding.setAttribute('x', pos.x - 10);
+        winding.setAttribute('y', pos.y - 5);
+        winding.setAttribute('width', '20');
+        winding.setAttribute('height', '10');
+        winding.setAttribute('fill', windingColors[i]);
+        winding.setAttribute('stroke', '#333');
+        winding.setAttribute('stroke-width', '1');
+        svg.appendChild(winding);
+        
+        // Phase labels
+        const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('x', pos.x);
+        label.setAttribute('y', i % 2 === 0 ? pos.y + (i === 0 ? -10 : 25) : pos.y + 5);
+        label.setAttribute('text-anchor', 'middle');
+        label.setAttribute('font-size', '10');
+        label.setAttribute('fill', '#333');
+        label.setAttribute('font-weight', 'bold');
+        label.textContent = `φ${i + 1}`;
+        svg.appendChild(label);
+    });
+    
+    // Step position indicator
+    const stepIndicator = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    stepIndicator.setAttribute('x1', '200');
+    stepIndicator.setAttribute('y1', '150');
+    stepIndicator.setAttribute('x2', '200');
+    stepIndicator.setAttribute('y2', '110');
+    stepIndicator.setAttribute('stroke', '#e83e8c');
+    stepIndicator.setAttribute('stroke-width', '4');
+    stepIndicator.setAttribute('marker-end', 'url(#arrowhead)');
+    svg.appendChild(stepIndicator);
+    
+    // Labels
+    if (results.stepsPerRev) {
+        const stepsLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        stepsLabel.setAttribute('x', '50');
+        stepsLabel.setAttribute('y', '120');
+        stepsLabel.setAttribute('font-size', '12');
+        stepsLabel.setAttribute('fill', '#333');
+        stepsLabel.textContent = `${results.stepsPerRev.formatted} steps/rev`;
+        svg.appendChild(stepsLabel);
+    }
+    
+    if (results.stepAngle) {
+        const angleLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        angleLabel.setAttribute('x', '50');
+        angleLabel.setAttribute('y', '140');
+        angleLabel.setAttribute('font-size', '12');
+        angleLabel.setAttribute('fill', '#333');
+        angleLabel.textContent = `${results.stepAngle.formatted} step angle`;
+        svg.appendChild(angleLabel);
+    }
+    
+    if (results.rotationalSpeed) {
+        const speedLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        speedLabel.setAttribute('x', '320');
+        speedLabel.setAttribute('y', '120');
+        speedLabel.setAttribute('font-size', '12');
+        speedLabel.setAttribute('fill', '#333');
+        speedLabel.textContent = `${results.rotationalSpeed.formatted}`;
+        svg.appendChild(speedLabel);
+    }
+    
+    if (results.holdingTorque) {
+        const torqueLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        torqueLabel.setAttribute('x', '320');
+        torqueLabel.setAttribute('y', '140');
+        torqueLabel.setAttribute('font-size', '12');
+        torqueLabel.setAttribute('fill', '#333');
+        torqueLabel.textContent = `T_h = ${results.holdingTorque.formatted}`;
+        svg.appendChild(torqueLabel);
+    }
+    
+    // Microstepping indicator
+    if (results.microstepFactor && results.microstepFactor.value > 1) {
+        const microstepLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        microstepLabel.setAttribute('x', '200');
+        microstepLabel.setAttribute('y', '270');
+        microstepLabel.setAttribute('text-anchor', 'middle');
+        microstepLabel.setAttribute('font-size', '12');
+        microstepLabel.setAttribute('fill', '#6f42c1');
+        microstepLabel.setAttribute('font-weight', 'bold');
+        microstepLabel.textContent = `${results.microstepFactor.formatted}x Microstepping`;
+        svg.appendChild(microstepLabel);
     }
 }
 
