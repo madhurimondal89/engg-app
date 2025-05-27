@@ -215,8 +215,10 @@ function displayResults(results, steps) {
     
     resultsContainer.innerHTML = resultsHTML;
     
-    // Update circuit diagram with calculated values
-    drawCircuitDiagram(results);
+    // Update circuit diagram with calculated values using new engine
+    if (window.circuitEngine) {
+        window.circuitEngine.updateCircuitValues('ohms-law', results);
+    }
 }
 
 // Add input event listeners for real-time validation
@@ -243,8 +245,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Initialize circuit diagram
-    drawCircuitDiagram();
+    // Initialize circuit diagram with new engine
+    if (window.circuitEngine) {
+        window.circuitEngine.initializeCircuit('ohms-law', 'circuitDiagram');
+    }
 });
 
 // Circuit Diagram Functions

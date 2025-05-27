@@ -307,6 +307,11 @@ function displayResults(results, steps) {
     }
     
     resultsContainer.innerHTML = resultsHTML;
+    
+    // Update circuit diagram with calculated values
+    if (window.circuitEngine) {
+        window.circuitEngine.updateCircuitValues('power-calculator', results);
+    }
 }
 
 // Add input event listeners for real-time validation
@@ -329,4 +334,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Initialize circuit diagram
+    if (window.circuitEngine) {
+        window.circuitEngine.initializeCircuit('power-calculator', 'circuitDiagram');
+    }
 });
