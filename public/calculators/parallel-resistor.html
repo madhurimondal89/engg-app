@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parallel Resistor Calculator - Equivalent Resistance & Current Distribution</title>
+    <meta name="description" content="Calculate parallel resistor equivalent resistance, current distribution, and power analysis. Design parallel circuits with step-by-step calculations and circuit analysis.">
+    <meta name="keywords" content="parallel resistor calculator, equivalent resistance, current distribution, parallel circuit analysis, electrical engineering">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Parallel Resistor Calculator - Equivalent Resistance & Current Distribution">
+    <meta property="og:description" content="Calculate parallel resistor networks with current distribution and power analysis.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/parallel-resistor.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Parallel Resistor Calculator",
+        "description": "Calculate parallel resistor equivalent resistance and current distribution",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Calculate equivalent resistance (1/Req = 1/R1 + 1/R2 + ...)",
+            "Current distribution analysis",
+            "Power consumption calculations",
+            "Support for 2-10 parallel resistors",
+            "Step-by-step solutions with circuit diagrams"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Parallel Resistor Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-grip-lines"></i>
+                <h1>⚡ Parallel Resistor Calculator</h1>
+            </div>
+            <p>Calculate equivalent resistance, current distribution, and power analysis for parallel resistor networks with detailed step-by-step solutions.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Calculator Type Selection -->
+            <div class="mode-selection" style="margin-bottom: 2rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h3 style="color: var(--charcoal); margin-bottom: 1rem;">Calculation Type</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="mode-btn active" onclick="setCalculationType('equivalent')" id="equivalentBtn">
+                            <i class="fas fa-equals"></i> Equivalent Resistance
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('current')" id="currentBtn">
+                            <i class="fas fa-bolt"></i> Current Distribution
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('power')" id="powerBtn">
+                            <i class="fas fa-lightning-bolt"></i> Power Analysis
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('design')" id="designBtn">
+                            <i class="fas fa-drafting-compass"></i> Circuit Design
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input Parameters
+                    </h2>
+
+                    <!-- Number of Resistors Selection -->
+                    <div class="input-group">
+                        <label class="input-label">Number of Parallel Resistors</label>
+                        <div class="input-row">
+                            <select class="unit-select" id="numResistors" onchange="updateResistorInputs()" style="flex: 1;">
+                                <option value="2" selected>2 Resistors</option>
+                                <option value="3">3 Resistors</option>
+                                <option value="4">4 Resistors</option>
+                                <option value="5">5 Resistors</option>
+                                <option value="6">6 Resistors</option>
+                                <option value="7">7 Resistors</option>
+                                <option value="8">8 Resistors</option>
+                                <option value="9">9 Resistors</option>
+                                <option value="10">10 Resistors</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Parallel Circuit Diagram -->
+                    <div class="circuit-diagram" style="background: var(--light-gray); padding: 1.5rem; border-radius: 8px; margin: 1rem 0; text-align: center;">
+                        <div style="font-family: 'Roboto Mono', monospace; color: var(--text-gray); font-size: 0.9rem;">
+                            <div id="circuitDisplay">
+                                <div>    ┌─── R1 ───┐</div>
+                                <div>────┤         ├────</div>
+                                <div>    └─── R2 ───┘</div>
+                            </div>
+                            <div style="margin-top: 0.5rem; font-size: 0.8rem;">Parallel Resistor Network</div>
+                        </div>
+                    </div>
+
+                    <!-- Formula Display -->
+                    <div class="formula-display">
+                        <div class="formula-name">Parallel Resistance Formula</div>
+                        <div class="formula-equation" id="formulaDisplay">1/Req = 1/R1 + 1/R2</div>
+                        <div class="formula-description">Equivalent resistance is always less than the smallest resistor</div>
+                    </div>
+
+                    <!-- Dynamic Resistor Inputs -->
+                    <div id="resistorInputs">
+                        <!-- Resistor inputs will be generated here -->
+                    </div>
+
+                    <!-- Additional Inputs for Current/Power Analysis -->
+                    <div id="additionalInputs" style="display: none;">
+                        <div class="input-group">
+                            <label class="input-label">Supply Voltage (V) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="supplyVoltage" placeholder="Enter supply voltage">
+                                <select class="unit-select" id="voltageUnit">
+                                    <option value="V" selected>V</option>
+                                    <option value="mV">mV</option>
+                                    <option value="kV">kV</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Total Current (I) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="totalCurrent" placeholder="Enter total current">
+                                <select class="unit-select" id="currentUnit">
+                                    <option value="A" selected>A</option>
+                                    <option value="mA">mA</option>
+                                    <option value="μA">μA</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Design Mode Inputs -->
+                    <div id="designInputs" style="display: none;">
+                        <div class="input-group">
+                            <label class="input-label">Target Equivalent Resistance</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="targetResistance" placeholder="Enter target resistance">
+                                <select class="unit-select" id="targetResistanceUnit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Available Resistor Values (comma-separated)</label>
+                            <div class="input-row">
+                                <input type="text" class="input-field" id="availableValues" placeholder="e.g., 1000, 2200, 4700, 10000" style="flex: 1;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button class="calculate-btn" onclick="calculateParallelResistors()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="result-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-grip-lines"></i>
+                        Results & Analysis
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-grip-lines"></i>
+                            <p>Enter resistor values and click Calculate to see parallel circuit analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Information -->
+            <div class="info-section" style="margin-top: 3rem;">
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h2 style="color: var(--charcoal); margin-bottom: 1rem;">Parallel Resistor Theory</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Equivalent Resistance</h3>
+                            <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                                In parallel circuits, the equivalent resistance is always less than the smallest individual resistor.
+                            </p>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>1/Req = 1/R1 + 1/R2 + 1/R3 + ...</li>
+                                <li>For two resistors: Req = (R1×R2)/(R1+R2)</li>
+                                <li>Adding more resistors decreases Req</li>
+                                <li>Provides multiple current paths</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Current Distribution</h3>
+                            <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                                Current divides inversely proportional to resistance values.
+                            </p>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>Voltage across all resistors is equal</li>
+                                <li>Current: I = V/R for each branch</li>
+                                <li>Smaller resistors carry more current</li>
+                                <li>Total current = sum of branch currents</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Applications</h3>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li><strong>Current Dividers:</strong> Split current between paths</li>
+                                <li><strong>Redundancy:</strong> Backup paths if one fails</li>
+                                <li><strong>Power Distribution:</strong> Multiple loads</li>
+                                <li><strong>Precision Resistors:</strong> Custom resistance values</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/parallel-resistor.html">Parallel Resistor</a></li>
+                        <li><a href="/calculators/wheatstone-bridge.html">Wheatstone Bridge</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loading-animations.js"></script>
+    <script src="/js/collaboration.js"></script>
+    <script src="/js/parallel-resistor.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
