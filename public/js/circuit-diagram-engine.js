@@ -120,6 +120,18 @@ class CircuitDiagramEngine {
             case 'wheatstone-bridge':
                 this.createWheatstoneBridge(svg);
                 break;
+            case 'battery-life':
+                this.createBatteryLifeCircuit(svg);
+                break;
+            case 'lc-resonant':
+                this.createLCResonantCircuit(svg);
+                break;
+            case 'faradays-law':
+                this.createFaradaysLawCircuit(svg);
+                break;
+            case 'lorentz-force':
+                this.createLorentzForceCircuit(svg);
+                break;
             default:
                 this.createGenericCircuit(svg);
         }
