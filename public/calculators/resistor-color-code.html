@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resistor Color Code Calculator - 4, 5, and 6 Band Resistors</title>
+    <meta name="description" content="Calculate resistor values from color codes and find color codes for resistance values. Supports 4-band, 5-band, and 6-band resistors with tolerance and temperature coefficient.">
+    <meta name="keywords" content="resistor color code, resistor calculator, color band calculator, electrical engineering, resistance value">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Resistor Color Code Calculator - 4, 5, and 6 Band Resistors">
+    <meta property="og:description" content="Calculate resistor values from color codes and find color codes for resistance values.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/resistor-color-code.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Resistor Color Code Calculator",
+        "description": "Calculate resistor values from color codes and find color codes for resistance values",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "4-band resistor color code",
+            "5-band resistor color code",
+            "6-band resistor color code",
+            "Value to color code conversion",
+            "Color code to value conversion",
+            "Tolerance and temperature coefficient"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Resistor Color Code Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-palette"></i>
+                <h1>🎨 Resistor Color Code Calculator</h1>
+            </div>
+            <p>Decode resistor color bands to find resistance values, or encode resistance values to color bands. Supports 4-band, 5-band, and 6-band resistors with tolerance and temperature coefficient.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Mode Selection -->
+            <div class="mode-selection" style="margin-bottom: 2rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h3 style="color: var(--charcoal); margin-bottom: 1rem;">Calculator Mode</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="mode-btn active" onclick="setMode('decode')" id="decodeBtn">
+                            <i class="fas fa-eye"></i> Decode Colors → Value
+                        </button>
+                        <button class="mode-btn" onclick="setMode('encode')" id="encodeBtn">
+                            <i class="fas fa-palette"></i> Encode Value → Colors
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        <span id="inputTitle">Color Band Selection</span>
+                    </h2>
+
+                    <!-- Band Type Selection -->
+                    <div class="input-group">
+                        <label class="input-label">Resistor Type</label>
+                        <select class="input-field" id="bandType" onchange="updateBandType()">
+                            <option value="4">4-Band Resistor</option>
+                            <option value="5">5-Band Resistor</option>
+                            <option value="6">6-Band Resistor</option>
+                        </select>
+                    </div>
+
+                    <!-- Decode Mode - Color Selection -->
+                    <div id="decodeMode">
+                        <div class="input-group">
+                            <label class="input-label">1st Band (1st Digit)</label>
+                            <select class="color-select" id="band1" onchange="calculateFromColors()">
+                                <option value="">Select Color</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">2nd Band (2nd Digit)</label>
+                            <select class="color-select" id="band2" onchange="calculateFromColors()">
+                                <option value="">Select Color</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group" id="band3Group">
+                            <label class="input-label">3rd Band (3rd Digit)</label>
+                            <select class="color-select" id="band3" onchange="calculateFromColors()">
+                                <option value="">Select Color</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" id="multiplierLabel">Multiplier Band</label>
+                            <select class="color-select" id="multiplier" onchange="calculateFromColors()">
+                                <option value="">Select Color</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Tolerance Band</label>
+                            <select class="color-select" id="tolerance" onchange="calculateFromColors()">
+                                <option value="">Select Color</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group" id="tempCoeffGroup" style="display: none;">
+                            <label class="input-label">Temperature Coefficient</label>
+                            <select class="color-select" id="tempCoeff" onchange="calculateFromColors()">
+                                <option value="">Select Color</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Encode Mode - Value Input -->
+                    <div id="encodeMode" style="display: none;">
+                        <div class="input-group">
+                            <label class="input-label">Resistance Value</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="resistanceValue" placeholder="Enter resistance value" onchange="calculateFromValue()">
+                                <select class="unit-select" id="resistanceUnit" onchange="calculateFromValue()">
+                                    <option value="1">Ω</option>
+                                    <option value="1000">kΩ</option>
+                                    <option value="1000000">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Tolerance</label>
+                            <select class="input-field" id="toleranceSelect" onchange="calculateFromValue()">
+                                <option value="1">±1% (Brown)</option>
+                                <option value="2">±2% (Red)</option>
+                                <option value="5" selected>±5% (Gold)</option>
+                                <option value="10">±10% (Silver)</option>
+                                <option value="0.5">±0.5% (Green)</option>
+                                <option value="0.25">±0.25% (Blue)</option>
+                                <option value="0.1">±0.1% (Violet)</option>
+                                <option value="20">±20% (None)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="result-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-microchip"></i>
+                        Resistor Visualization & Results
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-microchip"></i>
+                            <p>Select colors or enter a value to see the resistor</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Color Chart Reference -->
+            <div class="info-section" style="margin-top: 3rem;">
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h2 style="color: var(--charcoal); margin-bottom: 1rem;">Resistor Color Code Chart</h2>
+                    <div class="color-chart" id="colorChart">
+                        <!-- Color chart will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/power-calculator.html">Power Calculator</a></li>
+                        <li><a href="/calculators/resistor-color-code.html">Resistor Color Code</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/resistor-color-code.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
