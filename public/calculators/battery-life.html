@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battery Life Calculator - Power Consumption & Runtime Analysis</title>
+    <meta name="description" content="Calculate battery life, runtime, capacity requirements, and power consumption. Analyze battery performance for electronic devices and systems with step-by-step calculations.">
+    <meta name="keywords" content="battery life calculator, battery runtime, power consumption, battery capacity, amp hours, watt hours, electrical engineering">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Battery Life Calculator - Power Consumption & Runtime Analysis">
+    <meta property="og:description" content="Calculate battery life, runtime, and power consumption with detailed analysis.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/battery-life.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Battery Life Calculator",
+        "description": "Calculate battery life, runtime, and power consumption for electronic devices",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Calculate battery runtime from capacity and current",
+            "Determine required battery capacity for target runtime",
+            "Power consumption analysis",
+            "Multiple battery chemistry support",
+            "Efficiency calculations with step-by-step solutions"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Battery Life Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-battery-three-quarters"></i>
+                <h1>🔋 Battery Life Calculator</h1>
+            </div>
+            <p>Calculate battery runtime, required capacity, and power consumption. Analyze battery performance for electronic devices and systems with detailed calculations.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Calculator Type Selection -->
+            <div class="mode-selection" style="margin-bottom: 2rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h3 style="color: var(--charcoal); margin-bottom: 1rem;">Calculation Type</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="mode-btn active" onclick="setCalculationType('runtime')" id="runtimeBtn">
+                            <i class="fas fa-clock"></i> Battery Runtime
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('capacity')" id="capacityBtn">
+                            <i class="fas fa-battery-full"></i> Required Capacity
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('power')" id="powerBtn">
+                            <i class="fas fa-bolt"></i> Power Analysis
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('efficiency')" id="efficiencyBtn">
+                            <i class="fas fa-chart-line"></i> Efficiency Analysis
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input Parameters
+                    </h2>
+
+                    <!-- Runtime Calculation Mode -->
+                    <div id="runtimeMode">
+                        <div class="formula-display">
+                            <div class="formula-name">Battery Runtime Calculation</div>
+                            <div class="formula-equation">Runtime = (Battery Capacity × Efficiency) / Load Current</div>
+                            <div class="formula-description">Calculate how long a battery will last under a given load</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Battery Capacity - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="batteryCapacity" placeholder="Enter battery capacity">
+                                <select class="unit-select" id="capacityUnit">
+                                    <option value="mAh">mAh</option>
+                                    <option value="Ah">Ah</option>
+                                    <option value="Wh">Wh</option>
+                                    <option value="kWh">kWh</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Load Current - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="loadCurrent" placeholder="Enter load current">
+                                <select class="unit-select" id="currentUnit">
+                                    <option value="mA">mA</option>
+                                    <option value="A">A</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Battery Voltage - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="batteryVoltage" placeholder="Enter battery voltage">
+                                <select class="unit-select" id="voltageUnit">
+                                    <option value="V">V</option>
+                                    <option value="mV">mV</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Efficiency (%) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="efficiency" placeholder="Enter efficiency (0-100)" min="0" max="100" value="95">
+                                <span class="unit-label">%</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Runtime - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="runtime" placeholder="Enter runtime">
+                                <select class="unit-select" id="runtimeUnit">
+                                    <option value="hours">Hours</option>
+                                    <option value="minutes">Minutes</option>
+                                    <option value="days">Days</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Capacity Calculation Mode -->
+                    <div id="capacityMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Required Battery Capacity</div>
+                            <div class="formula-equation">Capacity = (Load Current × Desired Runtime) / Efficiency</div>
+                            <div class="formula-description">Calculate required battery capacity for target runtime</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Desired Runtime - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="desiredRuntime" placeholder="Enter desired runtime">
+                                <select class="unit-select" id="desiredRuntimeUnit">
+                                    <option value="hours">Hours</option>
+                                    <option value="minutes">Minutes</option>
+                                    <option value="days">Days</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Load Current - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="loadCurrentCap" placeholder="Enter load current">
+                                <select class="unit-select" id="currentUnitCap">
+                                    <option value="mA">mA</option>
+                                    <option value="A">A</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Safety Factor - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="safetyFactor" placeholder="Enter safety factor" value="1.2" step="0.1">
+                                <span class="unit-label">×</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">System Efficiency (%) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="efficiencyCap" placeholder="Enter efficiency" value="95">
+                                <span class="unit-label">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Power Analysis Mode -->
+                    <div id="powerMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Power Consumption Analysis</div>
+                            <div class="formula-equation">P = V × I | Energy = P × t</div>
+                            <div class="formula-description">Analyze power consumption and energy usage</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Operating Voltage - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="operatingVoltage" placeholder="Enter operating voltage">
+                                <select class="unit-select" id="opVoltageUnit">
+                                    <option value="V">V</option>
+                                    <option value="mV">mV</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Operating Current - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="operatingCurrent" placeholder="Enter operating current">
+                                <select class="unit-select" id="opCurrentUnit">
+                                    <option value="mA">mA</option>
+                                    <option value="A">A</option>
+                                    <option value="μA">μA</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Power Consumption - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="powerConsumption" placeholder="Enter power consumption">
+                                <select class="unit-select" id="powerUnit">
+                                    <option value="mW">mW</option>
+                                    <option value="W">W</option>
+                                    <option value="μW">μW</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Operating Time - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="operatingTime" placeholder="Enter operating time">
+                                <select class="unit-select" id="timeUnit">
+                                    <option value="hours">Hours</option>
+                                    <option value="minutes">Minutes</option>
+                                    <option value="days">Days</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Efficiency Analysis Mode -->
+                    <div id="efficiencyMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Battery Efficiency Analysis</div>
+                            <div class="formula-equation">Efficiency = (Useful Energy / Total Energy) × 100%</div>
+                            <div class="formula-description">Calculate battery and system efficiency</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Battery Chemistry</label>
+                            <div class="input-row">
+                                <select class="unit-select" id="batteryChemistry" style="flex: 1;">
+                                    <option value="li-ion">Lithium-Ion (Li-ion)</option>
+                                    <option value="li-po">Lithium Polymer (Li-Po)</option>
+                                    <option value="nimh">Nickel Metal Hydride (NiMH)</option>
+                                    <option value="nicd">Nickel Cadmium (NiCd)</option>
+                                    <option value="lead-acid">Lead Acid</option>
+                                    <option value="alkaline">Alkaline</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Discharge Rate (C-Rate) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="dischargeRate" placeholder="Enter C-rate (e.g., 0.2, 1.0, 2.0)">
+                                <span class="unit-label">C</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Temperature (°C) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="temperature" placeholder="Enter temperature" value="25">
+                                <span class="unit-label">°C</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Depth of Discharge (%) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="depthOfDischarge" placeholder="Enter DoD percentage" value="80">
+                                <span class="unit-label">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button class="calculate-btn" onclick="calculateBatteryLife()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="result-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-battery-three-quarters"></i>
+                        Results & Analysis
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-battery-three-quarters"></i>
+                            <p>Enter values and click Calculate to see battery analysis results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Information -->
+            <div class="info-section" style="margin-top: 3rem;">
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h2 style="color: var(--charcoal); margin-bottom: 1rem;">Battery Technology Guide</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Battery Chemistry Comparison</h3>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li><strong>Li-ion:</strong> 85-95% efficiency, 300-500 cycles</li>
+                                <li><strong>Li-Po:</strong> 85-95% efficiency, 300-500 cycles</li>
+                                <li><strong>NiMH:</strong> 70-85% efficiency, 500-1000 cycles</li>
+                                <li><strong>Lead Acid:</strong> 80-85% efficiency, 200-300 cycles</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Key Factors</h3>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>Discharge rate affects capacity</li>
+                                <li>Temperature impacts performance</li>
+                                <li>Depth of discharge affects lifespan</li>
+                                <li>Age reduces effective capacity</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/battery-life.html">Battery Life</a></li>
+                        <li><a href="/calculators/power-calculator.html">Power Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/collaboration.js"></script>
+    <script src="/js/battery-life.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
