@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stress & Strain Calculator - Material Engineering Analysis</title>
+    <meta name="description" content="Calculate stress, strain, elastic modulus, and material properties. Analyze tensile, compressive, and shear stress with interactive diagrams and step-by-step solutions.">
+    <meta name="keywords" content="stress calculation, strain analysis, elastic modulus, tensile stress, shear stress, material properties, mechanical engineering">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Stress & Strain Calculator - Material Engineering Analysis">
+    <meta property="og:description" content="Professional stress and strain calculator with interactive material analysis and visual diagrams.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/stress-strain.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Stress & Strain Calculator",
+        "description": "Calculate stress, strain, and material properties with interactive analysis",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Stress calculations",
+            "Strain analysis", 
+            "Elastic modulus determination",
+            "Material property analysis",
+            "Interactive stress diagrams"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#mechanical">Mechanical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Stress & Strain Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-weight-hanging"></i>
+                <h1>🔧 Stress & Strain Calculator</h1>
+            </div>
+            <p>Analyze material behavior under loading conditions. Calculate stress, strain, elastic modulus, and safety factors with interactive diagrams and comprehensive analysis.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Analysis Type Selection -->
+            <div class="mode-selection">
+                <h3 class="section-title">
+                    <i class="fas fa-cogs"></i>
+                    Analysis Type
+                </h3>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" onclick="setAnalysisType('tensile')" id="tensileBtn">
+                        <i class="fas fa-arrows-alt-h"></i>
+                        Tensile Stress
+                    </button>
+                    <button class="mode-btn" onclick="setAnalysisType('compressive')" id="compressiveBtn">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                        Compressive Stress
+                    </button>
+                    <button class="mode-btn" onclick="setAnalysisType('shear')" id="shearBtn">
+                        <i class="fas fa-cut"></i>
+                        Shear Stress
+                    </button>
+                    <button class="mode-btn" onclick="setAnalysisType('elastic')" id="elasticBtn">
+                        <i class="fas fa-chart-line"></i>
+                        Elastic Properties
+                    </button>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Material & Loading
+                    </h2>
+
+                    <!-- Dynamic Input Fields -->
+                    <div id="inputFields">
+                        <!-- Fields will be populated based on analysis type -->
+                    </div>
+
+                    <!-- Material Selection -->
+                    <div class="input-group">
+                        <label class="input-label">Material (Optional)</label>
+                        <select class="material-select" id="materialSelect" onchange="setMaterialProperties()">
+                            <option value="custom">Custom Material</option>
+                            <option value="steel">Structural Steel</option>
+                            <option value="aluminum">Aluminum 6061</option>
+                            <option value="copper">Copper</option>
+                            <option value="titanium">Titanium Ti-6Al-4V</option>
+                            <option value="concrete">Concrete</option>
+                            <option value="wood">Douglas Fir Wood</option>
+                        </select>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="button-group">
+                        <button class="calculate-btn" onclick="calculateStressStrain()">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                        <button class="clear-btn" onclick="clearInputs()">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stress Diagram Panel -->
+                <div class="diagram-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-project-diagram"></i>
+                        Stress Diagram
+                    </h2>
+                    <div id="stressDiagram" class="stress-diagram">
+                        <!-- Stress visualization will be drawn here -->
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div class="results-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Analysis Results
+                    </h2>
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-chart-bar"></i>
+                            <p>Select analysis type and enter values to see results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stress-Strain Curve -->
+            <div class="curve-section">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-area"></i>
+                    Stress-Strain Curve
+                </h3>
+                <div id="stressStrainChart" class="stress-strain-chart">
+                    <canvas id="curveCanvas" width="800" height="400"></canvas>
+                </div>
+            </div>
+
+            <!-- Educational Content -->
+            <div class="educational-content">
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3><i class="fas fa-info-circle"></i> Stress Fundamentals</h3>
+                        <p>Stress is the internal force per unit area within a material. Different types of stress affect materials in various ways:</p>
+                        <div class="formula-display">
+                            <span class="formula">σ = F/A</span>
+                            <div class="formula-desc">Normal Stress = Force / Cross-sectional Area</div>
+                        </div>
+                        <div class="formula-display">
+                            <span class="formula">τ = F/A</span>
+                            <div class="formula-desc">Shear Stress = Shear Force / Area</div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-expand-arrows-alt"></i> Strain Analysis</h3>
+                        <p>Strain measures the deformation of a material relative to its original dimensions:</p>
+                        <div class="formula-display">
+                            <span class="formula">ε = ΔL/L₀</span>
+                            <div class="formula-desc">Normal Strain = Change in Length / Original Length</div>
+                        </div>
+                        <div class="formula-display">
+                            <span class="formula">γ = Δx/h</span>
+                            <div class="formula-desc">Shear Strain = Lateral Displacement / Height</div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-balance-scale"></i> Material Properties</h3>
+                        <ul>
+                            <li><strong>Elastic Modulus (E):</strong> Slope of stress-strain curve in elastic region</li>
+                            <li><strong>Yield Strength:</strong> Stress at which plastic deformation begins</li>
+                            <li><strong>Ultimate Strength:</strong> Maximum stress before failure</li>
+                            <li><strong>Poisson's Ratio:</strong> Ratio of lateral to axial strain</li>
+                            <li><strong>Safety Factor:</strong> Ratio of yield strength to applied stress</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-tools"></i> Engineering Applications</h3>
+                        <ul>
+                            <li><strong>Structural Design:</strong> Building columns, beams, and foundations</li>
+                            <li><strong>Mechanical Components:</strong> Shafts, gears, and machine parts</li>
+                            <li><strong>Aerospace:</strong> Aircraft wings, fuselage, and engine components</li>
+                            <li><strong>Civil Engineering:</strong> Bridges, towers, and infrastructure</li>
+                            <li><strong>Material Testing:</strong> Quality control and material characterization</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Display -->
+            <div id="errorContainer" class="error-container" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/stress-strain.html">Stress & Strain</a></li>
+                        <li><a href="/calculators/force-calculator.html">Force Calculator</a></li>
+                        <li><a href="/calculators/torque-calculator.html">Torque Calculator</a></li>
+                        <li><a href="/calculators/pressure-calculator.html">Pressure Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loading-animations.js"></script>
+    <script src="/js/stress-strain.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
