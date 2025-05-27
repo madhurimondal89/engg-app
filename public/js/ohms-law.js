@@ -242,4 +242,265 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+    
+    // Initialize circuit diagram
+    drawCircuitDiagram();
 });
+
+// Circuit Diagram Functions
+function drawCircuitDiagram(results = null) {
+    const svg = document.getElementById('ohmsLawCircuit');
+    if (!svg) return;
+    
+    // Clear existing content
+    svg.innerHTML = '';
+    
+    // Create SVG elements
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    
+    // Add arrow marker for current direction
+    const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+    marker.setAttribute('id', 'arrowhead');
+    marker.setAttribute('markerWidth', '10');
+    marker.setAttribute('markerHeight', '7');
+    marker.setAttribute('refX', '9');
+    marker.setAttribute('refY', '3.5');
+    marker.setAttribute('orient', 'auto');
+    
+    const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    polygon.setAttribute('points', '0 0, 10 3.5, 0 7');
+    polygon.setAttribute('fill', '#007bff');
+    marker.appendChild(polygon);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+    
+    // Draw circuit components
+    drawVoltageSource(svg, 50, 150, results);
+    drawResistor(svg, 250, 100, results);
+    drawWires(svg, results);
+    drawCurrentIndicator(svg, results);
+    drawLabels(svg, results);
+}
+
+function drawVoltageSource(svg, x, y, results) {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    
+    // Negative terminal (short line)
+    const negative = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    negative.setAttribute('x1', x);
+    negative.setAttribute('y1', y - 20);
+    negative.setAttribute('x2', x);
+    negative.setAttribute('y2', y + 20);
+    negative.setAttribute('stroke', '#333');
+    negative.setAttribute('stroke-width', '4');
+    g.appendChild(negative);
+    
+    // Positive terminal (long line)
+    const positive = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    positive.setAttribute('x1', x + 15);
+    positive.setAttribute('y1', y - 30);
+    positive.setAttribute('x2', x + 15);
+    positive.setAttribute('y2', y + 30);
+    positive.setAttribute('stroke', '#333');
+    positive.setAttribute('stroke-width', '4');
+    g.appendChild(positive);
+    
+    // Plus and minus signs
+    const plusText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    plusText.setAttribute('x', x + 25);
+    plusText.setAttribute('y', y - 35);
+    plusText.setAttribute('text-anchor', 'middle');
+    plusText.setAttribute('font-size', '14');
+    plusText.setAttribute('fill', '#d63384');
+    plusText.setAttribute('font-weight', 'bold');
+    plusText.textContent = '+';
+    g.appendChild(plusText);
+    
+    const minusText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    minusText.setAttribute('x', x - 10);
+    minusText.setAttribute('y', y + 5);
+    minusText.setAttribute('text-anchor', 'middle');
+    minusText.setAttribute('font-size', '14');
+    minusText.setAttribute('fill', '#6c757d');
+    minusText.setAttribute('font-weight', 'bold');
+    minusText.textContent = '−';
+    g.appendChild(minusText);
+    
+    // Voltage label
+    const voltageLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    voltageLabel.setAttribute('x', x - 30);
+    voltageLabel.setAttribute('y', y + 5);
+    voltageLabel.setAttribute('text-anchor', 'middle');
+    voltageLabel.setAttribute('font-size', '16');
+    voltageLabel.setAttribute('fill', '#007bff');
+    voltageLabel.setAttribute('font-weight', 'bold');
+    
+    if (results && results.voltage) {
+        voltageLabel.textContent = `${results.voltage.formatted}`;
+    } else {
+        voltageLabel.textContent = 'V';
+    }
+    g.appendChild(voltageLabel);
+    svg.appendChild(g);
+}
+
+function drawResistor(svg, x, y, results) {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    
+    // Resistor rectangle
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', x - 30);
+    rect.setAttribute('y', y - 10);
+    rect.setAttribute('width', 60);
+    rect.setAttribute('height', 20);
+    rect.setAttribute('fill', '#f8f9fa');
+    rect.setAttribute('stroke', '#333');
+    rect.setAttribute('stroke-width', '2');
+    rect.setAttribute('rx', '3');
+    g.appendChild(rect);
+    
+    // Resistance label
+    const resistanceLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    resistanceLabel.setAttribute('x', x);
+    resistanceLabel.setAttribute('y', y + 40);
+    resistanceLabel.setAttribute('text-anchor', 'middle');
+    resistanceLabel.setAttribute('font-size', '16');
+    resistanceLabel.setAttribute('fill', '#28a745');
+    resistanceLabel.setAttribute('font-weight', 'bold');
+    
+    if (results && results.resistance) {
+        resistanceLabel.textContent = `${results.resistance.formatted}`;
+    } else {
+        resistanceLabel.textContent = 'R';
+    }
+    g.appendChild(resistanceLabel);
+    svg.appendChild(g);
+}
+
+function drawWires(svg, results) {
+    const wireColor = results ? '#007bff' : '#666';
+    const wireWidth = results ? '3' : '2';
+    
+    // Top wire
+    const topWire = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    topWire.setAttribute('x1', '65');
+    topWire.setAttribute('y1', '100');
+    topWire.setAttribute('x2', '220');
+    topWire.setAttribute('y2', '100');
+    topWire.setAttribute('stroke', wireColor);
+    topWire.setAttribute('stroke-width', wireWidth);
+    svg.appendChild(topWire);
+    
+    // Right wire
+    const rightWire = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    rightWire.setAttribute('x1', '280');
+    rightWire.setAttribute('y1', '100');
+    rightWire.setAttribute('x2', '400');
+    rightWire.setAttribute('y2', '100');
+    rightWire.setAttribute('stroke', wireColor);
+    rightWire.setAttribute('stroke-width', wireWidth);
+    svg.appendChild(rightWire);
+    
+    // Right vertical
+    const rightVertical = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    rightVertical.setAttribute('x1', '400');
+    rightVertical.setAttribute('y1', '100');
+    rightVertical.setAttribute('x2', '400');
+    rightVertical.setAttribute('y2', '200');
+    rightVertical.setAttribute('stroke', wireColor);
+    rightVertical.setAttribute('stroke-width', wireWidth);
+    svg.appendChild(rightVertical);
+    
+    // Bottom wire
+    const bottomWire = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    bottomWire.setAttribute('x1', '400');
+    bottomWire.setAttribute('y1', '200');
+    bottomWire.setAttribute('x2', '65');
+    bottomWire.setAttribute('y2', '200');
+    bottomWire.setAttribute('stroke', wireColor);
+    bottomWire.setAttribute('stroke-width', wireWidth);
+    svg.appendChild(bottomWire);
+    
+    // Left vertical
+    const leftVertical = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    leftVertical.setAttribute('x1', '65');
+    leftVertical.setAttribute('y1', '200');
+    leftVertical.setAttribute('x2', '65');
+    leftVertical.setAttribute('y2', '180');
+    leftVertical.setAttribute('stroke', wireColor);
+    leftVertical.setAttribute('stroke-width', wireWidth);
+    svg.appendChild(leftVertical);
+    
+    // Battery top connection
+    const batteryTop = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    batteryTop.setAttribute('x1', '65');
+    batteryTop.setAttribute('y1', '120');
+    batteryTop.setAttribute('x2', '65');
+    batteryTop.setAttribute('y2', '100');
+    batteryTop.setAttribute('stroke', wireColor);
+    batteryTop.setAttribute('stroke-width', wireWidth);
+    svg.appendChild(batteryTop);
+}
+
+function drawCurrentIndicator(svg, results) {
+    if (!results || !results.current) return;
+    
+    // Current flow arrow
+    const currentArrow = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    currentArrow.setAttribute('x1', '120');
+    currentArrow.setAttribute('y1', '100');
+    currentArrow.setAttribute('x2', '160');
+    currentArrow.setAttribute('y2', '100');
+    currentArrow.setAttribute('stroke', '#dc3545');
+    currentArrow.setAttribute('stroke-width', '3');
+    currentArrow.setAttribute('marker-end', 'url(#arrowhead)');
+    svg.appendChild(currentArrow);
+    
+    // Current label
+    const currentLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    currentLabel.setAttribute('x', '140');
+    currentLabel.setAttribute('y', '85');
+    currentLabel.setAttribute('text-anchor', 'middle');
+    currentLabel.setAttribute('font-size', '14');
+    currentLabel.setAttribute('fill', '#dc3545');
+    currentLabel.setAttribute('font-weight', 'bold');
+    currentLabel.textContent = `I = ${results.current.formatted}`;
+    svg.appendChild(currentLabel);
+}
+
+function drawLabels(svg, results) {
+    // Circuit title
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    title.setAttribute('x', '250');
+    title.setAttribute('y', '30');
+    title.setAttribute('text-anchor', 'middle');
+    title.setAttribute('font-size', '18');
+    title.setAttribute('fill', '#333');
+    title.setAttribute('font-weight', 'bold');
+    title.textContent = 'Simple DC Circuit - Ohm\'s Law';
+    svg.appendChild(title);
+    
+    // Formula
+    const formula = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    formula.setAttribute('x', '250');
+    formula.setAttribute('y', '280');
+    formula.setAttribute('text-anchor', 'middle');
+    formula.setAttribute('font-size', '16');
+    formula.setAttribute('fill', '#6c757d');
+    formula.setAttribute('font-style', 'italic');
+    formula.textContent = 'V = I × R';
+    svg.appendChild(formula);
+    
+    if (results && results.power) {
+        // Power label
+        const powerLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        powerLabel.setAttribute('x', '250');
+        powerLabel.setAttribute('y', '260');
+        powerLabel.setAttribute('text-anchor', 'middle');
+        powerLabel.setAttribute('font-size', '14');
+        powerLabel.setAttribute('fill', '#fd7e14');
+        powerLabel.setAttribute('font-weight', 'bold');
+        powerLabel.textContent = `Power: ${results.power.formatted}`;
+        svg.appendChild(powerLabel);
+    }
+}
