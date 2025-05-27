@@ -126,15 +126,23 @@ function clearInputs() {
 function calculateRCTimeConstant() {
     hideError();
     
-    if (currentCalculationType === 'timeConstant') {
-        calculateTimeConstant();
-    } else if (currentCalculationType === 'charging') {
-        calculateChargingAnalysis();
-    } else if (currentCalculationType === 'discharging') {
-        calculateDischargingAnalysis();
-    } else if (currentCalculationType === 'settling') {
-        calculateSettlingTime();
-    }
+    // Use enhanced calculation with loading animation
+    enhancedCalculate(() => {
+        if (currentCalculationType === 'timeConstant') {
+            return calculateTimeConstant();
+        } else if (currentCalculationType === 'charging') {
+            return calculateChargingAnalysis();
+        } else if (currentCalculationType === 'discharging') {
+            return calculateDischargingAnalysis();
+        } else if (currentCalculationType === 'settling') {
+            return calculateSettlingTime();
+        }
+    }, {
+        minDelay: 1000,
+        customMessage: "Analyzing RC circuit behavior..."
+    }).then(() => {
+        scrollToResults();
+    });
 }
 
 // Calculate time constant
