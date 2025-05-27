@@ -680,6 +680,291 @@ body {
     }
 }
 
+/* Loading Indicators and Animations */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    z-index: 100;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(2px);
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--border-gray);
+    border-top: 4px solid var(--primary-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+.loading-text {
+    color: var(--primary-blue);
+    font-weight: 500;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.loading-subtext {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    text-align: center;
+    max-width: 200px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Button loading animation */
+.calculate-btn.loading {
+    animation: pulse 1.5s ease-in-out infinite;
+    pointer-events: none;
+    position: relative;
+}
+
+.calculate-btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 4px 20px rgba(25, 118, 210, 0.3);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 6px 25px rgba(25, 118, 210, 0.5);
+    }
+}
+
+/* Progress bar animation */
+.calculation-progress {
+    width: 100%;
+    height: 4px;
+    background: var(--light-gray);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-dark));
+    border-radius: 2px;
+    animation: progress 2s ease-in-out;
+    transform-origin: left;
+}
+
+@keyframes progress {
+    0% {
+        transform: scaleX(0);
+    }
+    50% {
+        transform: scaleX(0.7);
+    }
+    100% {
+        transform: scaleX(1);
+    }
+}
+
+/* Calculation steps fade-in animation */
+.step-item {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+.step-item:nth-child(1) { animation-delay: 0.1s; }
+.step-item:nth-child(2) { animation-delay: 0.2s; }
+.step-item:nth-child(3) { animation-delay: 0.3s; }
+.step-item:nth-child(4) { animation-delay: 0.4s; }
+.step-item:nth-child(5) { animation-delay: 0.5s; }
+.step-item:nth-child(6) { animation-delay: 0.6s; }
+.step-item:nth-child(7) { animation-delay: 0.7s; }
+.step-item:nth-child(8) { animation-delay: 0.8s; }
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Result items animation */
+.result-item {
+    opacity: 0;
+    transform: scale(0.95);
+    animation: fadeInScale 0.4s ease forwards;
+}
+
+.result-item:nth-child(1) { animation-delay: 0.1s; }
+.result-item:nth-child(2) { animation-delay: 0.15s; }
+.result-item:nth-child(3) { animation-delay: 0.2s; }
+.result-item:nth-child(4) { animation-delay: 0.25s; }
+.result-item:nth-child(5) { animation-delay: 0.3s; }
+.result-item:nth-child(6) { animation-delay: 0.35s; }
+
+@keyframes fadeInScale {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Loading dots animation */
+.loading-dots::after {
+    content: '';
+    animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+    0%, 20% {
+        content: '';
+    }
+    40% {
+        content: '.';
+    }
+    60% {
+        content: '..';
+    }
+    80%, 100% {
+        content: '...';
+    }
+}
+
+/* Shimmer effect for loading placeholders */
+.loading-placeholder {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+    height: 20px;
+    margin: 0.5rem 0;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Success animation */
+.result-display {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideInSuccess 0.6s ease forwards;
+}
+
+@keyframes slideInSuccess {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Error shake animation */
+.error-message.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Relative positioning for loading overlay */
+.result-panel {
+    position: relative;
+}
+
+.input-panel {
+    position: relative;
+}
+
+/* Success checkmark animation */
+.success-checkmark {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--success-green);
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.success-checkmark::after {
+    content: '';
+    position: absolute;
+    top: 18px;
+    left: 22px;
+    width: 16px;
+    height: 25px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    animation: checkmark 0.3s ease-in-out 0.3s forwards;
+    opacity: 0;
+}
+
+@keyframes checkmark {
+    to {
+        opacity: 1;
+    }
+}
+
+/* Floating calculation particles */
+.calculation-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--primary-blue);
+    border-radius: 50%;
+    animation: float 3s ease-in-out infinite;
+    opacity: 0.6;
+}
+
+.calculation-particle:nth-child(1) { animation-delay: 0s; left: 10%; }
+.calculation-particle:nth-child(2) { animation-delay: 0.5s; left: 30%; }
+.calculation-particle:nth-child(3) { animation-delay: 1s; left: 50%; }
+.calculation-particle:nth-child(4) { animation-delay: 1.5s; left: 70%; }
+.calculation-particle:nth-child(5) { animation-delay: 2s; left: 90%; }
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateY(-20px);
+        opacity: 1;
+    }
+}
+
 /* Dark Mode */
 @media (prefers-color-scheme: dark) {
     body.dark-mode {
@@ -688,5 +973,14 @@ body {
         --charcoal: #ffffff;
         --text-gray: #cccccc;
         --border-gray: #333333;
+    }
+    
+    .loading-overlay {
+        background: rgba(26, 26, 26, 0.95);
+    }
+    
+    .loading-placeholder {
+        background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+        background-size: 200% 100%;
     }
 }

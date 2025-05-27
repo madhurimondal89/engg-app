@@ -54,6 +54,19 @@ function clearInputs() {
 function calculateOhmsLaw() {
     hideError();
     
+    // Use enhanced calculation with loading animation
+    enhancedCalculate(() => {
+        return performOhmsLawCalculation();
+    }, {
+        minDelay: 1200,
+        customMessage: "Calculating Ohm's Law parameters..."
+    }).then(() => {
+        scrollToResults();
+    });
+}
+
+// Actual calculation logic (separated for loading system)
+function performOhmsLawCalculation() {
     // Get input values
     const voltageValue = parseFloat(document.getElementById('voltage').value);
     const currentValue = parseFloat(document.getElementById('current').value);
