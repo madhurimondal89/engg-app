@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Circuit Diagram Sketch Pad - Draw & Design Circuits</title>
+    <meta name="description" content="Interactive circuit diagram drawing tool. Design electrical circuits with drag-and-drop components, resistors, capacitors, inductors, and more. Export and save your circuit designs.">
+    <meta name="keywords" content="circuit diagram, circuit design, electrical schematic, circuit drawing, interactive circuit, electrical engineering, circuit sketch">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Interactive Circuit Diagram Sketch Pad - Draw & Design Circuits">
+    <meta property="og:description" content="Design electrical circuits with interactive drawing tools and components.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/circuit-sketch.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Circuit Diagram Sketch Pad",
+        "description": "Interactive circuit diagram drawing and design tool",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Drag-and-drop circuit components",
+            "Interactive wire drawing",
+            "Circuit component library",
+            "Export circuit diagrams",
+            "Grid-based design canvas"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Circuit Sketch Pad</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-pencil-ruler"></i>
+                <h1>🎨 Interactive Circuit Diagram Sketch Pad</h1>
+            </div>
+            <p>Design and draw electrical circuit diagrams with interactive tools. Drag and drop components, draw connections, and create professional circuit schematics.</p>
+        </div>
+    </section>
+
+    <!-- Circuit Designer Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <div class="circuit-designer-layout">
+                <!-- Component Toolbar -->
+                <div class="component-toolbar">
+                    <h3 class="toolbar-title">
+                        <i class="fas fa-toolbox"></i>
+                        Component Library
+                    </h3>
+                    
+                    <div class="component-category">
+                        <h4>Basic Components</h4>
+                        <div class="component-grid">
+                            <div class="component-item" draggable="true" data-type="resistor" title="Resistor">
+                                <svg width="60" height="30" viewBox="0 0 60 30">
+                                    <line x1="0" y1="15" x2="15" y2="15" stroke="#333" stroke-width="2"/>
+                                    <rect x="15" y="8" width="30" height="14" fill="none" stroke="#333" stroke-width="2" rx="2"/>
+                                    <line x1="45" y1="15" x2="60" y2="15" stroke="#333" stroke-width="2"/>
+                                    <text x="30" y="20" text-anchor="middle" font-size="8" fill="#333">R</text>
+                                </svg>
+                                <span>Resistor</span>
+                            </div>
+                            
+                            <div class="component-item" draggable="true" data-type="capacitor" title="Capacitor">
+                                <svg width="60" height="30" viewBox="0 0 60 30">
+                                    <line x1="0" y1="15" x2="25" y2="15" stroke="#333" stroke-width="2"/>
+                                    <line x1="25" y1="5" x2="25" y2="25" stroke="#333" stroke-width="3"/>
+                                    <line x1="35" y1="5" x2="35" y2="25" stroke="#333" stroke-width="3"/>
+                                    <line x1="35" y1="15" x2="60" y2="15" stroke="#333" stroke-width="2"/>
+                                    <text x="30" y="9" text-anchor="middle" font-size="8" fill="#333">C</text>
+                                </svg>
+                                <span>Capacitor</span>
+                            </div>
+                            
+                            <div class="component-item" draggable="true" data-type="inductor" title="Inductor">
+                                <svg width="60" height="30" viewBox="0 0 60 30">
+                                    <line x1="0" y1="15" x2="10" y2="15" stroke="#333" stroke-width="2"/>
+                                    <path d="M10,15 Q15,5 20,15 Q25,25 30,15 Q35,5 40,15 Q45,25 50,15" 
+                                          fill="none" stroke="#333" stroke-width="2"/>
+                                    <line x1="50" y1="15" x2="60" y2="15" stroke="#333" stroke-width="2"/>
+                                    <text x="30" y="9" text-anchor="middle" font-size="8" fill="#333">L</text>
+                                </svg>
+                                <span>Inductor</span>
+                            </div>
+                            
+                            <div class="component-item" draggable="true" data-type="battery" title="Battery/Voltage Source">
+                                <svg width="60" height="30" viewBox="0 0 60 30">
+                                    <line x1="0" y1="15" x2="20" y2="15" stroke="#333" stroke-width="2"/>
+                                    <line x1="20" y1="8" x2="20" y2="22" stroke="#333" stroke-width="3"/>
+                                    <line x1="25" y1="5" x2="25" y2="25" stroke="#333" stroke-width="2"/>
+                                    <line x1="30" y1="8" x2="30" y2="22" stroke="#333" stroke-width="3"/>
+                                    <line x1="35" y1="5" x2="35" y2="25" stroke="#333" stroke-width="2"/>
+                                    <line x1="40" y1="15" x2="60" y2="15" stroke="#333" stroke-width="2"/>
+                                    <text x="27" y="4" text-anchor="middle" font-size="8" fill="#333">+</text>
+                                </svg>
+                                <span>Battery</span>
+                            </div>
+                            
+                            <div class="component-item" draggable="true" data-type="ground" title="Ground">
+                                <svg width="60" height="30" viewBox="0 0 60 30">
+                                    <line x1="30" y1="0" x2="30" y2="15" stroke="#333" stroke-width="2"/>
+                                    <line x1="20" y1="15" x2="40" y2="15" stroke="#333" stroke-width="3"/>
+                                    <line x1="23" y1="18" x2="37" y2="18" stroke="#333" stroke-width="2"/>
+                                    <line x1="26" y1="21" x2="34" y2="21" stroke="#333" stroke-width="2"/>
+                                    <text x="30" y="28" text-anchor="middle" font-size="8" fill="#333">GND</text>
+                                </svg>
+                                <span>Ground</span>
+                            </div>
+                            
+                            <div class="component-item" draggable="true" data-type="diode" title="Diode">
+                                <svg width="60" height="30" viewBox="0 0 60 30">
+                                    <line x1="0" y1="15" x2="20" y2="15" stroke="#333" stroke-width="2"/>
+                                    <polygon points="20,8 20,22 35,15" fill="#333"/>
+                                    <line x1="35" y1="8" x2="35" y2="22" stroke="#333" stroke-width="2"/>
+                                    <line x1="35" y1="15" x2="60" y2="15" stroke="#333" stroke-width="2"/>
+                                </svg>
+                                <span>Diode</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="component-category">
+                        <h4>Active Components</h4>
+                        <div class="component-grid">
+                            <div class="component-item" draggable="true" data-type="npn" title="NPN Transistor">
+                                <svg width="60" height="30" viewBox="0 0 60 30">
+                                    <line x1="0" y1="15" x2="25" y2="15" stroke="#333" stroke-width="2"/>
+                                    <line x1="25" y1="8" x2="25" y2="22" stroke="#333" stroke-width="3"/>
+                                    <line x1="25" y1="10" x2="45" y2="2" stroke="#333" stroke-width="2"/>
+                                    <line x1="25" y1="20" x2="45" y2="28" stroke="#333" stroke-width="2"/>
+                                    <polygon points="42,25 45,28 45,25" fill="#333"/>
+                                    <text x="30" y="16" text-anchor="middle" font-size="6" fill="#333">NPN</text>
+                                </svg>
+                                <span>NPN</span>
+                            </div>
+                            
+                            <div class="component-item" draggable="true" data-type="opamp" title="Op-Amp">
+                                <svg width="60" height="30" viewBox="0 0 60 30">
+                                    <polygon points="10,5 10,25 50,15" fill="none" stroke="#333" stroke-width="2"/>
+                                    <line x1="0" y1="10" x2="10" y2="10" stroke="#333" stroke-width="2"/>
+                                    <line x1="0" y1="20" x2="10" y2="20" stroke="#333" stroke-width="2"/>
+                                    <line x1="50" y1="15" x2="60" y2="15" stroke="#333" stroke-width="2"/>
+                                    <text x="16" y="12" font-size="8" fill="#333">+</text>
+                                    <text x="16" y="22" font-size="8" fill="#333">-</text>
+                                </svg>
+                                <span>Op-Amp</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="component-category">
+                        <h4>Measurement</h4>
+                        <div class="component-grid">
+                            <div class="component-item" draggable="true" data-type="voltmeter" title="Voltmeter">
+                                <svg width="60" height="30" viewBox="0 0 60 30">
+                                    <circle cx="30" cy="15" r="12" fill="none" stroke="#333" stroke-width="2"/>
+                                    <line x1="0" y1="15" x2="18" y2="15" stroke="#333" stroke-width="2"/>
+                                    <line x1="42" y1="15" x2="60" y2="15" stroke="#333" stroke-width="2"/>
+                                    <text x="30" y="18" text-anchor="middle" font-size="10" fill="#333">V</text>
+                                </svg>
+                                <span>Voltmeter</span>
+                            </div>
+                            
+                            <div class="component-item" draggable="true" data-type="ammeter" title="Ammeter">
+                                <svg width="60" height="30" viewBox="0 0 60 30">
+                                    <circle cx="30" cy="15" r="12" fill="none" stroke="#333" stroke-width="2"/>
+                                    <line x1="0" y1="15" x2="18" y2="15" stroke="#333" stroke-width="2"/>
+                                    <line x1="42" y1="15" x2="60" y2="15" stroke="#333" stroke-width="2"/>
+                                    <text x="30" y="18" text-anchor="middle" font-size="10" fill="#333">A</text>
+                                </svg>
+                                <span>Ammeter</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Canvas Area -->
+                <div class="canvas-area">
+                    <!-- Toolbar -->
+                    <div class="canvas-toolbar">
+                        <div class="tool-group">
+                            <button class="tool-btn active" id="selectTool" title="Select Tool">
+                                <i class="fas fa-mouse-pointer"></i>
+                            </button>
+                            <button class="tool-btn" id="wireTool" title="Wire Tool">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button class="tool-btn" id="deleteTool" title="Delete Tool">
+                                <i class="fas fa-eraser"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="tool-group">
+                            <button class="tool-btn" id="gridToggle" title="Toggle Grid">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="tool-btn" id="snapToggle" title="Toggle Snap">
+                                <i class="fas fa-magnet"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="tool-group">
+                            <button class="tool-btn" id="zoomIn" title="Zoom In">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                            <button class="tool-btn" id="zoomOut" title="Zoom Out">
+                                <i class="fas fa-search-minus"></i>
+                            </button>
+                            <button class="tool-btn" id="zoomFit" title="Fit to Screen">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="tool-group">
+                            <button class="tool-btn" id="clearCanvas" title="Clear Canvas">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="tool-btn" id="exportSVG" title="Export as SVG">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Canvas Container -->
+                    <div class="canvas-container" id="canvasContainer">
+                        <svg id="circuitCanvas" width="100%" height="600">
+                            <!-- Grid pattern -->
+                            <defs>
+                                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#e0e0e0" stroke-width="1" opacity="0.5"/>
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#grid)" id="gridPattern"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Properties Panel -->
+                <div class="properties-panel">
+                    <h3 class="panel-title">
+                        <i class="fas fa-cog"></i>
+                        Properties
+                    </h3>
+                    
+                    <div id="componentProperties">
+                        <div class="property-item">
+                            <label>No component selected</label>
+                            <p class="help-text">Select a component to edit its properties</p>
+                        </div>
+                    </div>
+                    
+                    <div class="circuit-info">
+                        <h4>Circuit Information</h4>
+                        <div class="info-item">
+                            <span>Components:</span>
+                            <span id="componentCount">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span>Connections:</span>
+                            <span id="wireCount">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Tools</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/circuit-sketch.html">Circuit Sketch Pad</a></li>
+                        <li><a href="/calculators/parallel-resistor.html">Parallel Resistor</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loading-animations.js"></script>
+    <script src="/js/circuit-sketch.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
