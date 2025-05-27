@@ -99,7 +99,15 @@ function setCalculationType(type) {
     
     // Update button states
     document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(type.replace('-', '') + 'Btn').classList.add('active');
+    
+    // Handle the time-constant button ID correctly
+    let buttonId;
+    if (type === 'time-constant') {
+        buttonId = 'timeConstantBtn';
+    } else {
+        buttonId = type + 'Btn';
+    }
+    document.getElementById(buttonId).classList.add('active');
     
     // Update input fields
     updateInputFields();
