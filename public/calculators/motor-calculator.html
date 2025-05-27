@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrical Motor Calculator - Motor Performance Analysis</title>
+    <meta name="description" content="Calculate motor power, efficiency, torque, speed, and electrical parameters. Analyze AC/DC motors, induction motors, and synchronous motors with step-by-step solutions.">
+    <meta name="keywords" content="motor calculator, electrical motor, motor efficiency, torque calculation, motor power, induction motor, synchronous motor, motor analysis">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Electrical Motor Calculator - Motor Performance Analysis">
+    <meta property="og:description" content="Professional motor calculator for analyzing electrical motor performance, efficiency, and characteristics.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/motor-calculator.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Electrical Motor Calculator",
+        "description": "Calculate motor performance parameters including power, efficiency, torque, and speed",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Motor power calculations",
+            "Efficiency analysis",
+            "Torque and speed calculations",
+            "AC/DC motor analysis",
+            "Motor characteristic curves"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Motor Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-cog"></i>
+                <h1>⚡ Electrical Motor Calculator</h1>
+            </div>
+            <p>Analyze electrical motor performance including power consumption, efficiency, torque, speed, and electrical characteristics for AC/DC motors.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Motor Type Selection -->
+            <div class="mode-selection">
+                <h3 class="section-title">
+                    <i class="fas fa-cogs"></i>
+                    Motor Type & Analysis
+                </h3>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" onclick="setMotorType('dc')" id="dcBtn">
+                        <i class="fas fa-battery-full"></i>
+                        DC Motor
+                    </button>
+                    <button class="mode-btn" onclick="setMotorType('ac-induction')" id="acInductionBtn">
+                        <i class="fas fa-wave-square"></i>
+                        AC Induction Motor
+                    </button>
+                    <button class="mode-btn" onclick="setMotorType('synchronous')" id="synchronousBtn">
+                        <i class="fas fa-sync"></i>
+                        Synchronous Motor
+                    </button>
+                    <button class="mode-btn" onclick="setMotorType('universal')" id="universalBtn">
+                        <i class="fas fa-plug"></i>
+                        Universal Motor
+                    </button>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Motor Parameters
+                    </h2>
+
+                    <!-- Dynamic Input Fields -->
+                    <div id="inputFields">
+                        <!-- Fields will be populated based on motor type -->
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="button-group">
+                        <button class="calculate-btn" onclick="calculateMotor()">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                        <button class="clear-btn" onclick="clearInputs()">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Motor Diagram Panel -->
+                <div class="diagram-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-project-diagram"></i>
+                        Motor Diagram
+                    </h2>
+                    <div id="motorDiagram" class="motor-diagram">
+                        <!-- Motor visualization will be drawn here -->
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div class="results-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-chart-line"></i>
+                        Performance Analysis
+                    </h2>
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-cog"></i>
+                            <p>Select motor type and enter parameters to see analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Curves -->
+            <div class="curve-section">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-area"></i>
+                    Motor Characteristic Curves
+                </h3>
+                <div id="performanceChart" class="performance-chart">
+                    <canvas id="curveCanvas" width="800" height="400"></canvas>
+                </div>
+            </div>
+
+            <!-- Educational Content -->
+            <div class="educational-content">
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3><i class="fas fa-battery-full"></i> DC Motors</h3>
+                        <p>Direct current motors convert electrical energy to mechanical energy using magnetic fields:</p>
+                        <div class="formula-display">
+                            <span class="formula">P = V × I</span>
+                            <div class="formula-desc">Electrical Power = Voltage × Current</div>
+                        </div>
+                        <div class="formula-display">
+                            <span class="formula">T = k × Φ × I</span>
+                            <div class="formula-desc">Torque = Motor Constant × Flux × Current</div>
+                        </div>
+                        <div class="formula-display">
+                            <span class="formula">η = P_out / P_in</span>
+                            <div class="formula-desc">Efficiency = Mechanical Power / Electrical Power</div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-wave-square"></i> AC Induction Motors</h3>
+                        <p>Three-phase induction motors are the workhorses of industry:</p>
+                        <ul>
+                            <li><strong>Slip:</strong> s = (n_s - n_r) / n_s</li>
+                            <li><strong>Synchronous Speed:</strong> n_s = 120f / p</li>
+                            <li><strong>Rotor Speed:</strong> n_r = n_s × (1 - s)</li>
+                            <li><strong>Power Factor:</strong> cos φ = P / (√3 × V × I)</li>
+                            <li><strong>Efficiency:</strong> Typically 85-95% at rated load</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-sync"></i> Synchronous Motors</h3>
+                        <p>Synchronous motors run at constant speed synchronized with supply frequency:</p>
+                        <ul>
+                            <li><strong>Constant Speed:</strong> Always runs at synchronous speed</li>
+                            <li><strong>Power Factor Control:</strong> Can operate at leading, lagging, or unity power factor</li>
+                            <li><strong>High Efficiency:</strong> Typically 95-98% efficiency</li>
+                            <li><strong>Applications:</strong> Large industrial drives, power factor correction</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-tools"></i> Motor Applications</h3>
+                        <ul>
+                            <li><strong>Industrial Drives:</strong> Pumps, fans, compressors, conveyors</li>
+                            <li><strong>HVAC Systems:</strong> Air handling units, chillers, cooling towers</li>
+                            <li><strong>Transportation:</strong> Electric vehicles, trains, elevators</li>
+                            <li><strong>Automation:</strong> Robotics, CNC machines, assembly lines</li>
+                            <li><strong>Renewable Energy:</strong> Wind turbines, solar tracking systems</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Display -->
+            <div id="errorContainer" class="error-container" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/motor-calculator.html">Motor Calculator</a></li>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/power-calculator.html">Power Calculator</a></li>
+                        <li><a href="/calculators/capacitor-charge.html">Capacitor Charge</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loading-animations.js"></script>
+    <script src="/js/motor-calculator.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
