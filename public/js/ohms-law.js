@@ -214,6 +214,9 @@ function displayResults(results, steps) {
     }
     
     resultsContainer.innerHTML = resultsHTML;
+    
+    // Update circuit diagram with calculated values
+    drawCircuitDiagram(results);
 }
 
 // Add input event listeners for real-time validation
