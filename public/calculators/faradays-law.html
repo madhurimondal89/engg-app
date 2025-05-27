@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faraday's Law and Lenz's Law Calculator - Electromagnetic Induction</title>
+    <meta name="description" content="Calculate electromagnetic induction using Faraday's Law and Lenz's Law. Find induced EMF, magnetic flux, and electromagnetic parameters with step-by-step solutions.">
+    <meta name="keywords" content="faradays law, lenz law, electromagnetic induction, induced emf, magnetic flux, electrical engineering">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Faraday's Law and Lenz's Law Calculator - Electromagnetic Induction">
+    <meta property="og:description" content="Calculate electromagnetic induction with Faraday's Law and Lenz's Law calculations.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/faradays-law.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Faraday's Law Calculator",
+        "description": "Calculate electromagnetic induction using Faraday's Law and Lenz's Law",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Calculate induced EMF (ε = -N × dΦ/dt)",
+            "Calculate magnetic flux (Φ = B × A × cos(θ))",
+            "Lenz's Law direction analysis",
+            "Self-inductance calculations",
+            "Step-by-step solutions"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Faraday's Law Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-atom"></i>
+                <h1>⚡ Faraday's Law & Lenz's Law Calculator</h1>
+            </div>
+            <p>Calculate electromagnetic induction using Faraday's Law and analyze current direction with Lenz's Law. Compute induced EMF, magnetic flux, and electromagnetic parameters.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Calculator Type Selection -->
+            <div class="mode-selection" style="margin-bottom: 2rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h3 style="color: var(--charcoal); margin-bottom: 1rem;">Calculation Type</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="mode-btn active" onclick="setCalculationType('faraday')" id="faradayBtn">
+                            <i class="fas fa-bolt"></i> Faraday's Law (EMF)
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('flux')" id="fluxBtn">
+                            <i class="fas fa-magnet"></i> Magnetic Flux
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('inductance')" id="inductanceBtn">
+                            <i class="fas fa-coils"></i> Self-Inductance
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input Parameters
+                    </h2>
+
+                    <!-- Faraday's Law Mode -->
+                    <div id="faradayMode">
+                        <div class="formula-display">
+                            <div class="formula-name">Faraday's Law of Electromagnetic Induction</div>
+                            <div class="formula-equation">ε = -N × dΦ/dt</div>
+                            <div class="formula-description">Induced EMF equals negative rate of change of magnetic flux</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Number of Turns (N) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="turns" placeholder="Enter number of turns">
+                                <span class="unit-label">turns</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Initial Magnetic Flux (Φ₁) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="fluxInitial" placeholder="Enter initial flux">
+                                <select class="unit-select" id="fluxInitialUnit">
+                                    <option value="Wb">Wb</option>
+                                    <option value="mWb">mWb</option>
+                                    <option value="μWb">μWb</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Final Magnetic Flux (Φ₂) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="fluxFinal" placeholder="Enter final flux">
+                                <select class="unit-select" id="fluxFinalUnit">
+                                    <option value="Wb">Wb</option>
+                                    <option value="mWb">mWb</option>
+                                    <option value="μWb">μWb</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Time Interval (Δt) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="timeInterval" placeholder="Enter time interval">
+                                <select class="unit-select" id="timeUnit">
+                                    <option value="s">s</option>
+                                    <option value="ms">ms</option>
+                                    <option value="μs">μs</option>
+                                    <option value="min">min</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Induced EMF (ε) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="inducedEMF" placeholder="Enter induced EMF">
+                                <select class="unit-select" id="emfUnit">
+                                    <option value="V">V</option>
+                                    <option value="mV">mV</option>
+                                    <option value="kV">kV</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Magnetic Flux Mode -->
+                    <div id="fluxMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Magnetic Flux</div>
+                            <div class="formula-equation">Φ = B × A × cos(θ)</div>
+                            <div class="formula-description">Magnetic flux through a surface</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Magnetic Field (B) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="magneticField" placeholder="Enter magnetic field strength">
+                                <select class="unit-select" id="magneticFieldUnit">
+                                    <option value="T">T</option>
+                                    <option value="mT">mT</option>
+                                    <option value="μT">μT</option>
+                                    <option value="G">G</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Area (A) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="area" placeholder="Enter area">
+                                <select class="unit-select" id="areaUnit">
+                                    <option value="m²">m²</option>
+                                    <option value="cm²">cm²</option>
+                                    <option value="mm²">mm²</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Angle (θ) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="angle" placeholder="Enter angle between B and normal">
+                                <select class="unit-select" id="angleUnit">
+                                    <option value="deg">degrees</option>
+                                    <option value="rad">radians</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Magnetic Flux (Φ) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="magneticFlux" placeholder="Enter magnetic flux">
+                                <select class="unit-select" id="magneticFluxUnit">
+                                    <option value="Wb">Wb</option>
+                                    <option value="mWb">mWb</option>
+                                    <option value="μWb">μWb</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Self-Inductance Mode -->
+                    <div id="inductanceMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Self-Inductance</div>
+                            <div class="formula-equation">L = Φ/I = ε/(dI/dt)</div>
+                            <div class="formula-description">Self-inductance relates flux to current</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Inductance (L) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="inductance" placeholder="Enter inductance">
+                                <select class="unit-select" id="inductanceUnit">
+                                    <option value="H">H</option>
+                                    <option value="mH">mH</option>
+                                    <option value="μH">μH</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Current (I) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="current" placeholder="Enter current">
+                                <select class="unit-select" id="currentUnit">
+                                    <option value="A">A</option>
+                                    <option value="mA">mA</option>
+                                    <option value="μA">μA</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Rate of Current Change (dI/dt) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="currentRate" placeholder="Enter current change rate">
+                                <select class="unit-select" id="currentRateUnit">
+                                    <option value="A/s">A/s</option>
+                                    <option value="mA/s">mA/s</option>
+                                    <option value="A/ms">A/ms</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Self-Induced EMF (ε) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="selfEMF" placeholder="Enter self-induced EMF">
+                                <select class="unit-select" id="selfEMFUnit">
+                                    <option value="V">V</option>
+                                    <option value="mV">mV</option>
+                                    <option value="kV">kV</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button class="calculate-btn" onclick="calculateElectromagneticInduction()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="result-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-atom"></i>
+                        Results & Analysis
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-atom"></i>
+                            <p>Enter values and click Calculate to see electromagnetic induction results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Information -->
+            <div class="info-section" style="margin-top: 3rem;">
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h2 style="color: var(--charcoal); margin-bottom: 1rem;">Electromagnetic Induction Laws</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Faraday's Law</h3>
+                            <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                                States that the induced EMF in a closed circuit is equal to the negative rate of change of magnetic flux through the circuit.
+                            </p>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>ε = -N × dΦ/dt</li>
+                                <li>Larger flux changes produce larger EMF</li>
+                                <li>Faster changes produce larger EMF</li>
+                                <li>More turns increase the total EMF</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Lenz's Law</h3>
+                            <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                                Determines the direction of induced current: it flows to oppose the change causing it.
+                            </p>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>Explains the negative sign in Faraday's Law</li>
+                                <li>Conservation of energy principle</li>
+                                <li>Induced current creates opposing magnetic field</li>
+                                <li>Natural resistance to change</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/faradays-law.html">Faraday's Law</a></li>
+                        <li><a href="/calculators/impedance-calculator.html">Impedance Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/collaboration.js"></script>
+    <script src="/js/faradays-law.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
