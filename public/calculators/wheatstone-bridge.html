@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheatstone Bridge Calculator - Resistance Measurement & Analysis</title>
+    <meta name="description" content="Calculate unknown resistances using Wheatstone bridge circuits. Analyze bridge balance conditions, sensitivity, and measurement accuracy with step-by-step solutions.">
+    <meta name="keywords" content="wheatstone bridge calculator, resistance measurement, bridge circuit, strain gauge, electrical engineering, precision measurement">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Wheatstone Bridge Calculator - Resistance Measurement & Analysis">
+    <meta property="og:description" content="Calculate unknown resistances and analyze Wheatstone bridge circuits with precision.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/wheatstone-bridge.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Wheatstone Bridge Calculator",
+        "description": "Calculate unknown resistances and analyze Wheatstone bridge circuits",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Calculate unknown resistance (Rx = R2 × R3/R1)",
+            "Bridge balance condition analysis",
+            "Bridge current and voltage calculations",
+            "Sensitivity analysis for strain gauges",
+            "Step-by-step solutions with circuit diagrams"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Wheatstone Bridge Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-project-diagram"></i>
+                <h1>⚖️ Wheatstone Bridge Calculator</h1>
+            </div>
+            <p>Calculate unknown resistances, analyze bridge balance conditions, and design precision measurement circuits using Wheatstone bridge principles.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Calculator Type Selection -->
+            <div class="mode-selection" style="margin-bottom: 2rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h3 style="color: var(--charcoal); margin-bottom: 1rem;">Calculation Type</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="mode-btn active" onclick="setCalculationType('unknown')" id="unknownBtn">
+                            <i class="fas fa-question"></i> Unknown Resistance
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('balance')" id="balanceBtn">
+                            <i class="fas fa-balance-scale"></i> Bridge Balance
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('current')" id="currentBtn">
+                            <i class="fas fa-bolt"></i> Bridge Current
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('strain')" id="strainBtn">
+                            <i class="fas fa-expand-arrows-alt"></i> Strain Gauge
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input Parameters
+                    </h2>
+
+                    <!-- Unknown Resistance Mode -->
+                    <div id="unknownMode">
+                        <div class="formula-display">
+                            <div class="formula-name">Wheatstone Bridge - Unknown Resistance</div>
+                            <div class="formula-equation">Rx = R2 × R3 / R1</div>
+                            <div class="formula-description">Calculate unknown resistance when bridge is balanced</div>
+                        </div>
+
+                        <div class="bridge-diagram" style="background: var(--light-gray); padding: 1.5rem; border-radius: 8px; margin: 1rem 0; text-align: center;">
+                            <div style="font-family: 'Roboto Mono', monospace; color: var(--text-gray); font-size: 0.9rem;">
+                                <div>    R1 ——— R2</div>
+                                <div>    |       |</div>
+                                <div>    |   G   |</div>
+                                <div>    |       |</div>
+                                <div>    Rx ——— R3</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem;">Bridge Circuit (G = Galvanometer)</div>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">R1 (Reference Resistance) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="r1" placeholder="Enter R1 value">
+                                <select class="unit-select" id="r1Unit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">R2 (Variable Resistance) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="r2" placeholder="Enter R2 value">
+                                <select class="unit-select" id="r2Unit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">R3 (Known Resistance) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="r3" placeholder="Enter R3 value">
+                                <select class="unit-select" id="r3Unit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Rx (Unknown Resistance) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="rx" placeholder="Enter Rx value">
+                                <select class="unit-select" id="rxUnit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Balance Analysis Mode -->
+                    <div id="balanceMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Bridge Balance Condition</div>
+                            <div class="formula-equation">R1 × R3 = R2 × Rx</div>
+                            <div class="formula-description">Analyze balance condition and calculate balance error</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">R1 (Ω) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="r1Balance" placeholder="Enter R1 value">
+                                <select class="unit-select" id="r1BalanceUnit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">R2 (Ω) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="r2Balance" placeholder="Enter R2 value">
+                                <select class="unit-select" id="r2BalanceUnit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">R3 (Ω) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="r3Balance" placeholder="Enter R3 value">
+                                <select class="unit-select" id="r3BalanceUnit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Rx (Ω) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="rxBalance" placeholder="Enter Rx value">
+                                <select class="unit-select" id="rxBalanceUnit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bridge Current Mode -->
+                    <div id="currentMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Bridge Current Analysis</div>
+                            <div class="formula-equation">Ig = V × (R1×R3 - R2×Rx) / [(R1+R2)(R3+Rx) + Rg(R1+R2+R3+Rx)]</div>
+                            <div class="formula-description">Calculate galvanometer current in unbalanced bridge</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Supply Voltage (V) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="supplyVoltage" placeholder="Enter supply voltage">
+                                <select class="unit-select" id="supplyVoltageUnit">
+                                    <option value="V" selected>V</option>
+                                    <option value="mV">mV</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">R1 (Ω) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="r1Current" placeholder="Enter R1 value">
+                                <select class="unit-select" id="r1CurrentUnit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">R2 (Ω) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="r2Current" placeholder="Enter R2 value">
+                                <select class="unit-select" id="r2CurrentUnit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">R3 (Ω) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="r3Current" placeholder="Enter R3 value">
+                                <select class="unit-select" id="r3CurrentUnit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Rx (Ω) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="rxCurrent" placeholder="Enter Rx value">
+                                <select class="unit-select" id="rxCurrentUnit">
+                                    <option value="Ω">Ω</option>
+                                    <option value="kΩ" selected>kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Galvanometer Resistance (Rg) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="rg" placeholder="Enter galvanometer resistance" value="100">
+                                <select class="unit-select" id="rgUnit">
+                                    <option value="Ω" selected>Ω</option>
+                                    <option value="kΩ">kΩ</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Strain Gauge Mode -->
+                    <div id="strainMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Strain Gauge Bridge</div>
+                            <div class="formula-equation">ΔV/V = (GF × ε) / 4</div>
+                            <div class="formula-description">Calculate strain from bridge output voltage</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Bridge Excitation Voltage (V) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="excitationVoltage" placeholder="Enter excitation voltage" value="5">
+                                <select class="unit-select" id="excitationVoltageUnit">
+                                    <option value="V" selected>V</option>
+                                    <option value="mV">mV</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Output Voltage (ΔV) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="outputVoltage" placeholder="Enter output voltage">
+                                <select class="unit-select" id="outputVoltageUnit">
+                                    <option value="V">V</option>
+                                    <option value="mV" selected>mV</option>
+                                    <option value="μV">μV</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Gauge Factor (GF) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="gaugeFactor" placeholder="Enter gauge factor" value="2.1">
+                                <span class="unit-label">GF</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Strain (ε) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="strain" placeholder="Enter strain">
+                                <select class="unit-select" id="strainUnit">
+                                    <option value="με" selected>με</option>
+                                    <option value="mε">mε</option>
+                                    <option value="ε">ε</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Nominal Resistance (R₀) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="nominalResistance" placeholder="Enter nominal resistance" value="350">
+                                <select class="unit-select" id="nominalResistanceUnit">
+                                    <option value="Ω" selected>Ω</option>
+                                    <option value="kΩ">kΩ</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button class="calculate-btn" onclick="calculateWheatstone()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="result-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-project-diagram"></i>
+                        Results & Analysis
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-project-diagram"></i>
+                            <p>Enter values and click Calculate to see Wheatstone bridge analysis results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Information -->
+            <div class="info-section" style="margin-top: 3rem;">
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h2 style="color: var(--charcoal); margin-bottom: 1rem;">Wheatstone Bridge Theory</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Balance Condition</h3>
+                            <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                                A Wheatstone bridge is balanced when no current flows through the galvanometer.
+                            </p>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>R1 × R3 = R2 × Rx (balance equation)</li>
+                                <li>Galvanometer current = 0</li>
+                                <li>High precision measurement</li>
+                                <li>Independent of supply voltage</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Strain Measurement</h3>
+                            <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                                Strain gauges change resistance proportionally to applied strain.
+                            </p>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>ΔR/R = GF × ε (gauge equation)</li>
+                                <li>Bridge output ∝ applied strain</li>
+                                <li>Temperature compensation</li>
+                                <li>High sensitivity measurement</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Applications</h3>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li><strong>Resistance Measurement:</strong> Precise unknown resistance</li>
+                                <li><strong>Strain Gauges:</strong> Force and pressure sensors</li>
+                                <li><strong>Temperature Sensors:</strong> RTD measurements</li>
+                                <li><strong>Load Cells:</strong> Weight measurement systems</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/wheatstone-bridge.html">Wheatstone Bridge</a></li>
+                        <li><a href="/calculators/rc-time-constant.html">RC Time Constant</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loading-animations.js"></script>
+    <script src="/js/collaboration.js"></script>
+    <script src="/js/wheatstone-bridge.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
