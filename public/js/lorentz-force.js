@@ -645,54 +645,12 @@ function displayResults(results, steps, title) {
     resultsContainer.innerHTML = resultsHTML;
 }
 
-// Add input event listeners and collaboration integration
+// Add input event listeners
 document.addEventListener('DOMContentLoaded', function() {
-    // Add collaboration integration
-    setTimeout(() => {
-        if (window.collaboration) {
-            collaboration.getCurrentCalculationData = function() {
-                const inputs = {};
-                document.querySelectorAll('input, select').forEach(element => {
-                    if (element.id && element.value) {
-                        inputs[element.id] = element.value;
-                    }
-                });
-                return { 
-                    inputs, 
-                    calculationType: currentCalculationType,
-                    timestamp: Date.now() 
-                };
-            };
-            
-            collaboration.loadCalculationData = function(data) {
-                if (data.calculationType && data.calculationType !== currentCalculationType) {
-                    setCalculationType(data.calculationType);
-                }
-                if (data.inputs) {
-                    Object.entries(data.inputs).forEach(([id, value]) => {
-                        const element = document.getElementById(id);
-                        if (element && element.value !== value) {
-                            element.value = value;
-                        }
-                    });
-                }
-            };
-        }
-    }, 100);
-    
-    // Add input listeners for collaboration
+    // Add input listeners for error handling
     document.querySelectorAll('input, select').forEach(element => {
         element.addEventListener('input', function() {
             hideError();
-            if (window.collaboration) {
-                collaboration.shareCalculationData(collaboration.getCurrentCalculationData());
-            }
-        });
-        
-        element.addEventListener('change', function() {
-            if (window.collaboration) {
-                collaboration.shareCalculationData(collaboration.getCurrentCalculationData());
-            }
         });
     });
 });
