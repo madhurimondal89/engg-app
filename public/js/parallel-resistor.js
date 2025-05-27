@@ -94,20 +94,11 @@ function updateResistorInputs() {
     updateCircuitDiagram();
     updateFormulaDisplay();
     
-    // Add event listeners for collaboration
+    // Add event listeners for error handling
     setTimeout(() => {
         container.querySelectorAll('input, select').forEach(element => {
             element.addEventListener('input', function() {
                 hideError();
-                if (window.collaboration) {
-                    collaboration.shareCalculationData(collaboration.getCurrentCalculationData());
-                }
-            });
-            
-            element.addEventListener('change', function() {
-                if (window.collaboration) {
-                    collaboration.shareCalculationData(collaboration.getCurrentCalculationData());
-                }
             });
         });
     }, 100);
@@ -697,39 +688,6 @@ function displayResults(results, steps, title) {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     updateResistorInputs();
-    
-    // Add collaboration integration
-    setTimeout(() => {
-        if (window.collaboration) {
-            collaboration.getCurrentCalculationData = function() {
-                const inputs = {};
-                document.querySelectorAll('input, select').forEach(element => {
-                    if (element.id && element.value) {
-                        inputs[element.id] = element.value;
-                    }
-                });
-                return { 
-                    inputs, 
-                    calculationType: currentCalculationType,
-                    timestamp: Date.now() 
-                };
-            };
-            
-            collaboration.loadCalculationData = function(data) {
-                if (data.calculationType && data.calculationType !== currentCalculationType) {
-                    setCalculationType(data.calculationType);
-                }
-                if (data.inputs) {
-                    Object.entries(data.inputs).forEach(([id, value]) => {
-                        const element = document.getElementById(id);
-                        if (element && element.value !== value) {
-                            element.value = value;
-                        }
-                    });
-                }
-            };
-        }
-    }, 100);
 });
 
 // Add CSS for mode buttons and styling

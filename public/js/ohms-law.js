@@ -216,77 +216,8 @@ function displayResults(results, steps) {
     resultsContainer.innerHTML = resultsHTML;
 }
 
-// Integration with collaboration system
-function shareCurrentCalculation() {
-    if (window.collaboration) {
-        const data = {
-            inputs: {
-                voltage: document.getElementById('voltage').value,
-                current: document.getElementById('current').value,
-                resistance: document.getElementById('resistance').value,
-                voltageUnit: document.getElementById('voltageUnit').value,
-                currentUnit: document.getElementById('currentUnit').value,
-                resistanceUnit: document.getElementById('resistanceUnit').value
-            },
-            results: getCurrentResults(),
-            timestamp: Date.now()
-        };
-        collaboration.shareCalculationData(data);
-    }
-}
-
-function getCurrentResults() {
-    const resultsContainer = document.getElementById('resultsContainer');
-    return resultsContainer.innerHTML !== '<div class="empty-state"><i class="fas fa-chart-bar"></i><p>Enter values and click Calculate to see results</p></div>';
-}
-
-function loadCollaborativeData(data) {
-    if (data.inputs) {
-        // Set input values
-        Object.entries(data.inputs).forEach(([key, value]) => {
-            const element = document.getElementById(key);
-            if (element && element.value !== value) {
-                element.value = value;
-            }
-        });
-        
-        // Recalculate if we have enough data
-        const voltage = document.getElementById('voltage').value;
-        const current = document.getElementById('current').value;
-        const resistance = document.getElementById('resistance').value;
-        
-        if ((voltage && current) || (voltage && resistance) || (current && resistance)) {
-            calculateOhmsLaw();
-        }
-    }
-}
-
-// Override collaboration methods for Ohm's Law calculator
+// Add input event listeners for real-time validation
 document.addEventListener('DOMContentLoaded', function() {
-    // Wait for collaboration to be initialized
-    setTimeout(() => {
-        if (window.collaboration) {
-            // Override the default data methods
-            collaboration.getCurrentCalculationData = function() {
-                return {
-                    inputs: {
-                        voltage: document.getElementById('voltage').value,
-                        current: document.getElementById('current').value,
-                        resistance: document.getElementById('resistance').value,
-                        voltageUnit: document.getElementById('voltageUnit').value,
-                        currentUnit: document.getElementById('currentUnit').value,
-                        resistanceUnit: document.getElementById('resistanceUnit').value
-                    },
-                    timestamp: Date.now()
-                };
-            };
-            
-            collaboration.loadCalculationData = loadCollaborativeData;
-            collaboration.setDataUpdateCallback(loadCollaborativeData);
-        }
-    }, 100);
-    
-    // Add input event listeners for real-time validation and collaboration
     const inputs = ['voltage', 'current', 'resistance'];
     const units = ['voltageUnit', 'currentUnit', 'resistanceUnit'];
     
@@ -297,13 +228,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (this.value) {
                 hideError();
             }
-            
-            // Share changes in real-time
-            shareCurrentCalculation();
-        });
-        
-        input.addEventListener('change', function() {
-            shareCurrentCalculation();
         });
         
         // Add Enter key support for input fields
