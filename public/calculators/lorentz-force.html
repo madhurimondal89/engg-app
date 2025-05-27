@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorentz Force Calculator - Magnetic Force on Moving Charges</title>
+    <meta name="description" content="Calculate Lorentz force on moving charges and current-carrying conductors in magnetic fields. Analyze magnetic force, direction, and electromagnetic interactions with step-by-step solutions.">
+    <meta name="keywords" content="lorentz force calculator, magnetic force, moving charges, electromagnetic force, magnetic field, electrical engineering, physics">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Lorentz Force Calculator - Magnetic Force on Moving Charges">
+    <meta property="og:description" content="Calculate Lorentz force and magnetic interactions with detailed analysis.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/lorentz-force.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Lorentz Force Calculator",
+        "description": "Calculate Lorentz force on moving charges and current-carrying conductors",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Calculate force on moving charges (F = q × v × B × sin(θ))",
+            "Force on current-carrying conductors (F = I × L × B × sin(θ))",
+            "Right-hand rule direction analysis",
+            "Electromagnetic force calculations",
+            "Step-by-step solutions with vector analysis"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Lorentz Force Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-magnet"></i>
+                <h1>🧲 Lorentz Force Calculator</h1>
+            </div>
+            <p>Calculate magnetic forces on moving charges and current-carrying conductors. Analyze electromagnetic interactions with detailed vector analysis and direction determination.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Calculator Type Selection -->
+            <div class="mode-selection" style="margin-bottom: 2rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h3 style="color: var(--charcoal); margin-bottom: 1rem;">Calculation Type</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="mode-btn active" onclick="setCalculationType('charge')" id="chargeBtn">
+                            <i class="fas fa-atom"></i> Moving Charge
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('conductor')" id="conductorBtn">
+                            <i class="fas fa-bolt"></i> Current Conductor
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('cyclotron')" id="cyclotronBtn">
+                            <i class="fas fa-sync-alt"></i> Cyclotron Motion
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('hall')" id="hallBtn">
+                            <i class="fas fa-layer-group"></i> Hall Effect
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input Parameters
+                    </h2>
+
+                    <!-- Moving Charge Mode -->
+                    <div id="chargeMode">
+                        <div class="formula-display">
+                            <div class="formula-name">Lorentz Force on Moving Charge</div>
+                            <div class="formula-equation">F = q × v × B × sin(θ)</div>
+                            <div class="formula-description">Force on a charged particle moving in a magnetic field</div>
+                        </div>
+
+                        <div class="force-diagram" style="background: var(--light-gray); padding: 1.5rem; border-radius: 8px; margin: 1rem 0; text-align: center;">
+                            <div style="font-family: 'Roboto Mono', monospace; color: var(--text-gray); font-size: 0.9rem;">
+                                <div>Right-Hand Rule:</div>
+                                <div>👍 Thumb: velocity (v)</div>
+                                <div>🤏 Fingers: magnetic field (B)</div>
+                                <div>🖐️ Palm: force direction (F)</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.8rem;">(For positive charges)</div>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Charge (q) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="charge" placeholder="Enter charge magnitude">
+                                <select class="unit-select" id="chargeUnit">
+                                    <option value="C">C</option>
+                                    <option value="mC">mC</option>
+                                    <option value="μC">μC</option>
+                                    <option value="nC">nC</option>
+                                    <option value="e" selected>e (elementary)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Velocity (v) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="velocity" placeholder="Enter velocity">
+                                <select class="unit-select" id="velocityUnit">
+                                    <option value="m/s" selected>m/s</option>
+                                    <option value="km/s">km/s</option>
+                                    <option value="km/h">km/h</option>
+                                    <option value="c">c (speed of light)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Magnetic Field (B) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="magneticField" placeholder="Enter magnetic field strength">
+                                <select class="unit-select" id="magneticFieldUnit">
+                                    <option value="T" selected>T</option>
+                                    <option value="mT">mT</option>
+                                    <option value="μT">μT</option>
+                                    <option value="G">G</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Angle (θ) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="angle" placeholder="Enter angle between v and B" value="90">
+                                <select class="unit-select" id="angleUnit">
+                                    <option value="deg" selected>degrees</option>
+                                    <option value="rad">radians</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Force (F) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="force" placeholder="Enter force magnitude">
+                                <select class="unit-select" id="forceUnit">
+                                    <option value="N" selected>N</option>
+                                    <option value="mN">mN</option>
+                                    <option value="μN">μN</option>
+                                    <option value="nN">nN</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Current Conductor Mode -->
+                    <div id="conductorMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Force on Current-Carrying Conductor</div>
+                            <div class="formula-equation">F = I × L × B × sin(θ)</div>
+                            <div class="formula-description">Magnetic force on a wire carrying current in a magnetic field</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Current (I) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="current" placeholder="Enter current">
+                                <select class="unit-select" id="currentUnit">
+                                    <option value="A" selected>A</option>
+                                    <option value="mA">mA</option>
+                                    <option value="μA">μA</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Length (L) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="length" placeholder="Enter conductor length">
+                                <select class="unit-select" id="lengthUnit">
+                                    <option value="m" selected>m</option>
+                                    <option value="cm">cm</option>
+                                    <option value="mm">mm</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Magnetic Field (B) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="magneticFieldCond" placeholder="Enter magnetic field strength">
+                                <select class="unit-select" id="magneticFieldCondUnit">
+                                    <option value="T" selected>T</option>
+                                    <option value="mT">mT</option>
+                                    <option value="μT">μT</option>
+                                    <option value="G">G</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Angle (θ) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="angleCond" placeholder="Enter angle between I and B" value="90">
+                                <select class="unit-select" id="angleCondUnit">
+                                    <option value="deg" selected>degrees</option>
+                                    <option value="rad">radians</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Force (F) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="forceCond" placeholder="Enter force magnitude">
+                                <select class="unit-select" id="forceCondUnit">
+                                    <option value="N" selected>N</option>
+                                    <option value="mN">mN</option>
+                                    <option value="μN">μN</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cyclotron Motion Mode -->
+                    <div id="cyclotronMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Cyclotron Motion</div>
+                            <div class="formula-equation">r = mv / (qB), f = qB / (2πm)</div>
+                            <div class="formula-description">Circular motion of charged particles in magnetic fields</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Particle Mass (m) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="mass" placeholder="Enter particle mass">
+                                <select class="unit-select" id="massUnit">
+                                    <option value="kg">kg</option>
+                                    <option value="g">g</option>
+                                    <option value="u" selected>u (atomic mass)</option>
+                                    <option value="me">me (electron mass)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Charge (q) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="chargeCyc" placeholder="Enter charge">
+                                <select class="unit-select" id="chargeCycUnit">
+                                    <option value="C">C</option>
+                                    <option value="e" selected>e (elementary)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Velocity (v) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="velocityCyc" placeholder="Enter velocity">
+                                <select class="unit-select" id="velocityCycUnit">
+                                    <option value="m/s" selected>m/s</option>
+                                    <option value="km/s">km/s</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Magnetic Field (B) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="magneticFieldCyc" placeholder="Enter magnetic field">
+                                <select class="unit-select" id="magneticFieldCycUnit">
+                                    <option value="T" selected>T</option>
+                                    <option value="mT">mT</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Radius (r) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="radius" placeholder="Enter radius">
+                                <select class="unit-select" id="radiusUnit">
+                                    <option value="m" selected>m</option>
+                                    <option value="cm">cm</option>
+                                    <option value="mm">mm</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hall Effect Mode -->
+                    <div id="hallMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Hall Effect</div>
+                            <div class="formula-equation">VH = (IB) / (nqt)</div>
+                            <div class="formula-description">Voltage developed across a conductor in a magnetic field</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Current (I) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="currentHall" placeholder="Enter current">
+                                <select class="unit-select" id="currentHallUnit">
+                                    <option value="A" selected>A</option>
+                                    <option value="mA">mA</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Magnetic Field (B) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="magneticFieldHall" placeholder="Enter magnetic field">
+                                <select class="unit-select" id="magneticFieldHallUnit">
+                                    <option value="T" selected>T</option>
+                                    <option value="mT">mT</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Thickness (t) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="thickness" placeholder="Enter conductor thickness">
+                                <select class="unit-select" id="thicknessUnit">
+                                    <option value="m">m</option>
+                                    <option value="mm" selected>mm</option>
+                                    <option value="μm">μm</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Charge Carrier Density (n) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="carrierDensity" placeholder="Enter carrier density">
+                                <select class="unit-select" id="carrierDensityUnit">
+                                    <option value="m⁻³" selected>m⁻³</option>
+                                    <option value="cm⁻³">cm⁻³</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Hall Voltage (VH) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="hallVoltage" placeholder="Enter Hall voltage">
+                                <select class="unit-select" id="hallVoltageUnit">
+                                    <option value="V">V</option>
+                                    <option value="mV" selected>mV</option>
+                                    <option value="μV">μV</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button class="calculate-btn" onclick="calculateLorentzForce()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="result-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-magnet"></i>
+                        Results & Analysis
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-magnet"></i>
+                            <p>Enter values and click Calculate to see Lorentz force analysis results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Information -->
+            <div class="info-section" style="margin-top: 3rem;">
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h2 style="color: var(--charcoal); margin-bottom: 1rem;">Electromagnetic Force Theory</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Lorentz Force</h3>
+                            <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                                The force experienced by a charged particle moving in an electromagnetic field.
+                            </p>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>F = q(E + v × B) (full form)</li>
+                                <li>F = qvB sin(θ) (magnetic only)</li>
+                                <li>Force perpendicular to both v and B</li>
+                                <li>Right-hand rule determines direction</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Cyclotron Motion</h3>
+                            <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                                Charged particles move in circular paths in uniform magnetic fields.
+                            </p>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>Radius: r = mv/(qB)</li>
+                                <li>Frequency: f = qB/(2πm)</li>
+                                <li>Period independent of velocity</li>
+                                <li>Used in mass spectrometry</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Applications</h3>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li><strong>Electric Motors:</strong> Force on current-carrying wires</li>
+                                <li><strong>Mass Spectrometry:</strong> Particle separation</li>
+                                <li><strong>Hall Effect Sensors:</strong> Magnetic field detection</li>
+                                <li><strong>Particle Accelerators:</strong> Beam steering</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/lorentz-force.html">Lorentz Force</a></li>
+                        <li><a href="/calculators/parallel-resistor.html">Parallel Resistor</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loading-animations.js"></script>
+    <script src="/js/collaboration.js"></script>
+    <script src="/js/lorentz-force.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
