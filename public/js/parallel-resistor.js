@@ -683,11 +683,21 @@ function displayResults(results, steps, title) {
     }
     
     resultsContainer.innerHTML = resultsHTML;
+    
+    // Update circuit diagram with calculated values
+    if (window.circuitEngine) {
+        window.circuitEngine.updateCircuitValues('parallel-resistor', results);
+    }
 }
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     updateResistorInputs();
+    
+    // Initialize circuit diagram
+    if (window.circuitEngine) {
+        window.circuitEngine.initializeCircuit('parallel-resistor', 'circuitDiagram');
+    }
 });
 
 // Add CSS for mode buttons and styling
