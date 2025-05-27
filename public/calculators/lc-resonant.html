@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LC Resonant Frequency Calculator - Inductance & Capacitance Analysis</title>
+    <meta name="description" content="Calculate LC resonant frequency, inductance, and capacitance values. Design LC tank circuits, oscillators, and filters with step-by-step calculations.">
+    <meta name="keywords" content="LC resonant frequency, inductance calculator, capacitance calculator, tank circuit, oscillator design, filter design, electrical engineering">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="LC Resonant Frequency Calculator - Inductance & Capacitance Analysis">
+    <meta property="og:description" content="Calculate LC resonant frequency and component values for tank circuits and oscillators.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/lc-resonant.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "LC Resonant Frequency Calculator",
+        "description": "Calculate LC resonant frequency, inductance, and capacitance for tank circuits",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Calculate resonant frequency (f = 1/(2π√LC))",
+            "Find required inductance for target frequency",
+            "Determine capacitance values",
+            "Quality factor (Q) calculations",
+            "Circuit analysis with step-by-step solutions"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>LC Resonant Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-wave-square"></i>
+                <h1>📡 LC Resonant Frequency Calculator</h1>
+            </div>
+            <p>Calculate LC resonant frequency, inductance, and capacitance values for tank circuits, oscillators, and filters. Design RF circuits with precise component calculations.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Calculator Type Selection -->
+            <div class="mode-selection" style="margin-bottom: 2rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h3 style="color: var(--charcoal); margin-bottom: 1rem;">Calculation Type</h3>
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <button class="mode-btn active" onclick="setCalculationType('frequency')" id="frequencyBtn">
+                            <i class="fas fa-wave-square"></i> Resonant Frequency
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('inductance')" id="inductanceBtn">
+                            <i class="fas fa-coils"></i> Required Inductance
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('capacitance')" id="capacitanceBtn">
+                            <i class="fas fa-microchip"></i> Required Capacitance
+                        </button>
+                        <button class="mode-btn" onclick="setCalculationType('quality')" id="qualityBtn">
+                            <i class="fas fa-chart-line"></i> Quality Factor
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Input Parameters
+                    </h2>
+
+                    <!-- Frequency Calculation Mode -->
+                    <div id="frequencyMode">
+                        <div class="formula-display">
+                            <div class="formula-name">LC Resonant Frequency</div>
+                            <div class="formula-equation">f = 1 / (2π√LC)</div>
+                            <div class="formula-description">Calculate resonant frequency from inductance and capacitance</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Inductance (L) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="inductance" placeholder="Enter inductance value">
+                                <select class="unit-select" id="inductanceUnit">
+                                    <option value="H">H</option>
+                                    <option value="mH">mH</option>
+                                    <option value="μH" selected>μH</option>
+                                    <option value="nH">nH</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Capacitance (C) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="capacitance" placeholder="Enter capacitance value">
+                                <select class="unit-select" id="capacitanceUnit">
+                                    <option value="F">F</option>
+                                    <option value="mF">mF</option>
+                                    <option value="μF">μF</option>
+                                    <option value="nF">nF</option>
+                                    <option value="pF" selected>pF</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Resonant Frequency (f) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="frequency" placeholder="Enter frequency">
+                                <select class="unit-select" id="frequencyUnit">
+                                    <option value="Hz">Hz</option>
+                                    <option value="kHz">kHz</option>
+                                    <option value="MHz" selected>MHz</option>
+                                    <option value="GHz">GHz</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Inductance Calculation Mode -->
+                    <div id="inductanceMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Required Inductance</div>
+                            <div class="formula-equation">L = 1 / (4π²f²C)</div>
+                            <div class="formula-description">Calculate inductance for target resonant frequency</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Target Frequency (f) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="targetFrequency" placeholder="Enter target frequency">
+                                <select class="unit-select" id="targetFrequencyUnit">
+                                    <option value="Hz">Hz</option>
+                                    <option value="kHz">kHz</option>
+                                    <option value="MHz" selected>MHz</option>
+                                    <option value="GHz">GHz</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Available Capacitance (C) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="availableCapacitance" placeholder="Enter capacitance value">
+                                <select class="unit-select" id="availableCapacitanceUnit">
+                                    <option value="F">F</option>
+                                    <option value="mF">mF</option>
+                                    <option value="μF">μF</option>
+                                    <option value="nF">nF</option>
+                                    <option value="pF" selected>pF</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Inductance Tolerance (%) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="inductanceTolerance" placeholder="Enter tolerance" value="5">
+                                <span class="unit-label">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Capacitance Calculation Mode -->
+                    <div id="capacitanceMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Required Capacitance</div>
+                            <div class="formula-equation">C = 1 / (4π²f²L)</div>
+                            <div class="formula-description">Calculate capacitance for target resonant frequency</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Target Frequency (f) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="targetFreqCap" placeholder="Enter target frequency">
+                                <select class="unit-select" id="targetFreqCapUnit">
+                                    <option value="Hz">Hz</option>
+                                    <option value="kHz">kHz</option>
+                                    <option value="MHz" selected>MHz</option>
+                                    <option value="GHz">GHz</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Available Inductance (L) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="availableInductance" placeholder="Enter inductance value">
+                                <select class="unit-select" id="availableInductanceUnit">
+                                    <option value="H">H</option>
+                                    <option value="mH">mH</option>
+                                    <option value="μH" selected>μH</option>
+                                    <option value="nH">nH</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Capacitance Tolerance (%) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="capacitanceTolerance" placeholder="Enter tolerance" value="5">
+                                <span class="unit-label">%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quality Factor Mode -->
+                    <div id="qualityMode" style="display: none;">
+                        <div class="formula-display">
+                            <div class="formula-name">Quality Factor (Q)</div>
+                            <div class="formula-equation">Q = ωL/R = 1/(ωRC) = (1/R)√(L/C)</div>
+                            <div class="formula-description">Calculate circuit quality factor and bandwidth</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Inductance (L) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="inductanceQ" placeholder="Enter inductance">
+                                <select class="unit-select" id="inductanceQUnit">
+                                    <option value="H">H</option>
+                                    <option value="mH">mH</option>
+                                    <option value="μH" selected>μH</option>
+                                    <option value="nH">nH</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Capacitance (C) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="capacitanceQ" placeholder="Enter capacitance">
+                                <select class="unit-select" id="capacitanceQUnit">
+                                    <option value="F">F</option>
+                                    <option value="mF">mF</option>
+                                    <option value="μF">μF</option>
+                                    <option value="nF">nF</option>
+                                    <option value="pF" selected>pF</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Series Resistance (R) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="resistance" placeholder="Enter resistance">
+                                <select class="unit-select" id="resistanceUnit">
+                                    <option value="Ω" selected>Ω</option>
+                                    <option value="kΩ">kΩ</option>
+                                    <option value="MΩ">MΩ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">Quality Factor (Q) - Optional</label>
+                            <div class="input-row">
+                                <input type="number" class="input-field" id="qualityFactor" placeholder="Enter Q factor">
+                                <span class="unit-label">Q</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error Display -->
+                    <div class="error-message" id="errorMessage" style="display: none;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span id="errorText"></span>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <button class="calculate-btn" onclick="calculateLCResonance()">
+                        <i class="fas fa-calculator"></i> Calculate
+                    </button>
+                    <button class="clear-btn" onclick="clearInputs()">
+                        <i class="fas fa-trash"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="result-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-wave-square"></i>
+                        Results & Analysis
+                    </h2>
+
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-wave-square"></i>
+                            <p>Enter values and click Calculate to see LC circuit analysis results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Information -->
+            <div class="info-section" style="margin-top: 3rem;">
+                <div style="background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                    <h2 style="color: var(--charcoal); margin-bottom: 1rem;">LC Circuit Theory</h2>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Resonant Frequency</h3>
+                            <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                                At resonance, inductive and capacitive reactances are equal, creating minimum impedance for series circuits.
+                            </p>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>f₀ = 1/(2π√LC)</li>
+                                <li>XL = XC at resonance</li>
+                                <li>Maximum current in series LC</li>
+                                <li>Used in oscillators and filters</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Quality Factor (Q)</h3>
+                            <p style="color: var(--text-gray); margin-bottom: 1rem;">
+                                Measures the sharpness of resonance and energy storage efficiency in the circuit.
+                            </p>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li>Higher Q = sharper resonance</li>
+                                <li>Q = f₀/BW (bandwidth)</li>
+                                <li>Affects selectivity in filters</li>
+                                <li>Limited by resistance losses</li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;">Applications</h3>
+                            <ul style="color: var(--text-gray); margin-left: 1.5rem; font-size: 0.9rem;">
+                                <li><strong>Tank Circuits:</strong> Energy storage and oscillation</li>
+                                <li><strong>Filters:</strong> Bandpass and notch filters</li>
+                                <li><strong>Oscillators:</strong> RF signal generation</li>
+                                <li><strong>Tuning:</strong> Radio and antenna matching</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/lc-resonant.html">LC Resonant</a></li>
+                        <li><a href="/calculators/impedance-calculator.html">Impedance Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/collaboration.js"></script>
+    <script src="/js/lc-resonant.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
