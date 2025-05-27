@@ -467,6 +467,11 @@ function displayResults(results, steps, title) {
     }
     
     resultsContainer.innerHTML = resultsHTML;
+    
+    // Update circuit diagram with calculated values
+    if (window.circuitEngine) {
+        window.circuitEngine.updateCircuitValues('faradays-law', results);
+    }
 }
 
 // Add input event listeners
@@ -477,6 +482,11 @@ document.addEventListener('DOMContentLoaded', function() {
             hideError();
         });
     });
+    
+    // Initialize circuit diagram
+    if (window.circuitEngine) {
+        window.circuitEngine.initializeCircuit('faradays-law', 'circuitDiagram');
+    }
 });
 
 // Add CSS for mode buttons

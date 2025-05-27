@@ -592,6 +592,11 @@ function displayResults(results, steps, title) {
     }
     
     resultsContainer.innerHTML = resultsHTML;
+    
+    // Update circuit diagram with calculated values
+    if (window.circuitEngine) {
+        window.circuitEngine.updateCircuitValues('lc-resonant', results);
+    }
 }
 
 // Add input event listeners
@@ -602,6 +607,11 @@ document.addEventListener('DOMContentLoaded', function() {
             hideError();
         });
     });
+    
+    // Initialize circuit diagram
+    if (window.circuitEngine) {
+        window.circuitEngine.initializeCircuit('lc-resonant', 'circuitDiagram');
+    }
 });
 
 // Add CSS for mode buttons and styling

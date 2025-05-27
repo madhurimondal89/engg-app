@@ -699,6 +699,11 @@ function displayResults(results, steps, title) {
     }
     
     resultsContainer.innerHTML = resultsHTML;
+    
+    // Update circuit diagram with calculated values
+    if (window.circuitEngine) {
+        window.circuitEngine.updateCircuitValues('rc-time-constant', results);
+    }
 }
 
 // Add input event listeners
@@ -709,6 +714,11 @@ document.addEventListener('DOMContentLoaded', function() {
             hideError();
         });
     });
+    
+    // Initialize circuit diagram
+    if (window.circuitEngine) {
+        window.circuitEngine.initializeCircuit('rc-time-constant', 'circuitDiagram');
+    }
 });
 
 // Add CSS for mode buttons and styling

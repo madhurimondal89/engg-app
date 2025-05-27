@@ -603,6 +603,11 @@ function displayResults(results, steps, title) {
     }
     
     resultsContainer.innerHTML = resultsHTML;
+    
+    // Update circuit diagram with calculated values
+    if (window.circuitEngine) {
+        window.circuitEngine.updateCircuitValues('battery-life', results);
+    }
 }
 
 // Add input event listeners
@@ -613,6 +618,11 @@ document.addEventListener('DOMContentLoaded', function() {
             hideError();
         });
     });
+    
+    // Initialize circuit diagram
+    if (window.circuitEngine) {
+        window.circuitEngine.initializeCircuit('battery-life', 'circuitDiagram');
+    }
 });
 
 // Add CSS for mode buttons and styling
