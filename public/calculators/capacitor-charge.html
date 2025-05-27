@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capacitor Charge and Time Constant Calculator - RC Circuit Analysis</title>
+    <meta name="description" content="Calculate capacitor charging and discharging behavior, time constants, voltage curves, and energy storage. Interactive RC circuit analysis with real-time visualization.">
+    <meta name="keywords" content="capacitor charge, time constant, RC circuit, capacitor discharge, exponential decay, voltage curve, electrical engineering">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Capacitor Charge and Time Constant Calculator - RC Circuit Analysis">
+    <meta property="og:description" content="Interactive capacitor charging/discharging calculator with real-time circuit visualization and exponential curves.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/capacitor-charge.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Capacitor Charge and Time Constant Calculator",
+        "description": "Calculate capacitor charging and discharging behavior with interactive circuit visualization",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Capacitor charging calculations",
+            "Exponential decay analysis", 
+            "Time constant determination",
+            "Interactive circuit diagrams",
+            "Real-time voltage curves"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Capacitor Charge Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-battery-empty"></i>
+                <h1>⚡ Capacitor Charge and Time Constant Calculator</h1>
+            </div>
+            <p>Analyze capacitor charging and discharging behavior in RC circuits. Calculate time constants, voltage curves, energy storage, and visualize exponential responses.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Calculation Mode Selection -->
+            <div class="mode-selection">
+                <h3 class="section-title">
+                    <i class="fas fa-cogs"></i>
+                    Calculation Mode
+                </h3>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" onclick="setCalculationType('charging')" id="chargingBtn">
+                        <i class="fas fa-arrow-up"></i>
+                        Capacitor Charging
+                    </button>
+                    <button class="mode-btn" onclick="setCalculationType('discharging')" id="dischargingBtn">
+                        <i class="fas fa-arrow-down"></i>
+                        Capacitor Discharging
+                    </button>
+                    <button class="mode-btn" onclick="setCalculationType('time-constant')" id="timeConstantBtn">
+                        <i class="fas fa-clock"></i>
+                        Time Constant Analysis
+                    </button>
+                    <button class="mode-btn" onclick="setCalculationType('energy')" id="energyBtn">
+                        <i class="fas fa-bolt"></i>
+                        Energy Storage
+                    </button>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Circuit Parameters
+                    </h2>
+
+                    <!-- Dynamic Input Fields -->
+                    <div id="inputFields">
+                        <!-- Fields will be populated based on calculation type -->
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="button-group">
+                        <button class="calculate-btn" onclick="calculateCapacitor()">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                        <button class="clear-btn" onclick="clearInputs()">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Circuit Diagram Panel -->
+                <div class="circuit-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-project-diagram"></i>
+                        Interactive RC Circuit
+                    </h2>
+                    <div id="circuitDiagram" class="circuit-diagram">
+                        <!-- Circuit will be drawn here -->
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div class="results-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-chart-line"></i>
+                        Results & Analysis
+                    </h2>
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-chart-line"></i>
+                            <p>Select calculation mode and enter values to see results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voltage Curve Visualization -->
+            <div class="curve-section">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-area"></i>
+                    Voltage vs Time Curve
+                </h3>
+                <div id="voltageChart" class="voltage-chart">
+                    <canvas id="curveCanvas" width="800" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- Educational Content -->
+            <div class="educational-content">
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3><i class="fas fa-info-circle"></i> Capacitor Fundamentals</h3>
+                        <p>A capacitor stores electrical energy in an electric field. When charging through a resistor, the voltage follows an exponential curve governed by the time constant τ = RC.</p>
+                        <div class="formula-display">
+                            <span class="formula">V(t) = V₀(1 - e^(-t/τ))</span>
+                            <div class="formula-desc">Charging: voltage approaches supply voltage exponentially</div>
+                        </div>
+                        <div class="formula-display">
+                            <span class="formula">V(t) = V₀e^(-t/τ)</span>
+                            <div class="formula-desc">Discharging: voltage decays exponentially to zero</div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-clock"></i> Time Constant (τ)</h3>
+                        <p>The time constant τ = RC determines how quickly a capacitor charges or discharges:</p>
+                        <ul>
+                            <li><strong>63.2%</strong> charged/discharged after 1τ</li>
+                            <li><strong>86.5%</strong> charged/discharged after 2τ</li>
+                            <li><strong>95.0%</strong> charged/discharged after 3τ</li>
+                            <li><strong>98.2%</strong> charged/discharged after 4τ</li>
+                            <li><strong>99.3%</strong> charged/discharged after 5τ</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-microchip"></i> Applications</h3>
+                        <ul>
+                            <li><strong>Timing Circuits:</strong> Delays, oscillators, pulse generators</li>
+                            <li><strong>Filtering:</strong> Smoothing power supplies, signal conditioning</li>
+                            <li><strong>Energy Storage:</strong> Flash photography, motor starting</li>
+                            <li><strong>Coupling:</strong> AC signal transmission, blocking DC</li>
+                            <li><strong>Memory:</strong> DRAM cells, backup power systems</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Display -->
+            <div id="errorContainer" class="error-container" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/capacitor-charge.html">Capacitor Charge</a></li>
+                        <li><a href="/calculators/rc-time-constant.html">RC Time Constant</a></li>
+                        <li><a href="/calculators/power-calculator.html">Power Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loading-animations.js"></script>
+    <script src="/js/circuit-diagram-engine.js"></script>
+    <script src="/js/capacitor-charge.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>

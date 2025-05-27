@@ -132,6 +132,9 @@ class CircuitDiagramEngine {
             case 'lorentz-force':
                 this.createLorentzForceCircuit(svg);
                 break;
+            case 'capacitor-charge':
+                this.createCapacitorChargeCircuit(svg);
+                break;
             default:
                 this.createGenericCircuit(svg);
         }
