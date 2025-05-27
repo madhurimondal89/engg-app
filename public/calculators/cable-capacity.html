@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cable Current Carrying Capacity & Cross Section Calculator</title>
+    <meta name="description" content="Calculate current carrying capacity of electrical cables, determine required cross-section area, voltage drop, and cable derating factors. Professional electrical engineering tool.">
+    <meta name="keywords" content="cable current capacity, conductor cross section, ampacity, cable sizing, voltage drop, electrical cables, wire gauge, current rating">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Cable Current Carrying Capacity & Cross Section Calculator">
+    <meta property="og:description" content="Professional calculator for electrical cable sizing and current carrying capacity analysis.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/cable-capacity.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Cable Current Carrying Capacity Calculator",
+        "description": "Calculate current carrying capacity and cross-section area for electrical cables",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Current carrying capacity calculations",
+            "Cable cross-section sizing",
+            "Voltage drop analysis",
+            "Derating factor calculations",
+            "Cable temperature effects"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Cable Capacity Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-plug"></i>
+                <h1>⚡ Cable Current Carrying Capacity Calculator</h1>
+            </div>
+            <p>Calculate current carrying capacity, determine required cable cross-section area, analyze voltage drop, and apply derating factors for electrical conductors and cables.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Calculation Mode Selection -->
+            <div class="mode-selection">
+                <h3 class="section-title">
+                    <i class="fas fa-cogs"></i>
+                    Calculation Mode
+                </h3>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" onclick="setCalculationMode('capacity')" id="capacityBtn">
+                        <i class="fas fa-bolt"></i>
+                        Current Capacity
+                    </button>
+                    <button class="mode-btn" onclick="setCalculationMode('cross-section')" id="crossSectionBtn">
+                        <i class="fas fa-expand"></i>
+                        Cross Section
+                    </button>
+                    <button class="mode-btn" onclick="setCalculationMode('voltage-drop')" id="voltageDropBtn">
+                        <i class="fas fa-chart-line-down"></i>
+                        Voltage Drop
+                    </button>
+                    <button class="mode-btn" onclick="setCalculationMode('derating')" id="deratingBtn">
+                        <i class="fas fa-thermometer-half"></i>
+                        Derating Factors
+                    </button>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Cable Parameters
+                    </h2>
+
+                    <!-- Cable Type Selection -->
+                    <div class="input-group">
+                        <label class="input-label">Cable Type</label>
+                        <select class="cable-select" id="cableType" onchange="updateCableProperties()">
+                            <option value="copper-pvc">Copper PVC Insulated</option>
+                            <option value="copper-xlpe">Copper XLPE Insulated</option>
+                            <option value="aluminum-pvc">Aluminum PVC Insulated</option>
+                            <option value="aluminum-xlpe">Aluminum XLPE Insulated</option>
+                            <option value="copper-epr">Copper EPR Insulated</option>
+                            <option value="armored-copper">Armored Copper Cable</option>
+                        </select>
+                    </div>
+
+                    <!-- Installation Method -->
+                    <div class="input-group">
+                        <label class="input-label">Installation Method</label>
+                        <select class="installation-select" id="installationMethod">
+                            <option value="air">Clipped Direct (In Air)</option>
+                            <option value="conduit">In Conduit/Ducting</option>
+                            <option value="buried">Direct Buried</option>
+                            <option value="tray">Cable Tray</option>
+                            <option value="underground">Underground Duct</option>
+                            <option value="overhead">Overhead Lines</option>
+                        </select>
+                    </div>
+
+                    <!-- Dynamic Input Fields -->
+                    <div id="inputFields">
+                        <!-- Fields will be populated based on calculation mode -->
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="button-group">
+                        <button class="calculate-btn" onclick="calculateCable()">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                        <button class="clear-btn" onclick="clearInputs()">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Cable Diagram Panel -->
+                <div class="diagram-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-project-diagram"></i>
+                        Cable Configuration
+                    </h2>
+                    <div id="cableDiagram" class="cable-diagram">
+                        <!-- Cable visualization will be drawn here -->
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div class="results-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Analysis Results
+                    </h2>
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-plug"></i>
+                            <p>Select calculation mode and enter parameters to see results</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cable Standards Table -->
+            <div class="standards-section">
+                <h3 class="section-title">
+                    <i class="fas fa-table"></i>
+                    Standard Cable Ratings (IEC 60364)
+                </h3>
+                <div id="standardsTable" class="standards-table">
+                    <!-- Standards table will be populated here -->
+                </div>
+            </div>
+
+            <!-- Educational Content -->
+            <div class="educational-content">
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3><i class="fas fa-bolt"></i> Current Carrying Capacity</h3>
+                        <p>The ampacity of a conductor depends on several factors:</p>
+                        <div class="formula-display">
+                            <span class="formula">I = I₀ × CF × CT × CG</span>
+                            <div class="formula-desc">Current = Base Current × Correction Factors</div>
+                        </div>
+                        <ul>
+                            <li><strong>CF:</strong> Installation method correction factor</li>
+                            <li><strong>CT:</strong> Temperature correction factor</li>
+                            <li><strong>CG:</strong> Grouping/bundling correction factor</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-expand"></i> Cross Section Calculation</h3>
+                        <p>Cable cross-section is determined by current requirements and voltage drop:</p>
+                        <div class="formula-display">
+                            <span class="formula">A = (ρ × I × L) / (ΔV × 1000)</span>
+                            <div class="formula-desc">Area = (Resistivity × Current × Length) / Voltage Drop</div>
+                        </div>
+                        <div class="formula-display">
+                            <span class="formula">A = I / J</span>
+                            <div class="formula-desc">Area = Current / Current Density</div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-chart-line-down"></i> Voltage Drop</h3>
+                        <p>Voltage drop limits for different circuit types:</p>
+                        <ul>
+                            <li><strong>Lighting Circuits:</strong> 3% max voltage drop</li>
+                            <li><strong>Power Circuits:</strong> 5% max voltage drop</li>
+                            <li><strong>Motor Circuits:</strong> 10% starting, 5% running</li>
+                            <li><strong>Long Runs:</strong> May require larger conductors</li>
+                        </ul>
+                        <div class="formula-display">
+                            <span class="formula">ΔV = (ρ × I × L) / A</span>
+                            <div class="formula-desc">Voltage Drop = (Resistivity × Current × Length) / Area</div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-thermometer-half"></i> Derating Factors</h3>
+                        <ul>
+                            <li><strong>Temperature:</strong> Higher ambient temperatures reduce capacity</li>
+                            <li><strong>Grouping:</strong> Multiple cables reduce heat dissipation</li>
+                            <li><strong>Installation:</strong> Conduit vs. open air affects cooling</li>
+                            <li><strong>Soil Conditions:</strong> Thermal resistivity for buried cables</li>
+                            <li><strong>Load Factor:</strong> Continuous vs. intermittent loading</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Display -->
+            <div id="errorContainer" class="error-container" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/cable-capacity.html">Cable Capacity</a></li>
+                        <li><a href="/calculators/motor-calculator.html">Motor Calculator</a></li>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/power-calculator.html">Power Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loading-animations.js"></script>
+    <script src="/js/cable-capacity.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
