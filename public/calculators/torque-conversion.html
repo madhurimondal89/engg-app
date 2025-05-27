@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torque Conversion Calculator - Convert Between Different Torque Units</title>
+    <meta name="description" content="Convert between different torque units including Newton-meters, foot-pounds, inch-pounds, kilogram-force meters, and more. Professional torque unit converter with instant calculations.">
+    <meta name="keywords" content="torque conversion, torque converter, Newton meters, foot pounds, inch pounds, kg-m, torque units, mechanical engineering">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Torque Conversion Calculator - Convert Between Different Torque Units">
+    <meta property="og:description" content="Professional torque unit converter with support for Newton-meters, foot-pounds, inch-pounds, and more.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/torque-conversion.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Torque Conversion Calculator",
+        "description": "Convert between different torque units with high precision calculations",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Multiple torque unit conversions",
+            "Real-time conversion calculations",
+            "High precision results",
+            "Professional engineering tool"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#mechanical">Mechanical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Torque Conversion Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-exchange-alt"></i>
+                <h1>🔄 Torque Conversion Calculator</h1>
+            </div>
+            <p>Convert between different torque units with high precision. Supports Newton-meters, foot-pounds, inch-pounds, kilogram-force meters, and more.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Conversion Interface -->
+            <div class="conversion-layout">
+                <!-- Input Section -->
+                <div class="conversion-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Input Value
+                    </h3>
+                    <div class="input-group">
+                        <label for="inputValue">Enter Torque Value:</label>
+                        <div class="input-with-unit">
+                            <input type="number" id="inputValue" step="any" placeholder="Enter value...">
+                            <select id="inputUnit" class="unit-select">
+                                <option value="N⋅m">Newton-meters (N⋅m)</option>
+                                <option value="ft⋅lbf">Foot-pounds force (ft⋅lbf)</option>
+                                <option value="in⋅lbf">Inch-pounds force (in⋅lbf)</option>
+                                <option value="kgf⋅m">Kilogram-force meters (kgf⋅m)</option>
+                                <option value="dyne⋅cm">Dyne-centimeters (dyne⋅cm)</option>
+                                <option value="oz⋅in">Ounce-inches (oz⋅in)</option>
+                                <option value="mN⋅m">Millinewton-meters (mN⋅m)</option>
+                                <option value="kN⋅m">Kilonewton-meters (kN⋅m)</option>
+                                <option value="gf⋅cm">Gram-force centimeters (gf⋅cm)</option>
+                                <option value="lbf⋅in">Pound-force inches (lbf⋅in)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Swap Button -->
+                <div class="swap-section">
+                    <button class="swap-btn" id="swapUnits" title="Swap units">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+                </div>
+
+                <!-- Output Section -->
+                <div class="conversion-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Converted Value
+                    </h3>
+                    <div class="input-group">
+                        <label for="outputValue">Result:</label>
+                        <div class="input-with-unit">
+                            <input type="text" id="outputValue" readonly placeholder="Result will appear here...">
+                            <select id="outputUnit" class="unit-select">
+                                <option value="ft⋅lbf">Foot-pounds force (ft⋅lbf)</option>
+                                <option value="N⋅m">Newton-meters (N⋅m)</option>
+                                <option value="in⋅lbf">Inch-pounds force (in⋅lbf)</option>
+                                <option value="kgf⋅m">Kilogram-force meters (kgf⋅m)</option>
+                                <option value="dyne⋅cm">Dyne-centimeters (dyne⋅cm)</option>
+                                <option value="oz⋅in">Ounce-inches (oz⋅in)</option>
+                                <option value="mN⋅m">Millinewton-meters (mN⋅m)</option>
+                                <option value="kN⋅m">Kilonewton-meters (kN⋅m)</option>
+                                <option value="gf⋅cm">Gram-force centimeters (gf⋅cm)</option>
+                                <option value="lbf⋅in">Pound-force inches (lbf⋅in)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversion Table -->
+            <div class="conversion-table-section">
+                <h3 class="section-title">
+                    <i class="fas fa-table"></i>
+                    Complete Conversion Table
+                </h3>
+                <div class="table-container" id="conversionTable">
+                    <p class="help-text">Enter a value above to see conversions to all units</p>
+                </div>
+            </div>
+
+            <!-- Common Conversions -->
+            <div class="quick-conversions">
+                <h3 class="section-title">
+                    <i class="fas fa-bolt"></i>
+                    Quick Common Conversions
+                </h3>
+                <div class="quick-conversion-grid">
+                    <div class="quick-item" onclick="setQuickConversion(1, 'N⋅m', 'ft⋅lbf')">
+                        <div class="quick-value">1 N⋅m</div>
+                        <div class="quick-result">= 0.7376 ft⋅lbf</div>
+                    </div>
+                    <div class="quick-item" onclick="setQuickConversion(1, 'ft⋅lbf', 'N⋅m')">
+                        <div class="quick-value">1 ft⋅lbf</div>
+                        <div class="quick-result">= 1.3558 N⋅m</div>
+                    </div>
+                    <div class="quick-item" onclick="setQuickConversion(12, 'in⋅lbf', 'ft⋅lbf')">
+                        <div class="quick-value">12 in⋅lbf</div>
+                        <div class="quick-result">= 1 ft⋅lbf</div>
+                    </div>
+                    <div class="quick-item" onclick="setQuickConversion(1, 'kgf⋅m', 'N⋅m')">
+                        <div class="quick-value">1 kgf⋅m</div>
+                        <div class="quick-result">= 9.8067 N⋅m</div>
+                    </div>
+                    <div class="quick-item" onclick="setQuickConversion(100, 'N⋅m', 'kN⋅m')">
+                        <div class="quick-value">100 N⋅m</div>
+                        <div class="quick-result">= 0.1 kN⋅m</div>
+                    </div>
+                    <div class="quick-item" onclick="setQuickConversion(16, 'oz⋅in', 'lbf⋅in')">
+                        <div class="quick-value">16 oz⋅in</div>
+                        <div class="quick-result">= 1 lbf⋅in</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Content -->
+            <div class="educational-content">
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3><i class="fas fa-info-circle"></i> About Torque</h3>
+                        <p>Torque is a measure of the rotational force applied to an object. It's calculated as the product of force and the perpendicular distance from the axis of rotation.</p>
+                        <div class="formula-display">
+                            <span class="formula">τ = F × r</span>
+                            <div class="formula-desc">
+                                Where τ is torque, F is force, and r is the lever arm distance
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-wrench"></i> Common Applications</h3>
+                        <ul>
+                            <li><strong>Automotive:</strong> Engine torque specifications, wheel lug nuts</li>
+                            <li><strong>Manufacturing:</strong> Bolt tightening specifications</li>
+                            <li><strong>Aerospace:</strong> Critical fastener torque requirements</li>
+                            <li><strong>Machinery:</strong> Motor and gear specifications</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-balance-scale"></i> Unit Relationships</h3>
+                        <div class="unit-relationships">
+                            <div class="relationship-item">
+                                <span class="unit">1 N⋅m</span>
+                                <span class="equals">=</span>
+                                <span class="conversion">0.7376 ft⋅lbf</span>
+                            </div>
+                            <div class="relationship-item">
+                                <span class="unit">1 ft⋅lbf</span>
+                                <span class="equals">=</span>
+                                <span class="conversion">12 in⋅lbf</span>
+                            </div>
+                            <div class="relationship-item">
+                                <span class="unit">1 kgf⋅m</span>
+                                <span class="equals">=</span>
+                                <span class="conversion">9.8067 N⋅m</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Display -->
+            <div id="errorContainer" class="error-container" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/torque-conversion.html">Torque Conversion</a></li>
+                        <li><a href="/calculators/power-calculator.html">Power Calculator</a></li>
+                        <li><a href="/calculators/force-calculator.html">Force Calculator</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loading-animations.js"></script>
+    <script src="/js/torque-conversion.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
