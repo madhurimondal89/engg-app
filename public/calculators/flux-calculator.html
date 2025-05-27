@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electrical & Magnetic Flux Calculator - Electromagnetic Analysis</title>
+    <meta name="description" content="Calculate electrical flux, magnetic flux, flux density, and electromagnetic field parameters. Professional tools for Faraday's law, Gauss's law, and electromagnetic analysis.">
+    <meta name="keywords" content="flux calculator, magnetic flux, electrical flux, flux density, electromagnetic field, Faraday law, Gauss law, electromagnetic analysis">
+    
+    <!-- Open Graph tags -->
+    <meta property="og:title" content="Electrical & Magnetic Flux Calculator - Electromagnetic Analysis">
+    <meta property="og:description" content="Professional calculator for electrical and magnetic flux analysis with interactive field visualizations.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://engineering-calculators.replit.app/calculators/flux-calculator.html">
+    
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Electrical & Magnetic Flux Calculator",
+        "description": "Calculate electrical and magnetic flux with electromagnetic field analysis",
+        "applicationCategory": "EducationalApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Magnetic flux calculations",
+            "Electrical flux analysis",
+            "Flux density calculations",
+            "Electromagnetic field visualization",
+            "Faraday's law applications"
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Engineering Calculator Suite</h1>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Home</a>
+                    <a href="/about.html" class="nav-link">About</a>
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Header -->
+    <section class="calculator-header">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Home</a> <i class="fas fa-chevron-right"></i> 
+                <a href="/#electrical">Electrical Engineering</a> <i class="fas fa-chevron-right"></i> 
+                <span>Flux Calculator</span>
+            </div>
+            <div class="calculator-title">
+                <i class="fas fa-magnet"></i>
+                <h1>⚡ Electrical & Magnetic Flux Calculator</h1>
+            </div>
+            <p>Calculate electrical flux, magnetic flux, flux density, and electromagnetic field parameters. Analyze Faraday's law, Gauss's law, and electromagnetic induction with interactive visualizations.</p>
+        </div>
+    </section>
+
+    <!-- Calculator Content -->
+    <section class="calculator-content">
+        <div class="container">
+            <!-- Flux Type Selection -->
+            <div class="mode-selection">
+                <h3 class="section-title">
+                    <i class="fas fa-cogs"></i>
+                    Flux Analysis Type
+                </h3>
+                <div class="mode-buttons">
+                    <button class="mode-btn active" onclick="setFluxType('magnetic')" id="magneticBtn">
+                        <i class="fas fa-magnet"></i>
+                        Magnetic Flux
+                    </button>
+                    <button class="mode-btn" onclick="setFluxType('electrical')" id="electricalBtn">
+                        <i class="fas fa-bolt"></i>
+                        Electrical Flux
+                    </button>
+                    <button class="mode-btn" onclick="setFluxType('induction')" id="inductionBtn">
+                        <i class="fas fa-wave-square"></i>
+                        Electromagnetic Induction
+                    </button>
+                    <button class="mode-btn" onclick="setFluxType('density')" id="densityBtn">
+                        <i class="fas fa-compress"></i>
+                        Flux Density
+                    </button>
+                </div>
+            </div>
+
+            <div class="calculator-grid">
+                <!-- Input Panel -->
+                <div class="input-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-edit"></i>
+                        Field Parameters
+                    </h2>
+
+                    <!-- Dynamic Input Fields -->
+                    <div id="inputFields">
+                        <!-- Fields will be populated based on flux type -->
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="button-group">
+                        <button class="calculate-btn" onclick="calculateFlux()">
+                            <i class="fas fa-calculator"></i> Calculate
+                        </button>
+                        <button class="clear-btn" onclick="clearInputs()">
+                            <i class="fas fa-trash"></i> Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Field Visualization Panel -->
+                <div class="diagram-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-project-diagram"></i>
+                        Field Visualization
+                    </h2>
+                    <div id="fieldDiagram" class="field-diagram">
+                        <!-- Field visualization will be drawn here -->
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div class="results-panel">
+                    <h2 class="panel-title">
+                        <i class="fas fa-chart-line"></i>
+                        Analysis Results
+                    </h2>
+                    <div id="resultsContainer">
+                        <div class="empty-state">
+                            <i class="fas fa-magnet"></i>
+                            <p>Select flux type and enter parameters to see analysis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Field Lines Visualization -->
+            <div class="field-section">
+                <h3 class="section-title">
+                    <i class="fas fa-chart-area"></i>
+                    Field Lines & Vector Plot
+                </h3>
+                <div id="fieldChart" class="field-chart">
+                    <canvas id="fieldCanvas" width="800" height="400"></canvas>
+                </div>
+            </div>
+
+            <!-- Educational Content -->
+            <div class="educational-content">
+                <div class="content-grid">
+                    <div class="content-card">
+                        <h3><i class="fas fa-magnet"></i> Magnetic Flux</h3>
+                        <p>Magnetic flux measures the total magnetic field passing through a surface:</p>
+                        <div class="formula-display">
+                            <span class="formula">Φ_B = B · A · cos(θ)</span>
+                            <div class="formula-desc">Magnetic Flux = Field × Area × cos(angle)</div>
+                        </div>
+                        <div class="formula-display">
+                            <span class="formula">Φ_B = ∫ B⃗ · dA⃗</span>
+                            <div class="formula-desc">General form for non-uniform fields</div>
+                        </div>
+                        <ul>
+                            <li><strong>Unit:</strong> Weber (Wb) = T·m²</li>
+                            <li><strong>Applications:</strong> Transformers, generators, motors</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-bolt"></i> Electrical Flux</h3>
+                        <p>Electric flux quantifies the electric field through a surface (Gauss's Law):</p>
+                        <div class="formula-display">
+                            <span class="formula">Φ_E = E · A · cos(θ)</span>
+                            <div class="formula-desc">Electric Flux = Field × Area × cos(angle)</div>
+                        </div>
+                        <div class="formula-display">
+                            <span class="formula">Φ_E = Q/ε₀</span>
+                            <div class="formula-desc">Gauss's Law: Flux = Charge / Permittivity</div>
+                        </div>
+                        <ul>
+                            <li><strong>Unit:</strong> N·m²/C or V·m</li>
+                            <li><strong>Applications:</strong> Capacitors, field analysis</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-wave-square"></i> Electromagnetic Induction</h3>
+                        <p>Faraday's law relates changing magnetic flux to induced EMF:</p>
+                        <div class="formula-display">
+                            <span class="formula">ε = -N × dΦ_B/dt</span>
+                            <div class="formula-desc">Induced EMF = -Turns × Rate of flux change</div>
+                        </div>
+                        <div class="formula-display">
+                            <span class="formula">ε = -L × dI/dt</span>
+                            <div class="formula-desc">Self-inductance: EMF = -Inductance × dI/dt</div>
+                        </div>
+                        <ul>
+                            <li><strong>Lenz's Law:</strong> Induced current opposes change</li>
+                            <li><strong>Applications:</strong> Generators, transformers, inductors</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="content-card">
+                        <h3><i class="fas fa-compress"></i> Flux Density</h3>
+                        <p>Field intensity and flux density relationships:</p>
+                        <ul>
+                            <li><strong>Magnetic:</strong> B = μH (Tesla = Permeability × Field)</li>
+                            <li><strong>Electric:</strong> D = εE (C/m² = Permittivity × Field)</li>
+                            <li><strong>Energy Density:</strong> u = ½εE² + ½B²/μ</li>
+                            <li><strong>Poynting Vector:</strong> S = E × H (Power density)</li>
+                            <li><strong>Applications:</strong> Wave propagation, energy storage</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Display -->
+            <div id="errorContainer" class="error-container" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="errorMessage"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Engineering Calculator Suite</h3>
+                    <p>Professional engineering calculators for students and professionals</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="/calculators/flux-calculator.html">Flux Calculator</a></li>
+                        <li><a href="/calculators/motor-calculator.html">Motor Calculator</a></li>
+                        <li><a href="/calculators/ohms-law.html">Ohm's Law</a></li>
+                        <li><a href="/calculators/faradays-law.html">Faraday's Law</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/unit-converter.html">Unit Converter</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Engineering Calculator Suite. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/loading-animations.js"></script>
+    <script src="/js/flux-calculator.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html>
