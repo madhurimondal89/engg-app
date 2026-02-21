@@ -1,184 +1,110 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Building, BarChart3, Edit, Trash2, Save, Share, Printer, AlertTriangle } from 'lucide-react';
+import { Building, Truck, Ruler, Activity, Mountain, HardHat } from 'lucide-react';
+import ConstructionCalculator from './civil/construction-calculator';
+import StructuralCalculator from './civil/structural-calculator';
+import GeotechnicalCalculator from './civil/geotechnical-calculator';
+import SurveyingCalculator from './civil/surveying-calculator';
+import TransportationCalculator from './civil/transportation-calculator';
+import EnvironmentalCalculator from './civil/environmental-calculator';
+import QuantityCalculator from './civil/quantity-calculator';
 
 export default function CivilCalculator() {
-  const [activeCalculator, setActiveCalculator] = useState('beam');
-  const [inputs, setInputs] = useState({
-    force: { value: '', unit: 'N' },
-    length: { value: '', unit: 'm' },
-    area: { value: '', unit: 'm²' },
-    moment: { value: '', unit: 'N⋅m' },
-    stress: { value: '', unit: 'Pa' },
-    load: { value: '', unit: 'N' }
+  const [activeCalculator, setActiveCalculator] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('mode') || 'menu';
   });
 
   const calculatorTypes = [
-    { id: 'beam', name: 'Beam Analysis', active: false },
-    { id: 'concrete', name: 'Concrete Design', active: false }
+    { id: 'construction', name: 'Construction & Est.', icon: HardHat, active: true },
+    { id: 'structural', name: 'Structural Eng.', icon: Building, active: true },
+    { id: 'geotechnical', name: 'Geotechnical', icon: Mountain, active: true },
+    { id: 'surveying', name: 'Surveying', icon: Ruler, active: true },
+    { id: 'transportation', name: 'Transportation', icon: Truck, active: true },
+    { id: 'environmental', name: 'Environmental', icon: Activity, active: true },
+    { id: 'quantity', name: 'Qty & Site Util.', icon: Ruler, active: true },
   ];
 
-  const handleInputChange = (field: string, value: string) => {
-    setInputs(prev => ({
-      ...prev,
-      [field]: { ...prev[field as keyof typeof prev], value }
-    }));
-  };
-
-  const handleUnitChange = (field: string, unit: string) => {
-    setInputs(prev => ({
-      ...prev,
-      [field]: { ...prev[field as keyof typeof prev], unit }
-    }));
-  };
-
-  const clearInputs = () => {
-    setInputs({
-      force: { value: '', unit: 'N' },
-      length: { value: '', unit: 'm' },
-      area: { value: '', unit: 'm²' },
-      moment: { value: '', unit: 'N⋅m' },
-      stress: { value: '', unit: 'Pa' },
-      load: { value: '', unit: 'N' }
-    });
-  };
-
-  const getFormulaInfo = () => {
-    if (activeCalculator === 'beam') {
-      return {
-        name: 'Beam Bending Moment',
-        formula: 'M = F × L / 4',
-        description: 'Maximum moment for simply supported beam with center load'
-      };
-    } else if (activeCalculator === 'concrete') {
-      return {
-        name: 'Compressive Stress',
-        formula: 'σ = P / A',
-        description: 'Compressive stress in concrete'
-      };
+  // Sync state with URL
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (activeCalculator === 'menu') {
+      params.delete('mode');
+    } else {
+      params.set('mode', activeCalculator);
     }
-    return null;
+    const newRelativePathQuery = window.location.pathname + '?' + params.toString();
+    window.history.replaceState(null, '', newRelativePathQuery);
+  }, [activeCalculator]);
+
+  const renderActiveCalculator = () => {
+    switch (activeCalculator) {
+      case 'construction':
+        return <ConstructionCalculator />;
+      case 'structural':
+        return <StructuralCalculator />;
+      case 'geotechnical':
+        return <GeotechnicalCalculator />;
+      case 'surveying':
+        return <SurveyingCalculator />;
+      case 'transportation':
+        return <TransportationCalculator />;
+      case 'environmental':
+        return <EnvironmentalCalculator />;
+      case 'quantity':
+        return <QuantityCalculator />;
+      default:
+        return null;
+    }
   };
 
-  const formulaInfo = getFormulaInfo();
+  if (activeCalculator === 'menu') return (
+    <Card className="mb-6">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl font-semibold text-charcoal flex items-center">
+            <Building className="h-8 w-8 text-eng-blue mr-3" />
+            Civil Engineering Calculators
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {calculatorTypes.map((calc) => (
+            <Button
+              key={calc.id}
+              variant="outline"
+              className="h-auto py-6 flex flex-col items-center justify-center text-center whitespace-normal hover:border-eng-blue hover:bg-blue-50 transition-all group"
+              onClick={() => calc.active && setActiveCalculator(calc.id)}
+              disabled={!calc.active}
+            >
+              <div className="bg-blue-100 p-3 rounded-full mb-3 group-hover:bg-blue-200 transition-colors">
+                <calc.icon className="h-6 w-6 text-eng-blue" />
+              </div>
+              <span className="font-semibold text-lg text-charcoal">{calc.name}</span>
+              <span className="text-sm text-gray-500 mt-1">Click to open calculator</span>
+            </Button>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
 
   return (
     <>
-      {/* Calculator Type Selection */}
-      <Card className="mb-6">
-        <CardContent className="p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-charcoal flex items-center">
-              <Building className="h-6 w-6 text-eng-blue mr-3" />
-              Civil Engineering
-            </h2>
-            <Button variant="outline" size="sm" className="text-gray-500 hover:text-eng-blue">
-              <i className="fas fa-book mr-2"></i>
-              Formulas
-            </Button>
-          </div>
-          
-          <div className="flex flex-wrap gap-2">
-            {calculatorTypes.map((calc) => (
-              <Button
-                key={calc.id}
-                variant={activeCalculator === calc.id ? "default" : "outline"}
-                size="sm"
-                className={`${
-                  activeCalculator === calc.id 
-                    ? 'bg-eng-blue text-white hover:bg-eng-blue' 
-                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
-                } ${!calc.active ? 'opacity-50 cursor-not-allowed' : ''}`}
-                onClick={() => calc.active && setActiveCalculator(calc.id)}
-                disabled={!calc.active}
-              >
-                {calc.name}
-              </Button>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Calculator Interface */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        
-        {/* Input Panel */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-charcoal flex items-center">
-              <Edit className="h-5 w-5 text-eng-blue mr-2" />
-              Input Parameters
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            
-            {/* Formula Display */}
-            {formulaInfo && (
-              <div className="bg-blue-50 border-l-4 border-eng-blue p-4">
-                <div className="flex items-center mb-2">
-                  <i className="fas fa-formula text-eng-blue mr-2"></i>
-                  <span className="font-semibold text-charcoal">{formulaInfo.name}</span>
-                </div>
-                <div className="font-roboto-mono text-lg text-charcoal">
-                  {formulaInfo.formula}
-                </div>
-                <div className="text-sm text-gray-600 mt-2">
-                  {formulaInfo.description}
-                </div>
-              </div>
-            )}
-
-            {/* Coming Soon Message */}
-            <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
-                Civil engineering calculators are coming soon! This module will include beam analysis, concrete design, and structural calculations.
-              </AlertDescription>
-            </Alert>
-
-            {/* Action Buttons */}
-            <div className="space-y-3">
-              <Button 
-                disabled
-                className="w-full bg-gray-300 text-gray-500 font-semibold cursor-not-allowed"
-              >
-                <i className="fas fa-calculator mr-2"></i>
-                Calculate (Coming Soon)
-              </Button>
-              <Button 
-                variant="outline"
-                onClick={clearInputs}
-                className="w-full text-gray-700 hover:bg-gray-50"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Clear All
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Results Panel */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-charcoal flex items-center">
-              <BarChart3 className="h-5 w-5 text-eng-blue mr-2" />
-              Results & Analysis
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="text-center py-12 text-gray-500">
-              <BarChart3 className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p>Civil engineering calculations coming soon!</p>
-              <p className="text-sm mt-2">This will include beam analysis, concrete design, and structural calculations.</p>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="mb-6">
+        <Button variant="outline" onClick={() => setActiveCalculator('menu')} className="mb-4">
+          ← Back to Civil Menu
+        </Button>
+        <div className="flex items-center mb-4">
+          <h2 className="text-xl font-semibold text-charcoal flex items-center">
+            <Building className="h-6 w-6 text-eng-blue mr-3" />
+            Civil Engineering - {calculatorTypes.find(c => c.id === activeCalculator)?.name}
+          </h2>
+        </div>
       </div>
+
+      {renderActiveCalculator()}
     </>
   );
 }
