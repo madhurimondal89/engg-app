@@ -16,25 +16,77 @@
     <!-- Schema.org structured data -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "LC Resonant Frequency Calculator",
-        "description": "Calculate LC resonant frequency, inductance, and capacitance for tank circuits",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Any",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "SoftwareApplication",
+            "@id": "https://www.calculatorfree.in/calculators/lc-resonant.html/#software",
+            "name": "LC Resonant Frequency Calculator",
+            "description": "Calculate LC resonant frequency, inductance, and capacitance for tank circuits",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Any",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "@id": "https://www.calculatorfree.in/#organization",
+                "name": "Engineering Calculator Hub",
+                "url": "https://www.calculatorfree.in",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://www.calculatorfree.in/favicon.png"
+                }
+            },
+            "featureList": [
+                "Calculate resonant frequency (f = 1/(2π√LC))",
+                "Find required inductance for target frequency",
+                "Determine capacitance values",
+                "Quality factor (Q) calculations",
+                "Circuit analysis with step-by-step solutions"
+            ]
         },
-        "featureList": [
-            "Calculate resonant frequency (f = 1/(2π√LC))",
-            "Find required inductance for target frequency",
-            "Determine capacitance values",
-            "Quality factor (Q) calculations",
-            "Circuit analysis with step-by-step solutions"
-        ]
-    }
+        {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.calculatorfree.in/calculators/lc-resonant.html/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://www.calculatorfree.in"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Electrical Engineering",
+                    "item": "https://www.calculatorfree.in/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "LC Resonant Frequency Calculator",
+                    "item": "https://www.calculatorfree.in/calculators/lc-resonant.html"
+                }
+            ]
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://www.calculatorfree.in/calculators/lc-resonant.html/#webpage",
+            "url": "https://www.calculatorfree.in/calculators/lc-resonant.html",
+            "name": "LC Resonant Frequency Calculator - Engineering Calculator Hub",
+            "description": "Calculate LC resonant frequency, inductance, and capacitance for tank circuits",
+            "isPartOf": {
+                "@id": "https://www.calculatorfree.in/#website"
+            },
+            "mainEntity": {
+                "@id": "https://www.calculatorfree.in/calculators/lc-resonant.html/#software"
+            }
+        }
+    ]
+}
     </script>
     
     <link rel="stylesheet" href="/css/style.css">

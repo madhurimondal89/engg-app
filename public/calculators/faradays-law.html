@@ -16,25 +16,77 @@
     <!-- Schema.org structured data -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Faraday's Law Calculator",
-        "description": "Calculate electromagnetic induction using Faraday's Law and Lenz's Law",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Any",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "SoftwareApplication",
+            "@id": "https://www.calculatorfree.in/calculators/faradays-law.html/#software",
+            "name": "Faraday's Law Calculator",
+            "description": "Calculate electromagnetic induction using Faraday's Law and Lenz's Law",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Any",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "@id": "https://www.calculatorfree.in/#organization",
+                "name": "Engineering Calculator Hub",
+                "url": "https://www.calculatorfree.in",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://www.calculatorfree.in/favicon.png"
+                }
+            },
+            "featureList": [
+                "Calculate induced EMF (ε = -N × dΦ/dt)",
+                "Calculate magnetic flux (Φ = B × A × cos(θ))",
+                "Lenz's Law direction analysis",
+                "Self-inductance calculations",
+                "Step-by-step solutions"
+            ]
         },
-        "featureList": [
-            "Calculate induced EMF (ε = -N × dΦ/dt)",
-            "Calculate magnetic flux (Φ = B × A × cos(θ))",
-            "Lenz's Law direction analysis",
-            "Self-inductance calculations",
-            "Step-by-step solutions"
-        ]
-    }
+        {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.calculatorfree.in/calculators/faradays-law.html/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://www.calculatorfree.in"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Electrical Engineering",
+                    "item": "https://www.calculatorfree.in/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Faraday's Law Calculator",
+                    "item": "https://www.calculatorfree.in/calculators/faradays-law.html"
+                }
+            ]
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://www.calculatorfree.in/calculators/faradays-law.html/#webpage",
+            "url": "https://www.calculatorfree.in/calculators/faradays-law.html",
+            "name": "Faraday's Law Calculator - Engineering Calculator Hub",
+            "description": "Calculate electromagnetic induction using Faraday's Law and Lenz's Law",
+            "isPartOf": {
+                "@id": "https://www.calculatorfree.in/#website"
+            },
+            "mainEntity": {
+                "@id": "https://www.calculatorfree.in/calculators/faradays-law.html/#software"
+            }
+        }
+    ]
+}
     </script>
     
     <link rel="stylesheet" href="/css/style.css">

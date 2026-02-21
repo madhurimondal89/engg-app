@@ -16,25 +16,77 @@
     <!-- Schema.org structured data -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Cable Current Carrying Capacity Calculator",
-        "description": "Calculate current carrying capacity and cross-section area for electrical cables",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Any",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "SoftwareApplication",
+            "@id": "https://www.calculatorfree.in/calculators/cable-capacity.html/#software",
+            "name": "Cable Current Carrying Capacity Calculator",
+            "description": "Calculate current carrying capacity and cross-section area for electrical cables",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Any",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "@id": "https://www.calculatorfree.in/#organization",
+                "name": "Engineering Calculator Hub",
+                "url": "https://www.calculatorfree.in",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://www.calculatorfree.in/favicon.png"
+                }
+            },
+            "featureList": [
+                "Current carrying capacity calculations",
+                "Cable cross-section sizing",
+                "Voltage drop analysis",
+                "Derating factor calculations",
+                "Cable temperature effects"
+            ]
         },
-        "featureList": [
-            "Current carrying capacity calculations",
-            "Cable cross-section sizing",
-            "Voltage drop analysis",
-            "Derating factor calculations",
-            "Cable temperature effects"
-        ]
-    }
+        {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.calculatorfree.in/calculators/cable-capacity.html/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://www.calculatorfree.in"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Electrical Engineering",
+                    "item": "https://www.calculatorfree.in/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Cable Current Carrying Capacity Calculator",
+                    "item": "https://www.calculatorfree.in/calculators/cable-capacity.html"
+                }
+            ]
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://www.calculatorfree.in/calculators/cable-capacity.html/#webpage",
+            "url": "https://www.calculatorfree.in/calculators/cable-capacity.html",
+            "name": "Cable Current Carrying Capacity Calculator - Engineering Calculator Hub",
+            "description": "Calculate current carrying capacity and cross-section area for electrical cables",
+            "isPartOf": {
+                "@id": "https://www.calculatorfree.in/#website"
+            },
+            "mainEntity": {
+                "@id": "https://www.calculatorfree.in/calculators/cable-capacity.html/#software"
+            }
+        }
+    ]
+}
     </script>
     
     <link rel="stylesheet" href="/css/style.css">

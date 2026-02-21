@@ -16,24 +16,76 @@
     <!-- Schema.org structured data -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Torque Conversion Calculator",
-        "description": "Convert between different torque units with high precision calculations",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Any",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "SoftwareApplication",
+            "@id": "https://www.calculatorfree.in/calculators/torque-conversion.html/#software",
+            "name": "Torque Conversion Calculator",
+            "description": "Convert between different torque units with high precision calculations",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Any",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "@id": "https://www.calculatorfree.in/#organization",
+                "name": "Engineering Calculator Hub",
+                "url": "https://www.calculatorfree.in",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://www.calculatorfree.in/favicon.png"
+                }
+            },
+            "featureList": [
+                "Multiple torque unit conversions",
+                "Real-time conversion calculations",
+                "High precision results",
+                "Professional engineering tool"
+            ]
         },
-        "featureList": [
-            "Multiple torque unit conversions",
-            "Real-time conversion calculations",
-            "High precision results",
-            "Professional engineering tool"
-        ]
-    }
+        {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.calculatorfree.in/calculators/torque-conversion.html/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://www.calculatorfree.in"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Mechanical Engineering",
+                    "item": "https://www.calculatorfree.in/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Torque Conversion Calculator",
+                    "item": "https://www.calculatorfree.in/calculators/torque-conversion.html"
+                }
+            ]
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://www.calculatorfree.in/calculators/torque-conversion.html/#webpage",
+            "url": "https://www.calculatorfree.in/calculators/torque-conversion.html",
+            "name": "Torque Conversion Calculator - Engineering Calculator Hub",
+            "description": "Convert between different torque units with high precision calculations",
+            "isPartOf": {
+                "@id": "https://www.calculatorfree.in/#website"
+            },
+            "mainEntity": {
+                "@id": "https://www.calculatorfree.in/calculators/torque-conversion.html/#software"
+            }
+        }
+    ]
+}
     </script>
     
     <link rel="stylesheet" href="/css/style.css">

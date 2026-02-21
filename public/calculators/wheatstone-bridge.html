@@ -16,25 +16,77 @@
     <!-- Schema.org structured data -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Wheatstone Bridge Calculator",
-        "description": "Calculate unknown resistances and analyze Wheatstone bridge circuits",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Any",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "SoftwareApplication",
+            "@id": "https://www.calculatorfree.in/calculators/wheatstone-bridge.html/#software",
+            "name": "Wheatstone Bridge Calculator",
+            "description": "Calculate unknown resistances and analyze Wheatstone bridge circuits",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Any",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "@id": "https://www.calculatorfree.in/#organization",
+                "name": "Engineering Calculator Hub",
+                "url": "https://www.calculatorfree.in",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://www.calculatorfree.in/favicon.png"
+                }
+            },
+            "featureList": [
+                "Calculate unknown resistance (Rx = R2 × R3/R1)",
+                "Bridge balance condition analysis",
+                "Bridge current and voltage calculations",
+                "Sensitivity analysis for strain gauges",
+                "Step-by-step solutions with circuit diagrams"
+            ]
         },
-        "featureList": [
-            "Calculate unknown resistance (Rx = R2 × R3/R1)",
-            "Bridge balance condition analysis",
-            "Bridge current and voltage calculations",
-            "Sensitivity analysis for strain gauges",
-            "Step-by-step solutions with circuit diagrams"
-        ]
-    }
+        {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.calculatorfree.in/calculators/wheatstone-bridge.html/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://www.calculatorfree.in"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Electrical Engineering",
+                    "item": "https://www.calculatorfree.in/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Wheatstone Bridge Calculator",
+                    "item": "https://www.calculatorfree.in/calculators/wheatstone-bridge.html"
+                }
+            ]
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://www.calculatorfree.in/calculators/wheatstone-bridge.html/#webpage",
+            "url": "https://www.calculatorfree.in/calculators/wheatstone-bridge.html",
+            "name": "Wheatstone Bridge Calculator - Engineering Calculator Hub",
+            "description": "Calculate unknown resistances and analyze Wheatstone bridge circuits",
+            "isPartOf": {
+                "@id": "https://www.calculatorfree.in/#website"
+            },
+            "mainEntity": {
+                "@id": "https://www.calculatorfree.in/calculators/wheatstone-bridge.html/#software"
+            }
+        }
+    ]
+}
     </script>
     
     <link rel="stylesheet" href="/css/style.css">

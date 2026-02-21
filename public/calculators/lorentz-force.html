@@ -16,25 +16,77 @@
     <!-- Schema.org structured data -->
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Lorentz Force Calculator",
-        "description": "Calculate Lorentz force on moving charges and current-carrying conductors",
-        "applicationCategory": "EducationalApplication",
-        "operatingSystem": "Any",
-        "offers": {
-            "@type": "Offer",
-            "price": "0",
-            "priceCurrency": "USD"
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "SoftwareApplication",
+            "@id": "https://www.calculatorfree.in/calculators/lorentz-force.html/#software",
+            "name": "Lorentz Force Calculator",
+            "description": "Calculate Lorentz force on moving charges and current-carrying conductors",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Any",
+            "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+            },
+            "publisher": {
+                "@type": "Organization",
+                "@id": "https://www.calculatorfree.in/#organization",
+                "name": "Engineering Calculator Hub",
+                "url": "https://www.calculatorfree.in",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://www.calculatorfree.in/favicon.png"
+                }
+            },
+            "featureList": [
+                "Calculate force on moving charges (F = q × v × B × sin(θ))",
+                "Force on current-carrying conductors (F = I × L × B × sin(θ))",
+                "Right-hand rule direction analysis",
+                "Electromagnetic force calculations",
+                "Step-by-step solutions with vector analysis"
+            ]
         },
-        "featureList": [
-            "Calculate force on moving charges (F = q × v × B × sin(θ))",
-            "Force on current-carrying conductors (F = I × L × B × sin(θ))",
-            "Right-hand rule direction analysis",
-            "Electromagnetic force calculations",
-            "Step-by-step solutions with vector analysis"
-        ]
-    }
+        {
+            "@type": "BreadcrumbList",
+            "@id": "https://www.calculatorfree.in/calculators/lorentz-force.html/#breadcrumb",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Home",
+                    "item": "https://www.calculatorfree.in"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Electrical Engineering",
+                    "item": "https://www.calculatorfree.in/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": "Lorentz Force Calculator",
+                    "item": "https://www.calculatorfree.in/calculators/lorentz-force.html"
+                }
+            ]
+        },
+        {
+            "@type": "WebPage",
+            "@id": "https://www.calculatorfree.in/calculators/lorentz-force.html/#webpage",
+            "url": "https://www.calculatorfree.in/calculators/lorentz-force.html",
+            "name": "Lorentz Force Calculator - Engineering Calculator Hub",
+            "description": "Calculate Lorentz force on moving charges and current-carrying conductors",
+            "isPartOf": {
+                "@id": "https://www.calculatorfree.in/#website"
+            },
+            "mainEntity": {
+                "@id": "https://www.calculatorfree.in/calculators/lorentz-force.html/#software"
+            }
+        }
+    ]
+}
     </script>
     
     <link rel="stylesheet" href="/css/style.css">
