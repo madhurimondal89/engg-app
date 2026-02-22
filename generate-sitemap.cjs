@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DOMAIN = 'https://www.calculatorfree.in';
+const DOMAIN = 'https://engineering.calculatorfree.in';
 const PUBLIC_DIR = path.join(__dirname, 'public');
 
 let sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n`;
