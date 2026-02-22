@@ -7,7 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { calculateBoltTorque, calculateShaftDiameter, calculateGearRatio, calculateGearSpeed, calculateBeltLength, calculateBeltTension, calculateChainLength, calculateSpringConstant, calculateBearingLife, calculateFlywheelEnergy, type CalculationInput, type CalculationOutput } from '@/lib/calculations';
-import { Settings, BarChart3, Edit, Trash2, Save, Share, Printer, AlertTriangle, CheckCircle } from 'lucide-react';
+import { Settings, BarChart3, Edit, Trash2, Save, Share, Printer, AlertTriangle, CheckCircle, BookOpen } from 'lucide-react';
+import { getHowToUse, getEngineeringExplanation, getPracticalApplications, getFAQs } from '@/lib/calculator-content';
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
 export default function MachineDesignCalculator() {
     const [activeCalculator, setActiveCalculator] = useState('bolt-torque');
@@ -106,6 +108,29 @@ export default function MachineDesignCalculator() {
 
         setResults(result);
     };
+
+    const getFormulaInfo = () => {
+        if (activeCalculator === 'bolt-torque') {
+            return {
+                name: 'Bolt Torque',
+                formula: 'T = K × F × d',
+                description: 'Calculates the tightening torque (T) based on nut factor (K), preload force (F), and bolt diameter (d).'
+            };
+        } else if (activeCalculator === 'gear-ratio') {
+            return {
+                name: 'Gear Ratio',
+                formula: 'GR = N_out / N_in',
+                description: 'Ratio of number of teeth on output gear to number of teeth on input gear.'
+            };
+        }
+        return {
+            name: activeCalculator.replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase()),
+            formula: 'Formula depends on specific machine elements',
+            description: 'Refer to machine design handbooks for detailed formulas on ' + activeCalculator.replace('-', ' ')
+        };
+    };
+
+    const formulaInfo = getFormulaInfo();
 
     const clearInputs = () => {
         setInputs({
@@ -514,6 +539,65 @@ export default function MachineDesignCalculator() {
                     </CardContent>
                 </Card>
             </div >
+
+            {(() => {
+                if (!formulaInfo) return null;
+                return (
+                    <Card className="mt-6 border-0 shadow-none bg-transparent">
+                        <CardHeader className="px-0 pt-0">
+                            <CardTitle className="text-lg font-semibold text-charcoal flex items-center">
+                                <BookOpen className="h-5 w-5 text-eng-blue mr-2" />
+                                Quick Reference - {formulaInfo.name}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="px-0">
+                            <Accordion type="single" collapsible className="w-full bg-white rounded-lg border border-gray-200 px-4 shadow-sm">
+                                <AccordionItem value="how-to-use" className="border-b last:border-0 border-gray-100">
+                                    <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">How to Use This Calculator</AccordionTrigger>
+                                    <AccordionContent className="text-gray-600 pb-4">
+                                        {getHowToUse(formulaInfo, "this tool")}
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="formula-used" className="border-b last:border-0 border-gray-100">
+                                    <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Formula Used</AccordionTrigger>
+                                    <AccordionContent className="pb-4">
+                                        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 mt-2">
+                                            <div className="font-semibold text-charcoal mb-2">{formulaInfo.name}</div>
+                                            <div className="font-roboto-mono text-sm text-eng-blue mb-2 bg-gray-200 inline-block px-2 py-1 rounded">
+                                                {formulaInfo.formula}
+                                            </div>
+                                            <div className="text-sm text-gray-600 mb-3">{formulaInfo.description}</div>
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="explanation" className="border-b last:border-0 border-gray-100">
+                                    <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Engineering Explanation</AccordionTrigger>
+                                    <AccordionContent className="pb-4">
+                                        {getEngineeringExplanation('mechanical', formulaInfo, "this system")}
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="applications" className="border-b last:border-0 border-gray-100">
+                                    <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Practical Applications</AccordionTrigger>
+                                    <AccordionContent className="text-gray-600 pb-4">
+                                        {getPracticalApplications('mechanical', formulaInfo, "these")}
+                                    </AccordionContent>
+                                </AccordionItem>
+                                <AccordionItem value="faqs" className="border-b last:border-0 border-gray-100">
+                                    <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">FAQs</AccordionTrigger>
+                                    <AccordionContent className="space-y-4 text-gray-600 pb-4">
+                                        {getFAQs(formulaInfo, "calculator").map((faq, i) => (
+                                            <div key={i} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
+                                                <strong className="text-charcoal block mb-1">Q: {faq.question}</strong>
+                                                <p className="text-sm">A: {faq.answer}</p>
+                                            </div>
+                                        ))}
+                                    </AccordionContent>
+                                </AccordionItem>
+                            </Accordion>
+                        </CardContent>
+                    </Card>
+                );
+            })()}
         </>
     );
 }
