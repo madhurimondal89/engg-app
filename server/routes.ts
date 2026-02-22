@@ -19,12 +19,20 @@ const sharedCalculations = new Map<string, SharedCalculation>();
 export async function registerRoutes(app: Express): Promise<Server> {
   // Serve static files from public directory
   app.use(express.static(path.join(process.cwd(), 'public')));
-  
+
   // Handle HTML routes
   app.get('/', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
   });
-  
+
+  // Serve SEO files
+  app.get('/sitemap.xml', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public', 'sitemap.xml'));
+  });
+  app.get('/robots.txt', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'public', 'robots.txt'));
+  });
+
   app.get('/calculators/:calculator', (req, res) => {
     const calculatorFile = path.join(process.cwd(), 'public', 'calculators', `${req.params.calculator}.html`);
     res.sendFile(calculatorFile, (err) => {
@@ -38,7 +46,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/share/create', express.json(), (req, res) => {
     const { calculatorType, data } = req.body;
     const roomId = generateRoomId();
-    
+
     sharedCalculations.set(roomId, {
       roomId,
       calculatorType,
@@ -46,18 +54,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       participants: new Set(),
       lastUpdated: new Date()
     });
-    
+
     res.json({ roomId, shareUrl: `/calculators/${calculatorType}?room=${roomId}` });
   });
 
   app.get('/api/share/:roomId', (req, res) => {
     const { roomId } = req.params;
     const calculation = sharedCalculations.get(roomId);
-    
+
     if (!calculation) {
       return res.status(404).json({ error: 'Room not found' });
     }
-    
+
     res.json({
       roomId: calculation.roomId,
       calculatorType: calculation.calculatorType,
@@ -77,17 +85,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     ws.on('message', (message) => {
       try {
         const data = JSON.parse(message.toString());
-        
+
         switch (data.type) {
           case 'join_room':
             handleJoinRoom(ws, data.roomId);
             currentRoom = data.roomId;
             break;
-            
+
           case 'update_calculation':
             handleUpdateCalculation(data.roomId, data.calculationData);
             break;
-            
+
           case 'leave_room':
             handleLeaveRoom(ws, data.roomId);
             currentRoom = null;
@@ -110,9 +118,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         socket.send(JSON.stringify({ type: 'error', message: 'Room not found' }));
         return;
       }
-      
+
       calculation.participants.add(socket);
-      
+
       // Send current calculation data to the new participant
       socket.send(JSON.stringify({
         type: 'room_joined',
@@ -120,7 +128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         calculationData: calculation.data,
         participantCount: calculation.participants.size
       }));
-      
+
       // Notify other participants
       broadcastToRoom(roomId, {
         type: 'participant_joined',
@@ -131,10 +139,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     function handleUpdateCalculation(roomId: string, calculationData: any) {
       const calculation = sharedCalculations.get(roomId);
       if (!calculation) return;
-      
+
       calculation.data = calculationData;
       calculation.lastUpdated = new Date();
-      
+
       // Broadcast update to all participants
       broadcastToRoom(roomId, {
         type: 'calculation_updated',
@@ -145,15 +153,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     function handleLeaveRoom(socket: WebSocket, roomId: string) {
       const calculation = sharedCalculations.get(roomId);
       if (!calculation) return;
-      
+
       calculation.participants.delete(socket);
-      
+
       // Notify remaining participants
       broadcastToRoom(roomId, {
         type: 'participant_left',
         participantCount: calculation.participants.size
       });
-      
+
       // Clean up empty rooms
       if (calculation.participants.size === 0) {
         sharedCalculations.delete(roomId);
@@ -163,7 +171,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     function broadcastToRoom(roomId: string, message: any, excludeSocket?: WebSocket) {
       const calculation = sharedCalculations.get(roomId);
       if (!calculation) return;
-      
+
       const messageStr = JSON.stringify(message);
       calculation.participants.forEach(socket => {
         if (socket !== excludeSocket && socket.readyState === WebSocket.OPEN) {
