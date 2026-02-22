@@ -6,6 +6,7 @@ import ElectricalCalculator from './electrical-calculator';
 import MechanicalCalculator from './mechanical-calculator';
 import CivilCalculator from './civil-calculator';
 import UnitConverterModal from './unit-converter-modal';
+import GoogleAd from './ui/google-ad';
 import { Calculator, Moon, Sun, HelpCircle, RotateCcw, History, Download, BookOpen, Home } from 'lucide-react';
 
 export default function CalculatorLayout() {
@@ -81,7 +82,7 @@ export default function CalculatorLayout() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 
           {/* Sidebar Navigation */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <Card className="sticky top-6">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-charcoal dark:text-gray-100">
@@ -136,11 +137,21 @@ export default function CalculatorLayout() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Sidebar Ad (Desktop Only) */}
+            <div className="hidden lg:block sticky top-[500px]">
+              <GoogleAd />
+            </div>
           </div>
 
           {/* Main Calculator Area */}
           <div className="lg:col-span-3">
             {renderCalculator()}
+
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <h3 className="text-sm text-gray-400 text-center mb-2 uppercase tracking-wide">Advertisement</h3>
+              <GoogleAd />
+            </div>
           </div>
         </div>
       </div>
