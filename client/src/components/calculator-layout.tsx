@@ -98,7 +98,14 @@ export default function CalculatorLayout() {
                       ? 'bg-eng-blue text-white hover:bg-eng-blue'
                       : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                       }`}
-                    onClick={() => setActiveSection(discipline.id)}
+                    onClick={() => {
+                      setActiveSection(discipline.id);
+                      // Clear mode param from URL so the new discipline opens at its category/menu page
+                      const params = new URLSearchParams(window.location.search);
+                      params.set('discipline', discipline.id);
+                      params.delete('mode');
+                      window.history.replaceState(null, '', window.location.pathname + '?' + params.toString());
+                    }}
                   >
                     <i className={`${discipline.icon} mr-3`} />
                     {discipline.name.replace(' Engineering', '')}
@@ -145,7 +152,7 @@ export default function CalculatorLayout() {
           </div>
 
           {/* Main Calculator Area */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3" key={activeSection}>
             {renderCalculator()}
 
             <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
