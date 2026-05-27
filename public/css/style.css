@@ -158,6 +158,10 @@ body {
     padding: 4rem 0;
 }
 
+.categories.bg-gray-50 {
+    background-color: #F0F4F8;
+}
+
 .categories h2 {
     text-align: center;
     font-size: 2.5rem;
