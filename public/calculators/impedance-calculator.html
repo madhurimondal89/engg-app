@@ -289,10 +289,65 @@
                     </ul>
                 </div>
             </div>
-        </div>
-    </section>
+        
+        <!-- SEO Content Section -->
+        <div class="seo-content-section" style="margin-top:3rem; display:grid; gap:1.5rem;">
 
-    <!-- Footer -->
+          <!-- How to Use -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem; display:flex; align-items:center; gap:0.5rem;">
+              <span style="background:#dbeafe; color:#2563eb; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">HOW TO USE</span>
+            </h2>
+            <p style="color:#475569; line-height:1.7; margin:0;">Enter the resistance (R), inductance (L), and/or capacitance (C) values along with frequency. Click Calculate to find total impedance, phase angle, and resonant frequency.</p>
+          </div>
+
+          <!-- Formula -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem;">
+              <span style="background:#dcfce7; color:#16a34a; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">FORMULA USED</span>
+            </h2>
+            <div style="background:#f1f5f9; border-radius:8px; padding:1rem 1.2rem; font-family:'Roboto Mono',monospace; color:#1e293b; font-size:0.92rem; line-height:1.8; border-left:4px solid #16a34a;">
+              <div>Z = √(R² + (XL - XC)²)</div><div>XL = 2πfL</div><div>XC = 1÷(2πfC)</div><div>Phase angle θ = arctan((XL - XC) ÷ R)</div>
+            </div>
+          </div>
+
+          <!-- Worked Example -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem;">
+              <span style="background:#fef9c3; color:#ca8a04; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">WORKED EXAMPLE</span>
+            </h2>
+            <p style="color:#475569; line-height:1.7; margin:0;">R=100Ω, L=0.1H, C=10μF at f=50Hz: XL = 31.4Ω, XC = 318.3Ω, Z = √(100² + (31.4-318.3)²) = <strong>303.3 Ω</strong>.</p>
+          </div>
+
+          <!-- FAQ -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 1rem 0; font-size:1.25rem;">
+              <span style="background:#fce7f3; color:#db2777; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">FREQUENTLY ASKED QUESTIONS</span>
+            </h2>
+            
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is impedance?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: Impedance (Z) is the total opposition to AC current flow, combining resistance (R) and reactance (X): Z = R + jX.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is inductive reactance?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: XL = 2πfL. It increases with frequency — inductors oppose high-frequency AC more than low-frequency.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is capacitive reactance?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: XC = 1/(2πfC). It decreases with frequency — capacitors pass high-frequency AC more easily.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is resonance in an RLC circuit?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: Resonance occurs when XL = XC. Resonant frequency fr = 1÷(2π√(LC)). Impedance is minimum at resonance.</p>
+            </div>
+          </div>
+
+        </div>
+        <!-- End SEO Content Section -->
+        </div>
+        </section>
+        <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">

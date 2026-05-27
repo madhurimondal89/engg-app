@@ -514,10 +514,65 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        
+        <!-- SEO Content Section -->
+        <div class="seo-content-section" style="margin-top:3rem; display:grid; gap:1.5rem;">
 
-    <!-- Footer -->
+          <!-- How to Use -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem; display:flex; align-items:center; gap:0.5rem;">
+              <span style="background:#dbeafe; color:#2563eb; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">HOW TO USE</span>
+            </h2>
+            <p style="color:#475569; line-height:1.7; margin:0;">Enter three known resistances (R1, R2, R3) and the supply voltage. Click Calculate to find the unknown resistance (Rx) and galvanometer current at balance condition.</p>
+          </div>
+
+          <!-- Formula -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem;">
+              <span style="background:#dcfce7; color:#16a34a; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">FORMULA USED</span>
+            </h2>
+            <div style="background:#f1f5f9; border-radius:8px; padding:1rem 1.2rem; font-family:'Roboto Mono',monospace; color:#1e293b; font-size:0.92rem; line-height:1.8; border-left:4px solid #16a34a;">
+              <div>Balance condition: R1/R2 = R3/Rx → Rx = (R2 × R3) ÷ R1</div><div>Galvanometer current when unbalanced: Ig = V × (R1×R4 - R2×R3) ÷ (various terms)</div>
+            </div>
+          </div>
+
+          <!-- Worked Example -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem;">
+              <span style="background:#fef9c3; color:#ca8a04; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">WORKED EXAMPLE</span>
+            </h2>
+            <p style="color:#475569; line-height:1.7; margin:0;">R1=100Ω, R2=200Ω, R3=150Ω. Unknown Rx = (200 × 150) ÷ 100 = <strong>300 Ω</strong>. The bridge is balanced when all ratios are equal.</p>
+          </div>
+
+          <!-- FAQ -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 1rem 0; font-size:1.25rem;">
+              <span style="background:#fce7f3; color:#db2777; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">FREQUENTLY ASKED QUESTIONS</span>
+            </h2>
+            
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is a Wheatstone Bridge?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: A Wheatstone Bridge is a circuit used to measure an unknown resistance precisely by balancing two legs of a bridge circuit.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is the balance condition?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: The bridge is balanced when R1/R2 = R3/Rx, meaning no current flows through the galvanometer. This gives Rx = R2×R3/R1.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is a galvanometer?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: A galvanometer is a sensitive current detector. In a Wheatstone bridge, it indicates when the bridge is balanced (zero current).</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What are modern applications of Wheatstone Bridge?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: Strain gauges, temperature sensors (RTD), pressure sensors, and load cells all use Wheatstone bridge circuits.</p>
+            </div>
+          </div>
+
+        </div>
+        <!-- End SEO Content Section -->
+        </div>
+        </section>
+        <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">

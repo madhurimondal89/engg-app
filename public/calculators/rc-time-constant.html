@@ -508,10 +508,65 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        
+        <!-- SEO Content Section -->
+        <div class="seo-content-section" style="margin-top:3rem; display:grid; gap:1.5rem;">
 
-    <!-- Footer -->
+          <!-- How to Use -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem; display:flex; align-items:center; gap:0.5rem;">
+              <span style="background:#dbeafe; color:#2563eb; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">HOW TO USE</span>
+            </h2>
+            <p style="color:#475569; line-height:1.7; margin:0;">Enter the resistance (R) and capacitance (C) values. The calculator computes the time constant τ and shows the charging/discharging curve at various time intervals.</p>
+          </div>
+
+          <!-- Formula -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem;">
+              <span style="background:#dcfce7; color:#16a34a; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">FORMULA USED</span>
+            </h2>
+            <div style="background:#f1f5f9; border-radius:8px; padding:1rem 1.2rem; font-family:'Roboto Mono',monospace; color:#1e293b; font-size:0.92rem; line-height:1.8; border-left:4px solid #16a34a;">
+              <div>Time constant: τ = R × C (seconds)</div><div>Voltage at time t: V(t) = Vs(1 - e^(-t/τ))</div><div>63.2% charge at t = τ</div><div>99.3% at t = 5τ</div>
+            </div>
+          </div>
+
+          <!-- Worked Example -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem;">
+              <span style="background:#fef9c3; color:#ca8a04; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">WORKED EXAMPLE</span>
+            </h2>
+            <p style="color:#475569; line-height:1.7; margin:0;">R = 47kΩ, C = 10μF: τ = 47000 × 0.00001 = <strong>0.47 seconds</strong>. Capacitor reaches 63.2% charge at 0.47s and is fully charged at ~2.35s.</p>
+          </div>
+
+          <!-- FAQ -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 1rem 0; font-size:1.25rem;">
+              <span style="background:#fce7f3; color:#db2777; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">FREQUENTLY ASKED QUESTIONS</span>
+            </h2>
+            
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is the RC time constant?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: τ = RC is the time for a capacitor to charge to 63.2% (or discharge to 36.8%) of its final value.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: How many time constants to fully charge?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: Theoretically infinite, but practically after 5τ (99.3%), the capacitor is considered fully charged.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What determines the RC time constant?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: The product of resistance (Ω) and capacitance (F). Larger R or C means slower charging — longer time constant.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: How is RC circuit used practically?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: RC circuits are used in timing circuits, filters, signal conditioning, debouncing switches, and audio equalizers.</p>
+            </div>
+          </div>
+
+        </div>
+        <!-- End SEO Content Section -->
+        </div>
+        </section>
+        <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">

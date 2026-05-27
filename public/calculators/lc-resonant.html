@@ -439,10 +439,65 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        
+        <!-- SEO Content Section -->
+        <div class="seo-content-section" style="margin-top:3rem; display:grid; gap:1.5rem;">
 
-    <!-- Footer -->
+          <!-- How to Use -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem; display:flex; align-items:center; gap:0.5rem;">
+              <span style="background:#dbeafe; color:#2563eb; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">HOW TO USE</span>
+            </h2>
+            <p style="color:#475569; line-height:1.7; margin:0;">Enter the inductance (L) and capacitance (C) values. Click Calculate to find the resonant frequency, quality factor, and bandwidth of the LC circuit.</p>
+          </div>
+
+          <!-- Formula -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem;">
+              <span style="background:#dcfce7; color:#16a34a; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">FORMULA USED</span>
+            </h2>
+            <div style="background:#f1f5f9; border-radius:8px; padding:1rem 1.2rem; font-family:'Roboto Mono',monospace; color:#1e293b; font-size:0.92rem; line-height:1.8; border-left:4px solid #16a34a;">
+              <div>Resonant frequency: fr = 1 ÷ (2π√(L×C))</div><div>Quality factor: Q = (1/R)×√(L/C)</div><div>Bandwidth: BW = fr ÷ Q</div>
+            </div>
+          </div>
+
+          <!-- Worked Example -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 0.8rem 0; font-size:1.25rem;">
+              <span style="background:#fef9c3; color:#ca8a04; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">WORKED EXAMPLE</span>
+            </h2>
+            <p style="color:#475569; line-height:1.7; margin:0;">L = 10mH, C = 100μF: fr = 1 ÷ (2π × √(0.01 × 0.0001)) = <strong>159.2 Hz</strong>.</p>
+          </div>
+
+          <!-- FAQ -->
+          <div style="background:white; padding:1.8rem; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+            <h2 style="color:#1e293b; margin:0 0 1rem 0; font-size:1.25rem;">
+              <span style="background:#fce7f3; color:#db2777; padding:4px 10px; border-radius:6px; font-size:0.85rem; font-weight:600;">FREQUENTLY ASKED QUESTIONS</span>
+            </h2>
+            
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is LC resonance?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: At resonance, inductive reactance equals capacitive reactance (XL = XC). The circuit has minimum impedance in series or maximum in parallel.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is quality factor (Q)?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: Q factor measures the sharpness of resonance. High Q means sharp, selective frequency response. Q = Energy stored ÷ Energy dissipated per cycle.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: What is bandwidth of an LC circuit?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: Bandwidth is the range of frequencies around resonance where power is at least half the maximum: BW = fr ÷ Q.</p>
+            </div>
+            <div class="faq-item" style="margin-bottom:1.2rem; padding:1rem; background:#f8fafc; border-radius:8px; border-left:4px solid #2563eb;">
+              <h4 style="color:#1e293b; margin:0 0 0.4rem 0; font-size:0.95rem;">Q: Where are LC resonant circuits used?</h4>
+              <p style="color:#475569; margin:0; font-size:0.9rem; line-height:1.6;">A: Radio tuning circuits, bandpass filters, oscillators, wireless power transfer, and impedance matching networks.</p>
+            </div>
+          </div>
+
+        </div>
+        <!-- End SEO Content Section -->
+        </div>
+        </section>
+        <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
