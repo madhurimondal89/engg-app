@@ -4983,3 +4983,1078 @@ export function calculateLinePhase(inputs: {
   } catch (e) { errors.push("Error calculating Line/Phase conversion"); }
   return { results, steps, errors };
 }
+
+// =====================================================================
+// TRANSFORMER & EQUIPMENT TESTING CALCULATORS
+// =====================================================================
+
+// 1. IR Test Calculator (Insulation Resistance)
+export function calculateIRTest(inputs: {
+  testVoltage?: CalculationInput;
+  ir1min?: CalculationInput;
+  ir10min?: CalculationInput;
+  ratedVoltage?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const Vtest = inputs.testVoltage ? inputs.testVoltage.value : null;
+    const R1 = inputs.ir1min ? inputs.ir1min.value : null;
+    const R10 = inputs.ir10min ? inputs.ir10min.value : null;
+    const Vrated = inputs.ratedVoltage ? inputs.ratedVoltage.value : null;
+
+    if (R1 === null && R10 === null) {
+      errors.push('Enter at least IR at 1-minute (R1) or IR at 10-minute (R10).');
+      return { results, steps, errors };
+    }
+
+    // IEEE 43 minimum IR: R_min = kV + 1 (MΩ)
+    if (Vrated !== null) {
+      const kV = Vrated / 1000;
+      const Rmin = kV + 1;
+      results.minIR = { value: Rmin, unit: 'MΩ', formatted: `${Rmin.toFixed(1)} MΩ` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Minimum Acceptable IR (IEEE 43)',
+        formula: 'R_min = kV + 1',
+        calculation: `R_min = ${kV.toFixed(2)} + 1 = ${Rmin.toFixed(1)} MΩ`
+      });
+    }
+
+    // PI Calculation
+    if (R1 !== null && R10 !== null) {
+      const PI = R10 / R1;
+      results.pi = { value: PI, unit: '', formatted: PI.toFixed(2) };
+
+      let piCondition = '';
+      if (PI < 1) piCondition = '🔴 DANGEROUS - Wet/Contaminated';
+      else if (PI < 2) piCondition = '🟡 POOR - Questionable';
+      else if (PI < 3) piCondition = '🟢 FAIR - Acceptable';
+      else if (PI < 4) piCondition = '🟢 GOOD';
+      else piCondition = '🟢 EXCELLENT';
+
+      results.piCondition = { value: PI, unit: '', formatted: piCondition };
+
+      steps.push({
+        step: steps.length + 1,
+        description: 'Polarization Index',
+        formula: 'PI = R_10min / R_1min',
+        calculation: `PI = ${R10} / ${R1} = ${PI.toFixed(2)} → ${piCondition}`
+      });
+    }
+
+    // IR Grading at 1 min
+    if (R1 !== null) {
+      results.ir1min = { value: R1, unit: 'MΩ', formatted: `${R1.toFixed(1)} MΩ` };
+      let grade = R1 < 1 ? '🔴 FAIL - Insulation Breakdown Risk' :
+        R1 < 10 ? '🟡 MARGINAL - Monitor Closely' :
+        R1 < 100 ? '🟢 ACCEPTABLE' : '🟢 EXCELLENT';
+      results.ir1minGrade = { value: R1, unit: '', formatted: grade };
+    }
+
+    if (R10 !== null) {
+      results.ir10min = { value: R10, unit: 'MΩ', formatted: `${R10.toFixed(1)} MΩ` };
+    }
+
+    if (Vtest !== null) {
+      results.testVoltage = { value: Vtest, unit: 'V', formatted: `${Vtest} V` };
+    }
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 2. Polarization Index - Transformer specific
+export function calculatePITransformer(inputs: {
+  ir30sec?: CalculationInput;
+  ir1min?: CalculationInput;
+  ir10min?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const R05 = inputs.ir30sec ? inputs.ir30sec.value : null;
+    const R1 = inputs.ir1min ? inputs.ir1min.value : null;
+    const R10 = inputs.ir10min ? inputs.ir10min.value : null;
+
+    if (R1 === null) {
+      errors.push('IR at 1-minute (R1) is required.');
+      return { results, steps, errors };
+    }
+
+    // PI = R10 / R1
+    if (R10 !== null) {
+      const PI = R10 / R1;
+      results.pi = { value: PI, unit: '', formatted: PI.toFixed(2) };
+
+      let piClass = PI < 1 ? 'Dangerous' : PI < 2 ? 'Poor' : PI < 3 ? 'Fair (Acceptable)' : PI < 4 ? 'Good' : 'Excellent';
+      let piAction = PI < 1 ? 'DO NOT ENERGIZE - Immediate drying/repair needed' :
+        PI < 2 ? 'Investigate - Possible moisture/contamination' :
+        PI < 3 ? 'Monitor - Acceptable for service' :
+        'Good condition - Normal operation';
+
+      results.piClass = { value: PI, unit: '', formatted: piClass };
+      results.piAction = { value: PI, unit: '', formatted: piAction };
+
+      steps.push({
+        step: 1,
+        description: 'Polarization Index (PI)',
+        formula: 'PI = R_10min / R_1min',
+        calculation: `PI = ${R10} MΩ / ${R1} MΩ = ${PI.toFixed(2)}`
+      });
+    }
+
+    // DAR = R1 / R0.5 (30 sec)
+    if (R05 !== null) {
+      const DAR = R1 / R05;
+      results.dar = { value: DAR, unit: '', formatted: DAR.toFixed(2) };
+
+      let darClass = DAR < 1.0 ? 'Questionable' : DAR < 1.25 ? 'Poor' : DAR < 1.6 ? 'Fair' : 'Good';
+      results.darClass = { value: DAR, unit: '', formatted: darClass };
+
+      steps.push({
+        step: steps.length + 1,
+        description: 'Dielectric Absorption Ratio (DAR)',
+        formula: 'DAR = R_1min / R_30sec',
+        calculation: `DAR = ${R1} MΩ / ${R05} MΩ = ${DAR.toFixed(2)}`
+      });
+    }
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 3. TTR Calculator (Transformer Turns Ratio)
+export function calculateTTR(inputs: {
+  ttrPrimaryV?: CalculationInput;
+  ttrSecondaryV?: CalculationInput;
+  primaryTurns?: CalculationInput;
+  secondaryTurns?: CalculationInput;
+  ttrMeasuredRatio?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const Vp = inputs.ttrPrimaryV ? inputs.ttrPrimaryV.value : null;
+    const Vs = inputs.ttrSecondaryV ? inputs.ttrSecondaryV.value : null;
+    const Np = inputs.primaryTurns ? inputs.primaryTurns.value : null;
+    const Ns = inputs.secondaryTurns ? inputs.secondaryTurns.value : null;
+    const measuredRatio = inputs.ttrMeasuredRatio ? inputs.ttrMeasuredRatio.value : null;
+
+    let nameplateRatio: number | null = null;
+
+    // Calculate nameplate ratio from voltages
+    if (Vp !== null && Vs !== null && Vs !== 0) {
+      nameplateRatio = Vp / Vs;
+      results.nameplateRatio = { value: nameplateRatio, unit: ':1', formatted: `${nameplateRatio.toFixed(4)} : 1` };
+      steps.push({
+        step: 1,
+        description: 'Nameplate Turns Ratio from Voltage',
+        formula: 'a = Vp / Vs',
+        calculation: `a = ${Vp} / ${Vs} = ${nameplateRatio.toFixed(4)}`
+      });
+    }
+
+    // From turns
+    if (Np !== null && Ns !== null && Ns !== 0) {
+      const turnsRatio = Np / Ns;
+      results.turnsRatio = { value: turnsRatio, unit: ':1', formatted: `${turnsRatio.toFixed(4)} : 1` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Turns Ratio',
+        formula: 'a = Np / Ns',
+        calculation: `a = ${Np} / ${Ns} = ${turnsRatio.toFixed(4)}`
+      });
+      if (nameplateRatio === null) nameplateRatio = turnsRatio;
+    }
+
+    // Ratio error
+    if (nameplateRatio !== null && measuredRatio !== null) {
+      const ratioError = ((measuredRatio - nameplateRatio) / nameplateRatio) * 100;
+      results.measuredRatio = { value: measuredRatio, unit: ':1', formatted: `${measuredRatio.toFixed(4)} : 1` };
+      results.ratioError = { value: ratioError, unit: '%', formatted: `${ratioError.toFixed(3)} %` };
+
+      let status = Math.abs(ratioError) <= 0.5 ? '✅ PASS (≤ 0.5%)' :
+        Math.abs(ratioError) <= 1.0 ? '⚠️ MARGINAL (≤ 1.0%)' : '❌ FAIL (> 1.0%)';
+      results.ttrStatus = { value: ratioError, unit: '', formatted: status };
+
+      steps.push({
+        step: steps.length + 1,
+        description: 'Ratio Error',
+        formula: 'Error% = ((Measured - Nameplate) / Nameplate) × 100',
+        calculation: `Error = ((${measuredRatio} - ${nameplateRatio.toFixed(4)}) / ${nameplateRatio.toFixed(4)}) × 100 = ${ratioError.toFixed(3)}%`
+      });
+    }
+
+    if (Object.keys(results).length === 0) {
+      errors.push('Enter Primary & Secondary Voltage (or Turns) to calculate TTR.');
+    }
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 4. Winding Resistance Temperature Correction (IEC 60076)
+export function calculateWindingResistanceTemp(inputs: {
+  resistance?: CalculationInput;
+  tempMeasured?: CalculationInput;
+  tempReference?: CalculationInput;
+  conductorType?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const Rm = inputs.resistance ? inputs.resistance.value : null;
+    const Tm = inputs.tempMeasured ? inputs.tempMeasured.value : null;
+    const Tr = inputs.tempReference ? inputs.tempReference.value : 75;
+    const condType = inputs.conductorType ? String(inputs.conductorType.value) : 'copper';
+
+    // Temperature constant: Copper = 234.5, Aluminum = 225
+    const K = condType === 'aluminum' ? 225 : 234.5;
+
+    if (Rm === null || Tm === null) {
+      errors.push('Enter Measured Resistance and Measurement Temperature.');
+      return { results, steps, errors };
+    }
+
+    // IEC 60076: R_ref = R_m × (K + T_ref) / (K + T_m)
+    const Rref = Rm * (K + Tr!) / (K + Tm);
+
+    results.measuredResistance = { value: Rm, unit: 'Ω', formatted: `${Rm.toFixed(4)} Ω` };
+    results.measurementTemp = { value: Tm, unit: '°C', formatted: `${Tm} °C` };
+    results.referenceTemp = { value: Tr!, unit: '°C', formatted: `${Tr} °C` };
+    results.correctedResistance = { value: Rref, unit: 'Ω', formatted: `${Rref.toFixed(4)} Ω` };
+    results.correctedMohm = { value: Rref * 1000, unit: 'mΩ', formatted: `${(Rref * 1000).toFixed(2)} mΩ` };
+    results.conductor = { value: 0, unit: '', formatted: condType === 'aluminum' ? 'Aluminum (K=225)' : 'Copper (K=234.5)' };
+
+    steps.push({
+      step: 1,
+      description: 'Temperature Correction (IEC 60076)',
+      formula: 'R_ref = R_m × (K + T_ref) / (K + T_m)',
+      calculation: `R_ref = ${Rm} × (${K} + ${Tr}) / (${K} + ${Tm}) = ${Rref.toFixed(4)} Ω`
+    });
+
+    // Unbalance check (if multiple phases available - show formula)
+    results.balanceNote = { value: 0, unit: '', formatted: 'For 3-phase: Unbalance% = (Max-Min)/Avg × 100 (should be < 2%)' };
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 5. Tan Delta Calculator
+export function calculateTanDelta(inputs: {
+  tanDeltaLossI?: CalculationInput;
+  tanDeltaChargingI?: CalculationInput;
+  capacitance?: CalculationInput;
+  voltage?: CalculationInput;
+  frequency?: CalculationInput;
+  tanDelta?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const Ia = inputs.tanDeltaLossI ? inputs.tanDeltaLossI.value : null;
+    const Ic = inputs.tanDeltaChargingI ? inputs.tanDeltaChargingI.value : null;
+    const C = inputs.capacitance ? inputs.capacitance.value : null; // pF or nF
+    const V = inputs.voltage ? inputs.voltage.value : null;
+    const f = inputs.frequency ? inputs.frequency.value : 50;
+    const tanDeltaInput = inputs.tanDelta ? inputs.tanDelta.value : null;
+
+    // Method 1: From currents
+    if (Ia !== null && Ic !== null && Ic !== 0) {
+      const tanD = Ia / Ic;
+      const delta = Math.atan(tanD) * (180 / Math.PI);
+      const pf = Math.sin(Math.atan(tanD));
+
+      results.tanDelta = { value: tanD, unit: '', formatted: tanD.toFixed(4) };
+      results.lossAngle = { value: delta, unit: '°', formatted: `${delta.toFixed(3)}°` };
+      results.powerFactor = { value: pf, unit: '%', formatted: `${(pf * 100).toFixed(3)}%` };
+
+      steps.push({
+        step: 1,
+        description: 'Tan Delta from Currents',
+        formula: 'tan(δ) = I_active / I_charging',
+        calculation: `tan(δ) = ${Ia} / ${Ic} = ${tanD.toFixed(4)}`
+      });
+
+      let condition = tanD < 0.005 ? '🟢 EXCELLENT (< 0.005)' :
+        tanD < 0.010 ? '🟢 GOOD (< 0.01)' :
+        tanD < 0.020 ? '🟡 MARGINAL (0.01-0.02)' :
+        tanD < 0.050 ? '🟠 POOR (0.02-0.05)' : '🔴 CRITICAL (> 0.05)';
+      results.condition = { value: tanD, unit: '', formatted: condition };
+    }
+
+    // Method 2: Dielectric loss power
+    if (C !== null && V !== null) {
+      const tanD_use = tanDeltaInput !== null ? tanDeltaInput : (Ia !== null && Ic !== null && Ic !== 0 ? Ia / Ic : null);
+      if (tanD_use !== null) {
+        // C in pF → F
+        const C_F = C * 1e-12;
+        const omega = 2 * Math.PI * f!;
+        const Ploss = V * V * omega * C_F * tanD_use;
+
+        results.dielectricLoss = { value: Ploss, unit: 'W', formatted: `${Ploss.toFixed(3)} W` };
+        results.capacitance = { value: C, unit: 'pF', formatted: `${C} pF` };
+
+        steps.push({
+          step: steps.length + 1,
+          description: 'Dielectric Power Loss',
+          formula: 'P = V² × ω × C × tan(δ)',
+          calculation: `P = ${V}² × ${omega.toFixed(1)} × ${C_F.toExponential(3)} × ${tanD_use.toFixed(4)} = ${Ploss.toFixed(3)} W`
+        });
+      }
+    }
+
+    // Direct tan delta input
+    if (tanDeltaInput !== null && Object.keys(results).length === 0) {
+      const delta = Math.atan(tanDeltaInput) * (180 / Math.PI);
+      const pf = Math.sin(Math.atan(tanDeltaInput));
+      results.tanDelta = { value: tanDeltaInput, unit: '', formatted: tanDeltaInput.toFixed(4) };
+      results.lossAngle = { value: delta, unit: '°', formatted: `${delta.toFixed(3)}°` };
+      results.powerFactor = { value: pf, unit: '%', formatted: `${(pf * 100).toFixed(3)}%` };
+
+      let condition = tanDeltaInput < 0.005 ? '🟢 EXCELLENT' :
+        tanDeltaInput < 0.010 ? '🟢 GOOD' :
+        tanDeltaInput < 0.020 ? '🟡 MARGINAL' :
+        tanDeltaInput < 0.050 ? '🟠 POOR' : '🔴 CRITICAL';
+      results.condition = { value: tanDeltaInput, unit: '', formatted: condition };
+    }
+
+    if (Object.keys(results).length === 0) {
+      errors.push('Enter Active Current & Charging Current, or direct Tan Delta value.');
+    }
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 6. Oil BDV Test Calculator
+export function calculateOilBDV(inputs: {
+  bdv1?: CalculationInput;
+  bdv2?: CalculationInput;
+  bdv3?: CalculationInput;
+  bdv4?: CalculationInput;
+  bdv5?: CalculationInput;
+  bdv6?: CalculationInput;
+  transformerRating?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const readings = [
+      inputs.bdv1?.value, inputs.bdv2?.value, inputs.bdv3?.value,
+      inputs.bdv4?.value, inputs.bdv5?.value, inputs.bdv6?.value
+    ].filter(v => v !== undefined && v !== null) as number[];
+
+    if (readings.length === 0) {
+      errors.push('Enter at least one BDV reading (kV).');
+      return { results, steps, errors };
+    }
+
+    const avg = readings.reduce((a, b) => a + b, 0) / readings.length;
+    const minVal = Math.min(...readings);
+    const maxVal = Math.max(...readings);
+
+    results.averageBDV = { value: avg, unit: 'kV', formatted: `${avg.toFixed(1)} kV` };
+    results.minReading = { value: minVal, unit: 'kV', formatted: `${minVal.toFixed(1)} kV` };
+    results.maxReading = { value: maxVal, unit: 'kV', formatted: `${maxVal.toFixed(1)} kV` };
+    results.numberOfReadings = { value: readings.length, unit: '', formatted: `${readings.length} readings` };
+
+    steps.push({
+      step: 1,
+      description: 'Average BDV',
+      formula: 'BDV_avg = ΣBDVi / n',
+      calculation: `BDV_avg = (${readings.join(' + ')}) / ${readings.length} = ${avg.toFixed(1)} kV`
+    });
+
+    // IEC 60156 Pass/Fail criteria
+    // New oil: ≥ 70 kV | Service oil (EHV >170kV): ≥ 50 kV | HV (72.5-170kV): ≥ 40 kV | MV (<72.5kV): ≥ 30 kV
+    const rating = inputs.transformerRating?.value || 0;
+    let minRequired = 30;
+    let voltClass = 'MV (< 72.5 kV)';
+
+    if (rating > 170000) { minRequired = 50; voltClass = 'EHV (> 170 kV)'; }
+    else if (rating > 72500) { minRequired = 40; voltClass = 'HV (72.5-170 kV)'; }
+    else if (rating > 0) { minRequired = 30; voltClass = 'MV (< 72.5 kV)'; }
+
+    results.voltageClass = { value: rating, unit: '', formatted: voltClass };
+    results.minRequired = { value: minRequired, unit: 'kV', formatted: `${minRequired} kV (IEC 60156)` };
+
+    const passed = avg >= minRequired;
+    results.testResult = { value: avg, unit: '', formatted: passed ? `✅ PASS - Oil is acceptable (avg ${avg.toFixed(1)} kV ≥ ${minRequired} kV)` : `❌ FAIL - Oil needs filtration/replacement (avg ${avg.toFixed(1)} kV < ${minRequired} kV)` };
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 7. Oil DGA (Dissolved Gas Analysis) - Duval Triangle Method
+export function calculateOilDGA(inputs: {
+  hydrogen?: CalculationInput;
+  methane?: CalculationInput;
+  ethane?: CalculationInput;
+  ethylene?: CalculationInput;
+  acetylene?: CalculationInput;
+  co?: CalculationInput;
+  co2?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const H2 = inputs.hydrogen?.value || 0;
+    const CH4 = inputs.methane?.value || 0;
+    const C2H6 = inputs.ethane?.value || 0;
+    const C2H4 = inputs.ethylene?.value || 0;
+    const C2H2 = inputs.acetylene?.value || 0;
+    const CO = inputs.co?.value || 0;
+    const CO2 = inputs.co2?.value || 0;
+
+    const hasData = H2 > 0 || CH4 > 0 || C2H6 > 0 || C2H4 > 0 || C2H2 > 0;
+    if (!hasData) {
+      errors.push('Enter at least one gas concentration (ppm).');
+      return { results, steps, errors };
+    }
+
+    // Total Dissolved Combustible Gas (TDCG)
+    const TDCG = H2 + CH4 + C2H6 + C2H4 + C2H2 + CO;
+    results.tdcg = { value: TDCG, unit: 'ppm', formatted: `${TDCG.toFixed(0)} ppm` };
+
+    // TDCG Condition (IEEE C57.104)
+    let tdcgCondition = TDCG < 720 ? 'Condition 1: Normal' :
+      TDCG < 1920 ? 'Condition 2: Monitor - Abnormal' :
+      TDCG < 4630 ? 'Condition 3: High - Investigate' : 'Condition 4: Critical - Immediate Action';
+    results.tdcgCondition = { value: TDCG, unit: '', formatted: tdcgCondition };
+
+    // Gas ratios (Rogers / IEC 60599)
+    if (CH4 > 0) {
+      const R1 = CH4 > 0 ? H2 / CH4 : 0; // H2/CH4
+      const R2 = CH4 > 0 ? C2H2 / C2H2 : 0;
+
+      results.gasH2 = { value: H2, unit: 'ppm', formatted: `${H2} ppm` };
+      results.gasCH4 = { value: CH4, unit: 'ppm', formatted: `${CH4} ppm` };
+      results.gasC2H2 = { value: C2H2, unit: 'ppm', formatted: `${C2H2} ppm` };
+      results.gasC2H4 = { value: C2H4, unit: 'ppm', formatted: `${C2H4} ppm` };
+      results.gasC2H6 = { value: C2H6, unit: 'ppm', formatted: `${C2H6} ppm` };
+    }
+
+    // Duval Triangle (CH4, C2H2, C2H4 percentages)
+    const duvalTotal = CH4 + C2H2 + C2H4;
+    if (duvalTotal > 0) {
+      const pCH4 = (CH4 / duvalTotal) * 100;
+      const pC2H2 = (C2H2 / duvalTotal) * 100;
+      const pC2H4 = (C2H4 / duvalTotal) * 100;
+
+      results.pctCH4 = { value: pCH4, unit: '%', formatted: `${pCH4.toFixed(1)}%` };
+      results.pctC2H2 = { value: pC2H2, unit: '%', formatted: `${pC2H2.toFixed(1)}%` };
+      results.pctC2H4 = { value: pC2H4, unit: '%', formatted: `${pC2H4.toFixed(1)}%` };
+
+      // Duval Triangle fault type zones
+      let faultType = '';
+      if (pC2H2 > 29) faultType = 'D2 - High Energy Discharge (Arcing)';
+      else if (pC2H2 > 4 && pC2H4 > 20) faultType = 'D1 - Low Energy Discharge (PD/Sparking)';
+      else if (pC2H4 > 50 && pC2H2 < 4) faultType = 'T3 - Thermal Fault > 700°C';
+      else if (pC2H4 > 20 && pCH4 > 10 && pC2H2 < 4) faultType = 'T2 - Thermal Fault 300-700°C';
+      else if (pCH4 > 98 && pC2H4 < 4 && pC2H2 < 4) faultType = 'PD - Partial Discharge';
+      else if (pCH4 > 40 && pC2H4 < 20) faultType = 'T1 - Thermal Fault < 300°C';
+      else faultType = 'Normal or Mixed Fault - Further analysis required';
+
+      results.duvalFaultType = { value: 0, unit: '', formatted: faultType };
+
+      steps.push({
+        step: 1,
+        description: 'Duval Triangle Analysis',
+        formula: '%CH4 + %C2H2 + %C2H4 = 100%',
+        calculation: `CH4=${pCH4.toFixed(1)}%, C2H2=${pC2H2.toFixed(1)}%, C2H4=${pC2H4.toFixed(1)}% → ${faultType}`
+      });
+    }
+
+    // CO2/CO ratio (cellulose insulation)
+    if (CO > 0) {
+      const co2co = CO2 / CO;
+      results.co2coRatio = { value: co2co, unit: '', formatted: co2co.toFixed(1) };
+      let paperCondition = co2co < 3 ? '⚠️ Possible cellulose degradation' :
+        co2co < 11 ? '🟢 Normal cellulose aging' : '🟡 Possible overheating of paper';
+      results.paperCondition = { value: co2co, unit: '', formatted: paperCondition };
+
+      steps.push({
+        step: steps.length + 1,
+        description: 'CO2/CO Ratio (Paper Insulation)',
+        formula: 'CO2/CO ratio',
+        calculation: `CO2/CO = ${CO2}/${CO} = ${co2co.toFixed(1)} → ${paperCondition}`
+      });
+    }
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 8. CT Ratio Calculator
+export function calculateCTRatio(inputs: {
+  primaryCurrent?: CalculationInput;
+  secondaryCurrent?: CalculationInput;
+  burden?: CalculationInput;
+  accuracyClass?: CalculationInput;
+  actualCurrent?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const Ip = inputs.primaryCurrent ? inputs.primaryCurrent.value : null;
+    const Is = inputs.secondaryCurrent ? inputs.secondaryCurrent.value : 5; // Standard 5A secondary
+    const burden = inputs.burden ? inputs.burden.value : null;
+    const Iactual = inputs.actualCurrent ? inputs.actualCurrent.value : null;
+
+    if (Ip === null) {
+      errors.push('Enter Primary Current (Ip) to calculate CT Ratio.');
+      return { results, steps, errors };
+    }
+
+    const ratio = Ip / Is!;
+    results.ctRatio = { value: ratio, unit: ':1', formatted: `${Ip} / ${Is} = ${ratio.toFixed(0)} : 1` };
+    results.primaryCurrent = { value: Ip, unit: 'A', formatted: `${Ip} A` };
+    results.secondaryCurrent = { value: Is!, unit: 'A', formatted: `${Is} A` };
+
+    steps.push({
+      step: 1,
+      description: 'CT Ratio',
+      formula: 'n = Ip / Is',
+      calculation: `n = ${Ip} / ${Is} = ${ratio.toFixed(1)}`
+    });
+
+    // Knee point (approximate: 10× rated voltage for class P)
+    // Vk ≈ Is × (Rct + Rb) × 20 (Class PS)
+    if (burden !== null) {
+      const Vburden = Is! * burden;
+      results.burdenVoltage = { value: Vburden, unit: 'V', formatted: `${Vburden.toFixed(2)} V` };
+      results.burden = { value: burden, unit: 'Ω', formatted: `${burden} Ω` };
+      steps.push({
+        step: 2,
+        description: 'Burden Voltage',
+        formula: 'V_burden = Is × Z_burden',
+        calculation: `V_burden = ${Is} × ${burden} = ${Vburden.toFixed(2)} V`
+      });
+    }
+
+    // Secondary current at actual primary
+    if (Iactual !== null) {
+      const IsActual = Iactual / ratio;
+      results.secondaryAtActual = { value: IsActual, unit: 'A', formatted: `${IsActual.toFixed(3)} A` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Secondary Current at Actual Load',
+        formula: 'Is_actual = Ip_actual / n',
+        calculation: `Is = ${Iactual} / ${ratio.toFixed(1)} = ${IsActual.toFixed(3)} A`
+      });
+    }
+
+    // % Loading
+    const pctLoading = (Ip / Ip) * 100; // will be used with nominal
+    if (Iactual !== null) {
+      const loading = (Iactual / Ip) * 100;
+      results.loading = { value: loading, unit: '%', formatted: `${loading.toFixed(1)}% of rated` };
+    }
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 9. Earth Resistance Calculator (Wenner + Single Rod)
+export function calculateEarthResistanceTest(inputs: {
+  soilResistivity?: CalculationInput;
+  electrodeSpacing?: CalculationInput;
+  rodLength?: CalculationInput;
+  rodDiameter?: CalculationInput;
+  method?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const rho = inputs.soilResistivity ? inputs.soilResistivity.value : null; // Ω·m
+    const a = inputs.electrodeSpacing ? inputs.electrodeSpacing.value : null; // m (Wenner)
+    const L = inputs.rodLength ? inputs.rodLength.value : null; // m
+    const d = inputs.rodDiameter ? inputs.rodDiameter.value : null; // mm
+    const method = inputs.method?.value || 'wenner';
+
+    if (rho === null) {
+      errors.push('Enter Soil Resistivity (ρ) in Ω·m.');
+      return { results, steps, errors };
+    }
+
+    results.soilResistivity = { value: rho, unit: 'Ω·m', formatted: `${rho} Ω·m` };
+
+    // Wenner 4-pin method: R = 2πa * ρ / (2πa) = ρ/a (simplified for deep probes)
+    // Full: ρ = 2πa × R (for measuring resistivity)
+    if (a !== null) {
+      // Apparent resistivity (Wenner): ρ_a = 2πa × R → R = ρ/(2πa) × (correction factors)
+      // Simplified: R_earth ≈ ρ / (2π × a)
+      const Rwenner = rho / (2 * Math.PI * a);
+      results.wennerResistance = { value: Rwenner, unit: 'Ω', formatted: `${Rwenner.toFixed(3)} Ω` };
+      results.electrodeSpacing = { value: a, unit: 'm', formatted: `${a} m` };
+      steps.push({
+        step: 1,
+        description: 'Wenner 4-Pin Earth Resistance',
+        formula: 'R = ρ / (2π × a)',
+        calculation: `R = ${rho} / (2π × ${a}) = ${Rwenner.toFixed(3)} Ω`
+      });
+    }
+
+    // Single rod: R = (ρ / 2πL) × [ln(4L/d) - 1]
+    if (L !== null && d !== null) {
+      const d_m = d / 1000; // mm to m
+      if (4 * L / d_m > 1) {
+        const Rrod = (rho / (2 * Math.PI * L)) * (Math.log(4 * L / d_m) - 1);
+        results.singleRodResistance = { value: Rrod, unit: 'Ω', formatted: `${Rrod.toFixed(3)} Ω` };
+        results.rodLength = { value: L, unit: 'm', formatted: `${L} m` };
+        results.rodDiameter = { value: d, unit: 'mm', formatted: `${d} mm` };
+        steps.push({
+          step: steps.length + 1,
+          description: 'Single Rod Earth Resistance (IEEE 80)',
+          formula: 'R = (ρ/2πL) × [ln(4L/d) - 1]',
+          calculation: `R = (${rho}/(2π×${L})) × [ln(${(4 * L / d_m).toFixed(1)}) - 1] = ${Rrod.toFixed(3)} Ω`
+        });
+
+        // Parallel rods for <1Ω target
+        const nRods = Math.ceil(Rrod);
+        results.rodsFor1Ohm = { value: nRods, unit: 'rods', formatted: `~${nRods} parallel rods needed for < 1 Ω` };
+      }
+    }
+
+    // IEC/IEEE standards check
+    const totalR = results.singleRodResistance?.value || results.wennerResistance?.value;
+    if (totalR !== undefined) {
+      let earthClass = totalR < 1 ? '🟢 Excellent (< 1 Ω)' :
+        totalR < 5 ? '🟢 Good (< 5 Ω)' :
+        totalR < 10 ? '🟡 Acceptable (< 10 Ω)' :
+        totalR < 25 ? '🟠 Marginal (< 25 Ω)' : '🔴 Poor - Improve earthing system';
+      results.earthClass = { value: totalR, unit: '', formatted: earthClass };
+    }
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 10. Full Load Current Calculator
+export function calculateFullLoadCurrentTransformer(inputs: {
+  ttrKVA?: CalculationInput;
+  ttrVoltage?: CalculationInput;
+  ttrPhases?: CalculationInput;
+  ttrPF?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const kVA = inputs.ttrKVA ? inputs.ttrKVA.value : null;
+    const V = inputs.ttrVoltage ? inputs.ttrVoltage.value : null;
+    const ph = inputs.ttrPhases ? parseInt(inputs.ttrPhases.value.toString()) : 3;
+    const pf = inputs.ttrPF ? inputs.ttrPF.value : 1.0;
+
+    if (kVA === null || V === null) {
+      errors.push('Enter Rated KVA and Voltage.');
+      return { results, steps, errors };
+    }
+    if (V === 0) {
+      errors.push('Voltage cannot be zero.');
+      return { results, steps, errors };
+    }
+
+    const kVA_val = kVA * 1000; // VA
+
+    let FLC: number;
+    let formula: string;
+    let calc: string;
+
+    if (ph === 1) {
+      FLC = kVA_val / V;
+      formula = 'FLC = kVA × 1000 / V';
+      calc = `FLC = ${kVA_val} / ${V} = ${FLC.toFixed(2)} A`;
+    } else {
+      FLC = kVA_val / (Math.sqrt(3) * V);
+      formula = 'FLC = kVA × 1000 / (√3 × V)';
+      calc = `FLC = ${kVA_val} / (1.732 × ${V}) = ${FLC.toFixed(2)} A`;
+    }
+
+    results.flc = { value: FLC, unit: 'A', formatted: `${FLC.toFixed(2)} A` };
+    results.ratedKVA = { value: kVA, unit: 'kVA', formatted: `${kVA} kVA` };
+    results.voltage = { value: V, unit: 'V', formatted: `${V} V` };
+    results.phases = { value: ph, unit: 'φ', formatted: `${ph}-Phase` };
+
+    steps.push({ step: 1, description: 'Full Load Current', formula, calculation: calc });
+
+    // With power factor → kW
+    const kW = kVA * pf!;
+    results.realPower = { value: kW, unit: 'kW', formatted: `${kW.toFixed(2)} kW` };
+
+    // Protection: 125% of FLC for overcurrent protection
+    results.ocProtection = { value: FLC * 1.25, unit: 'A', formatted: `${(FLC * 1.25).toFixed(2)} A (125% FLC - OC Protection)` };
+
+    // 150% for short-time overload
+    results.overloadCurrent = { value: FLC * 1.5, unit: 'A', formatted: `${(FLC * 1.5).toFixed(2)} A (150% - Short-time overload)` };
+
+    steps.push({
+      step: 2,
+      description: 'Real Power',
+      formula: 'P = kVA × PF',
+      calculation: `P = ${kVA} × ${pf} = ${kW.toFixed(2)} kW`
+    });
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 11. Magnetic Balance Test
+export function calculateMagneticBalance(inputs: {
+  voltageRY?: CalculationInput;
+  voltageYB?: CalculationInput;
+  voltageBR?: CalculationInput;
+  appliedVoltage?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const VRY = inputs.voltageRY ? inputs.voltageRY.value : null;
+    const VYB = inputs.voltageYB ? inputs.voltageYB.value : null;
+    const VBR = inputs.voltageBR ? inputs.voltageBR.value : null;
+    const Vapplied = inputs.appliedVoltage ? inputs.appliedVoltage.value : null;
+
+    if (VRY === null || VYB === null || VBR === null) {
+      errors.push('Enter all three phase voltages (VRY, VYB, VBR).');
+      return { results, steps, errors };
+    }
+
+    results.voltageRY = { value: VRY, unit: 'V', formatted: `${VRY.toFixed(1)} V` };
+    results.voltageYB = { value: VYB, unit: 'V', formatted: `${VYB.toFixed(1)} V` };
+    results.voltageBR = { value: VBR, unit: 'V', formatted: `${VBR.toFixed(1)} V` };
+
+    const avg = (VRY + VYB + VBR) / 3;
+    results.averageVoltage = { value: avg, unit: 'V', formatted: `${avg.toFixed(1)} V` };
+
+    const maxDev = Math.max(
+      Math.abs(VRY - avg), Math.abs(VYB - avg), Math.abs(VBR - avg)
+    );
+    const unbalance = (maxDev / avg) * 100;
+    results.maxDeviation = { value: maxDev, unit: 'V', formatted: `${maxDev.toFixed(2)} V` };
+    results.unbalance = { value: unbalance, unit: '%', formatted: `${unbalance.toFixed(2)}%` };
+
+    steps.push({
+      step: 1,
+      description: 'Voltage Unbalance',
+      formula: 'Unbalance% = (Max deviation from avg / Avg) × 100',
+      calculation: `Unbalance = (${maxDev.toFixed(2)} / ${avg.toFixed(1)}) × 100 = ${unbalance.toFixed(2)}%`
+    });
+
+    // Magnetic balance check: Outer limb voltages should be ~50% of center
+    // Typical: VRY ≈ VBR ≈ 0.5 × VYB for 3-limb core (Y center limb)
+    if (VYB > VRY && VYB > VBR) {
+      const ratioRY = (VRY / VYB) * 100;
+      const ratioBR = (VBR / VYB) * 100;
+      results.outerLimbRatioRY = { value: ratioRY, unit: '%', formatted: `${ratioRY.toFixed(1)}% of center (VYB)` };
+      results.outerLimbRatioBR = { value: ratioBR, unit: '%', formatted: `${ratioBR.toFixed(1)}% of center (VYB)` };
+
+      // For 3-limb: outer limbs ~45-55% is normal
+      let coreCondition = (ratioRY >= 40 && ratioRY <= 60 && ratioBR >= 40 && ratioBR <= 60) ?
+        '🟢 NORMAL - Core symmetry acceptable' :
+        '⚠️ ASYMMETRIC - Possible core/winding issue';
+      results.coreCondition = { value: 0, unit: '', formatted: coreCondition };
+    }
+
+    let balanceStatus = unbalance < 2 ? '✅ PASS - Balanced (< 2%)' :
+      unbalance < 5 ? '⚠️ WARNING - Minor unbalance (2-5%)' :
+      '❌ FAIL - Significant unbalance (> 5%) - Inspect core & windings';
+    results.balanceStatus = { value: unbalance, unit: '', formatted: balanceStatus };
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 12. Vector Group Test
+export function calculateVectorGroup(inputs: {
+  vectorGroup?: CalculationInput;
+  primaryLineVoltage?: CalculationInput;
+  secondaryLineVoltage?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const vg = inputs.vectorGroup ? inputs.vectorGroup.value.toString() : 'Dyn11';
+    const Vp = inputs.primaryLineVoltage ? inputs.primaryLineVoltage.value : null;
+    const Vs = inputs.secondaryLineVoltage ? inputs.secondaryLineVoltage.value : null;
+
+    results.vectorGroup = { value: 0, unit: '', formatted: vg };
+
+    // Parse vector group
+    const phaseDisplacementDeg = (() => {
+      const match = vg.match(/\d+$/);
+      if (match) return parseInt(match[0]) * 30;
+      return 0;
+    })();
+
+    results.phaseDisplacement = { value: phaseDisplacementDeg, unit: '°', formatted: `${phaseDisplacementDeg}° (Clock position ${vg.match(/\d+$/)?.[0] || '0'})` };
+
+    // Connection types
+    const primaryConn = vg[0] === 'D' ? 'Delta (D)' : vg[0] === 'Y' || vg[0] === 'y' ? 'Star (Y)' : vg[0] === 'Z' ? 'Zig-zag (Z)' : 'Unknown';
+    const secChar = vg.replace(/^[DYZdyz]n?/, '')[0] || '';
+    const secondaryConn = secChar === 'd' ? 'Delta' : secChar === 'y' ? 'Star' : secChar === 'z' ? 'Zig-zag' : 'Unknown';
+    const hasNeutral = vg.toLowerCase().includes('n') ? 'Yes (Neutral available)' : 'No';
+
+    results.primaryConnection = { value: 0, unit: '', formatted: primaryConn };
+    results.secondaryConnection = { value: 0, unit: '', formatted: secondaryConn };
+    results.neutralAvailable = { value: 0, unit: '', formatted: hasNeutral };
+
+    // Turns ratio for voltage
+    if (Vp !== null && Vs !== null) {
+      const TTR = Vp / Vs;
+      results.measuredTTR = { value: TTR, unit: ':1', formatted: `${TTR.toFixed(3)} : 1` };
+
+      // For Dyn: V_primary(Line) = V_secondary(Line) × TTR
+      const calcVs = Vp / TTR;
+      results.expectedSecondaryV = { value: calcVs, unit: 'V', formatted: `${calcVs.toFixed(1)} V` };
+
+      steps.push({
+        step: 1,
+        description: 'Vector Group Analysis',
+        formula: `${vg}: Phase displacement = ${phaseDisplacementDeg}°`,
+        calculation: `Primary: ${primaryConn}, Secondary: ${secondaryConn}, TTR = ${TTR.toFixed(3)}`
+      });
+    }
+
+    // Common vector groups explanation
+    const vgInfo: { [key: string]: string } = {
+      'Dyn11': 'Delta Primary / Star Secondary with Neutral, 330° lag (30° lead). Most common in distribution.',
+      'Dyn1': 'Delta Primary / Star Secondary with Neutral, 30° lag.',
+      'Yd11': 'Star Primary / Delta Secondary, 330° lag.',
+      'YNyn0': 'Star-Neutral Primary / Star-Neutral Secondary, 0° displacement.',
+      'Yyn0': 'Star Primary / Star-Neutral Secondary, 0° displacement.',
+      'Dzn0': 'Delta Primary / Zig-zag Secondary, 0° displacement.',
+    };
+
+    const info = vgInfo[vg] || `Phase displacement: ${phaseDisplacementDeg}°`;
+    results.description = { value: 0, unit: '', formatted: info };
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 13. Core Loss Calculator (Iron Loss)
+export function calculateCoreLoss(inputs: {
+  mass?: CalculationInput;
+  frequency?: CalculationInput;
+  fluxDensity?: CalculationInput;
+  steinmetzN?: CalculationInput;
+  eddyConstant?: CalculationInput;
+  hysteresisConstant?: CalculationInput;
+  supplyVoltage?: CalculationInput;
+  noLoadCurrent?: CalculationInput;
+  noLoadPower?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const m = inputs.mass ? inputs.mass.value : null; // kg
+    const f = inputs.frequency ? inputs.frequency.value : 50;
+    const Bm = inputs.fluxDensity ? inputs.fluxDensity.value : null; // Tesla
+    const n = inputs.steinmetzN ? inputs.steinmetzN.value : 1.6; // Steinmetz constant
+    const Ce = inputs.eddyConstant ? inputs.eddyConstant.value : null;
+    const Ch = inputs.hysteresisConstant ? inputs.hysteresisConstant.value : null;
+    const V0 = inputs.supplyVoltage ? inputs.supplyVoltage.value : null;
+    const I0 = inputs.noLoadCurrent ? inputs.noLoadCurrent.value : null;
+    const P0 = inputs.noLoadPower ? inputs.noLoadPower.value : null; // W (measured)
+
+    let hasCalc = false;
+
+    // Method 1: From Steinmetz equation
+    if (Bm !== null && m !== null && Ch !== null) {
+      const Ph = Ch * Math.pow(f!, n!) * Math.pow(Bm, n!) * m;
+      results.hysteresisLoss = { value: Ph, unit: 'W', formatted: `${Ph.toFixed(2)} W` };
+      steps.push({
+        step: 1,
+        description: 'Hysteresis Loss (Steinmetz)',
+        formula: 'Ph = Ch × f^n × Bm^n × m',
+        calculation: `Ph = ${Ch} × ${f}^${n} × ${Bm}^${n} × ${m} = ${Ph.toFixed(2)} W`
+      });
+      hasCalc = true;
+    }
+
+    if (Bm !== null && m !== null && Ce !== null) {
+      const Pe = Ce * Math.pow(f!, 2) * Math.pow(Bm, 2) * m;
+      results.eddyCurrentLoss = { value: Pe, unit: 'W', formatted: `${Pe.toFixed(2)} W` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Eddy Current Loss',
+        formula: 'Pe = Ce × f² × Bm² × m',
+        calculation: `Pe = ${Ce} × ${f}² × ${Bm}² × ${m} = ${Pe.toFixed(2)} W`
+      });
+      hasCalc = true;
+
+      if (results.hysteresisLoss) {
+        const Pcore = results.hysteresisLoss.value + Pe;
+        results.totalCoreLoss = { value: Pcore, unit: 'W', formatted: `${Pcore.toFixed(2)} W` };
+        steps.push({
+          step: steps.length + 1,
+          description: 'Total Core Loss',
+          formula: 'Pi = Ph + Pe',
+          calculation: `Pi = ${results.hysteresisLoss.value.toFixed(2)} + ${Pe.toFixed(2)} = ${Pcore.toFixed(2)} W`
+        });
+      }
+    }
+
+    // Method 2: From open circuit test (direct measurement)
+    if (P0 !== null) {
+      results.measuredCoreLoss = { value: P0, unit: 'W', formatted: `${P0.toFixed(2)} W` };
+      results.coreLossKW = { value: P0 / 1000, unit: 'kW', formatted: `${(P0 / 1000).toFixed(3)} kW` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Core Loss (Open Circuit Test)',
+        formula: 'Pi = P_OC (measured at rated voltage, no load)',
+        calculation: `Pi = ${P0.toFixed(2)} W`
+      });
+      hasCalc = true;
+
+      if (V0 !== null && I0 !== null) {
+        const S0 = V0 * I0;
+        const pf0 = P0 / S0;
+        const Q0 = Math.sqrt(S0 * S0 - P0 * P0);
+        results.noLoadPF = { value: pf0, unit: '', formatted: pf0.toFixed(4) };
+        results.magnetizingVAR = { value: Q0, unit: 'VAR', formatted: `${Q0.toFixed(2)} VAR` };
+        results.noLoadApparent = { value: S0, unit: 'VA', formatted: `${S0.toFixed(2)} VA` };
+        steps.push({
+          step: steps.length + 1,
+          description: 'No-Load Power Factor',
+          formula: 'PF0 = P0 / (V0 × I0)',
+          calculation: `PF0 = ${P0} / (${V0} × ${I0}) = ${pf0.toFixed(4)}`
+        });
+      }
+    }
+
+    if (!hasCalc) {
+      errors.push('Enter (Ch + Ce + Bm + Mass) for Steinmetz method, OR (No-load Power P0) for OC test method.');
+    }
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}
+
+// 14. Copper Loss Calculator (I²R Loss)
+export function calculateCopperLoss(inputs: {
+  primaryCurrent?: CalculationInput;
+  secondaryCurrent?: CalculationInput;
+  primaryResistance?: CalculationInput;
+  secondaryResistance?: CalculationInput;
+  ratedKVA?: CalculationInput;
+  shortCircuitPower?: CalculationInput;
+  loadFactor?: CalculationInput;
+  primaryVoltage?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const Ip = inputs.primaryCurrent ? inputs.primaryCurrent.value : null;
+    const Is = inputs.secondaryCurrent ? inputs.secondaryCurrent.value : null;
+    const Rp = inputs.primaryResistance ? inputs.primaryResistance.value : null;
+    const Rs = inputs.secondaryResistance ? inputs.secondaryResistance.value : null;
+    const kVA = inputs.ratedKVA ? inputs.ratedKVA.value : null;
+    const Psc = inputs.shortCircuitPower ? inputs.shortCircuitPower.value : null; // W (from SC test)
+    const LF = inputs.loadFactor ? inputs.loadFactor.value / 100 : 1.0; // %
+    const Vp = inputs.primaryVoltage ? inputs.primaryVoltage.value : null;
+
+    let hasCalc = false;
+
+    // Method 1: Direct I²R calculation
+    if (Ip !== null && Rp !== null) {
+      const Pcu_p = Ip * Ip * Rp;
+      results.primaryCopperLoss = { value: Pcu_p, unit: 'W', formatted: `${Pcu_p.toFixed(2)} W` };
+      steps.push({
+        step: 1,
+        description: 'Primary Copper Loss',
+        formula: 'Pcu_p = Ip² × Rp',
+        calculation: `Pcu_p = ${Ip}² × ${Rp} = ${Pcu_p.toFixed(2)} W`
+      });
+      hasCalc = true;
+    }
+
+    if (Is !== null && Rs !== null) {
+      const Pcu_s = Is * Is * Rs;
+      results.secondaryCopperLoss = { value: Pcu_s, unit: 'W', formatted: `${Pcu_s.toFixed(2)} W` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Secondary Copper Loss',
+        formula: 'Pcu_s = Is² × Rs',
+        calculation: `Pcu_s = ${Is}² × ${Rs} = ${Pcu_s.toFixed(2)} W`
+      });
+      hasCalc = true;
+    }
+
+    // Total copper loss from both windings
+    if (results.primaryCopperLoss && results.secondaryCopperLoss) {
+      const totalCu = results.primaryCopperLoss.value + results.secondaryCopperLoss.value;
+      results.totalCopperLoss = { value: totalCu, unit: 'W', formatted: `${totalCu.toFixed(2)} W` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Total Full-Load Copper Loss',
+        formula: 'Pcu = Pcu_p + Pcu_s',
+        calculation: `Pcu = ${results.primaryCopperLoss.value.toFixed(2)} + ${results.secondaryCopperLoss.value.toFixed(2)} = ${totalCu.toFixed(2)} W`
+      });
+    }
+
+    // Method 2: From Short Circuit Test (most accurate)
+    if (Psc !== null) {
+      results.scTestCopperLoss = { value: Psc, unit: 'W', formatted: `${Psc.toFixed(2)} W` };
+      results.scTestCopperLossKW = { value: Psc / 1000, unit: 'kW', formatted: `${(Psc / 1000).toFixed(3)} kW` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Full-Load Copper Loss (SC Test)',
+        formula: 'Pcu_FL = P_SC (at rated current)',
+        calculation: `Pcu_FL = ${Psc.toFixed(2)} W`
+      });
+      hasCalc = true;
+
+      // Copper loss at load factor x: Pcu(x) = x² × Pcu_FL
+      const PcuAtLoad = LF! * LF! * Psc;
+      results.copperLossAtLoad = { value: PcuAtLoad, unit: 'W', formatted: `${PcuAtLoad.toFixed(2)} W @ ${(LF! * 100).toFixed(0)}% load` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Copper Loss at Partial Load',
+        formula: 'Pcu(x) = x² × Pcu_FL',
+        calculation: `Pcu(${(LF! * 100).toFixed(0)}%) = ${LF!}² × ${Psc.toFixed(2)} = ${PcuAtLoad.toFixed(2)} W`
+      });
+    }
+
+    // kVA rating efficiency note
+    if (kVA !== null && Psc !== null) {
+      const pctCuLoss = (Psc / (kVA * 1000)) * 100;
+      results.copperLossPct = { value: pctCuLoss, unit: '%', formatted: `${pctCuLoss.toFixed(2)}% of rated kVA` };
+    }
+
+    if (!hasCalc) {
+      errors.push('Enter (Ip + Rp and/or Is + Rs) for direct method, OR Short Circuit Power (Psc) from SC test.');
+    }
+
+  } catch (e) { errors.push('Calculation error'); }
+  return { results, steps, errors };
+}

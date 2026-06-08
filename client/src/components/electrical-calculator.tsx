@@ -117,13 +117,49 @@ import {
   calculateDAR,
   calculateInsulationPowerFactor,
   calculateLinePhase,
+  calculateIRTest,
+  calculatePITransformer,
+  calculateTTR,
+  calculateWindingResistanceTemp,
+  calculateTanDelta,
+  calculateOilBDV,
+  calculateOilDGA,
+  calculateCTRatio,
+  calculateEarthResistanceTest,
+  calculateFullLoadCurrentTransformer,
+  calculateMagneticBalance,
+  calculateVectorGroup,
+  calculateCoreLoss,
+  calculateCopperLoss,
   type CalculationInput,
   type CalculationOutput
 } from '@/lib/calculations';
 import { getHowToUse, getEngineeringExplanation, getPracticalApplications, getFAQs } from '@/lib/calculator-content';
 import { Zap, BarChart3, Edit, Trash2, Save, Share, Printer, AlertTriangle, CheckCircle, ExternalLink, Cpu, Magnet, Activity, Battery, Grid, UtilityPole, Shield, Sun, Scale, ActivitySquare, AlertOctagon, BookOpen } from 'lucide-react';
 
-export default function ElectricalCalculator() {
+class ElecCalcErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
+  constructor(props: any) { super(props); this.state = { hasError: false, error: null }; }
+  static getDerivedStateFromError(error: any) { return { hasError: true, error }; }
+  componentDidCatch(error: any, info: any) { console.error('ElecCalc Error:', error, info); }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{padding: 24, background: '#fee2e2', borderRadius: 8, margin: 16}}>
+          <h3 style={{color: '#dc2626', fontWeight: 'bold'}}>⚠️ Calculator Error (Debug)</h3>
+          <pre style={{fontSize: 12, marginTop: 8, whiteSpace: 'pre-wrap', color: '#7f1d1d'}}>
+            {this.state.error?.toString()}{'\n'}{this.state.error?.stack}
+          </pre>
+          <button onClick={() => this.setState({hasError: false, error: null})} style={{marginTop: 8, padding: '4px 12px', background: '#dc2626', color: 'white', borderRadius: 4}}>
+            Reset
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function ElectricalCalculatorInner() {
   const [activeCalculator, setActiveCalculator] = useState(() => {
     const params = new URLSearchParams(window.location.search);
     return params.get('mode') || 'menu';
@@ -241,7 +277,66 @@ export default function ElectricalCalculator() {
     lineVoltage: { value: '', unit: 'V' },
     lineCurrent: { value: '', unit: 'A' },
     phaseVoltage: { value: '', unit: 'V' },
-    phaseCurrent: { value: '', unit: 'A' }
+    phaseCurrent: { value: '', unit: 'A' },
+    // Transformer & Equipment Testing inputs
+    ir1min: { value: '', unit: 'MΩ' },
+    ir10min: { value: '', unit: 'MΩ' },
+    ir30sec: { value: '', unit: 'MΩ' },
+    measuredRatio: { value: '', unit: '' },
+    tempMeasured: { value: '25', unit: '°C' },
+    tempReference: { value: '75', unit: '°C' },
+    conductorType: { value: 'copper', unit: '' },
+    activeCurrent: { value: '', unit: 'mA' },
+    chargingCurrent: { value: '', unit: 'mA' },
+    tanDelta: { value: '', unit: 'unitless' },
+    bdv1: { value: '', unit: 'kV' },
+    bdv2: { value: '', unit: 'kV' },
+    bdv3: { value: '', unit: 'kV' },
+    bdv4: { value: '', unit: 'kV' },
+    bdv5: { value: '', unit: 'kV' },
+    bdv6: { value: '', unit: 'kV' },
+    transformerRating: { value: '', unit: 'V' },
+    hydrogen: { value: '', unit: 'ppm' },
+    methane: { value: '', unit: 'ppm' },
+    ethane: { value: '', unit: 'ppm' },
+    ethylene: { value: '', unit: 'ppm' },
+    acetylene: { value: '', unit: 'ppm' },
+    co: { value: '', unit: 'ppm' },
+    co2: { value: '', unit: 'ppm' },
+    burden: { value: '', unit: 'Ω' },
+    actualCurrent: { value: '', unit: 'A' },
+    electrodeSpacing: { value: '', unit: 'm' },
+    rodLength: { value: '3', unit: 'm' },
+    rodDiameter: { value: '16', unit: 'mm' },
+    ratedKVA: { value: '', unit: 'kVA' },
+    voltageRY: { value: '', unit: 'V' },
+    voltageYB: { value: '', unit: 'V' },
+    voltageBR: { value: '', unit: 'V' },
+    appliedVoltage: { value: '', unit: 'V' },
+    vectorGroup: { value: 'Dyn11', unit: '' },
+    primaryLineVoltage: { value: '', unit: 'V' },
+    secondaryLineVoltage: { value: '', unit: 'V' },
+    mass: { value: '', unit: 'kg' },
+    fluxDensity: { value: '', unit: 'T' },
+    steinmetzN: { value: '1.6', unit: '' },
+    eddyConstant: { value: '', unit: '' },
+    hysteresisConstant: { value: '', unit: '' },
+    noLoadCurrent: { value: '', unit: 'A' },
+    noLoadPower: { value: '', unit: 'W' },
+    shortCircuitPower: { value: '', unit: 'W' },
+    loadFactor: { value: '100', unit: '%' },
+    // Dedicated fields for TTR Calculator (avoid sharing with other calculators)
+    ttrPrimaryV: { value: '', unit: 'V' },
+    ttrSecondaryV: { value: '', unit: 'V' },
+    ttrMeasuredRatio: { value: '', unit: 'ratio' },
+    // Dedicated fields for Full Load Current Calculator
+    ttrKVA: { value: '', unit: 'kVA' },
+    ttrVoltage: { value: '', unit: 'V' },
+    ttrPhases: { value: '3', unit: '' },
+    ttrPF: { value: '0.85', unit: 'pf' },
+    // Dedicated fields for Tan Delta
+    tanDeltaLossI: { value: '', unit: 'mA' },
+    tanDeltaChargingI: { value: '', unit: 'mA' },
   });
   const [results, setResults] = useState<CalculationOutput | null>(null);
 
@@ -385,6 +480,22 @@ export default function ElectricalCalculator() {
     { id: 'battery', name: 'Battery Life', group: 'Systems', description: 'Estimate battery runtime' },
     { id: 'motor', name: 'Motor Calculator', group: 'Systems', description: 'Motor power and efficiency' },
     { id: 'cable', name: 'Cable Capacity', group: 'Systems', description: 'Cable sizing and ampacity' },
+
+    // Transformer & Equipment Testing
+    { id: 'ir-test', name: 'IR Test Calculator', group: 'Transformer & Equipment Testing', description: 'Insulation Resistance & PI grading' },
+    { id: 'pi-transformer', name: 'Polarization Index (PI)', group: 'Transformer & Equipment Testing', description: 'R10/R1 winding absorption test' },
+    { id: 'ttr-calculator', name: 'TTR Calculator', group: 'Transformer & Equipment Testing', description: 'Turns ratio & ratio error check' },
+    { id: 'winding-resistance-temp', name: 'Winding Resistance Temp Correction', group: 'Transformer & Equipment Testing', description: 'IEC 60076 temperature correction' },
+    { id: 'tan-delta', name: 'Tan Delta (Dissipation Factor)', group: 'Transformer & Equipment Testing', description: 'Insulation deterioration test' },
+    { id: 'oil-bdv', name: 'Oil BDV Test Calculator', group: 'Transformer & Equipment Testing', description: 'IEC 60156 dielectric strength' },
+    { id: 'oil-dga', name: 'Oil DGA Analysis', group: 'Transformer & Equipment Testing', description: 'Dissolved gas Duval Triangle fault' },
+    { id: 'ct-ratio', name: 'CT Ratio Calculator', group: 'Transformer & Equipment Testing', description: 'Current transformer ratio & burden' },
+    { id: 'earth-resistance-test', name: 'Earth Resistance Calculator', group: 'Transformer & Equipment Testing', description: 'Wenner & single rod method' },
+    { id: 'full-load-current-transformer', name: 'Full Load Current Calculator', group: 'Transformer & Equipment Testing', description: '1φ & 3φ transformer FLC' },
+    { id: 'magnetic-balance', name: 'Magnetic Balance Test', group: 'Transformer & Equipment Testing', description: 'Core balance voltage ratio' },
+    { id: 'vector-group', name: 'Vector Group Test', group: 'Transformer & Equipment Testing', description: 'Dyn11, Yd1 phase displacement' },
+    { id: 'core-loss', name: 'Core Loss Calculator', group: 'Transformer & Equipment Testing', description: 'Iron loss: Hysteresis + Eddy current' },
+    { id: 'copper-loss', name: 'Copper Loss Calculator', group: 'Transformer & Equipment Testing', description: 'I²R winding loss calculation' },
   ];
 
   const groups = [
@@ -402,6 +513,7 @@ export default function ElectricalCalculator() {
     { id: 'Insulation & Safety Testing', name: 'Insulation & Safety Testing', icon: ActivitySquare, description: 'Megger, PI, DAR, Dielectric Strength and Leakage' },
     { id: 'Measurement & Units', name: 'Measurement & Units', icon: Scale, description: 'Unit conversion, prefixes, power equivalents' },
     { id: 'Systems', name: 'Systems', icon: Grid, description: 'Power systems, motors, and cabling' },
+    { id: 'Transformer & Equipment Testing', name: 'Transformer & Equipment Testing', icon: AlertOctagon, description: 'IR, PI, TTR, Oil BDV, DGA, CT Ratio, Core/Copper Loss' },
   ];
 
   const externalLinks: { [key: string]: string } = {
@@ -448,7 +560,11 @@ export default function ElectricalCalculator() {
     'freq-to-rpm', 'rpm-to-freq', 'electrical-units', 'phase-converter', 'power-loss',
     'insulation-resistance', 'min-insulation-resistance', 'megger-test-voltage', 'insulation-test-duration',
     'leakage-current', 'dielectric-strength', 'dielectric-loss', 'polarization-index', 'dar-calculator',
-    'insulation-power-factor', 'line-phase-calculator'
+    'insulation-power-factor', 'line-phase-calculator',
+    // Transformer & Equipment Testing
+    'ir-test', 'pi-transformer', 'ttr-calculator', 'winding-resistance-temp', 'tan-delta',
+    'oil-bdv', 'oil-dga', 'ct-ratio', 'earth-resistance-test', 'full-load-current-transformer',
+    'magnetic-balance', 'vector-group', 'core-loss', 'copper-loss'
   ];
 
   // Sync state with URL and clear previous results
@@ -763,6 +879,21 @@ export default function ElectricalCalculator() {
       case 'dar-calculator': result = calculateDAR(calculationInputs); break;
       case 'insulation-power-factor': result = calculateInsulationPowerFactor(calculationInputs); break;
       case 'line-phase-calculator': result = calculateLinePhase(calculationInputs); break;
+      // Transformer & Equipment Testing
+      case 'ir-test': result = calculateIRTest(calculationInputs); break;
+      case 'pi-transformer': result = calculatePITransformer(calculationInputs); break;
+      case 'ttr-calculator': result = calculateTTR(calculationInputs); break;
+      case 'winding-resistance-temp': result = calculateWindingResistanceTemp(calculationInputs); break;
+      case 'tan-delta': result = calculateTanDelta(calculationInputs); break;
+      case 'oil-bdv': result = calculateOilBDV(calculationInputs); break;
+      case 'oil-dga': result = calculateOilDGA(calculationInputs); break;
+      case 'ct-ratio': result = calculateCTRatio(calculationInputs); break;
+      case 'earth-resistance-test': result = calculateEarthResistanceTest(calculationInputs); break;
+      case 'full-load-current-transformer': result = calculateFullLoadCurrentTransformer(calculationInputs); break;
+      case 'magnetic-balance': result = calculateMagneticBalance(calculationInputs); break;
+      case 'vector-group': result = calculateVectorGroup(calculationInputs); break;
+      case 'core-loss': result = calculateCoreLoss(calculationInputs); break;
+      case 'copper-loss': result = calculateCopperLoss(calculationInputs); break;
       default:
         // Use default error set prior
         break;
@@ -884,7 +1015,66 @@ export default function ElectricalCalculator() {
       lineVoltage: { value: '', unit: 'V' },
       lineCurrent: { value: '', unit: 'A' },
       phaseVoltage: { value: '', unit: 'V' },
-      phaseCurrent: { value: '', unit: 'A' }
+      phaseCurrent: { value: '', unit: 'A' },
+      // Transformer & Equipment Testing inputs
+      ir1min: { value: '', unit: 'MΩ' },
+      ir10min: { value: '', unit: 'MΩ' },
+      ir30sec: { value: '', unit: 'MΩ' },
+      measuredRatio: { value: '', unit: '' },
+      tempMeasured: { value: '25', unit: '°C' },
+      tempReference: { value: '75', unit: '°C' },
+      conductorType: { value: 'copper', unit: '' },
+      activeCurrent: { value: '', unit: 'mA' },
+      chargingCurrent: { value: '', unit: 'mA' },
+      tanDelta: { value: '', unit: 'unitless' },
+      bdv1: { value: '', unit: 'kV' },
+      bdv2: { value: '', unit: 'kV' },
+      bdv3: { value: '', unit: 'kV' },
+      bdv4: { value: '', unit: 'kV' },
+      bdv5: { value: '', unit: 'kV' },
+      bdv6: { value: '', unit: 'kV' },
+      transformerRating: { value: '', unit: 'V' },
+      hydrogen: { value: '', unit: 'ppm' },
+      methane: { value: '', unit: 'ppm' },
+      ethane: { value: '', unit: 'ppm' },
+      ethylene: { value: '', unit: 'ppm' },
+      acetylene: { value: '', unit: 'ppm' },
+      co: { value: '', unit: 'ppm' },
+      co2: { value: '', unit: 'ppm' },
+      burden: { value: '', unit: 'Ω' },
+      actualCurrent: { value: '', unit: 'A' },
+      electrodeSpacing: { value: '', unit: 'm' },
+      rodLength: { value: '3', unit: 'm' },
+      rodDiameter: { value: '16', unit: 'mm' },
+      ratedKVA: { value: '', unit: 'kVA' },
+      voltageRY: { value: '', unit: 'V' },
+      voltageYB: { value: '', unit: 'V' },
+      voltageBR: { value: '', unit: 'V' },
+      appliedVoltage: { value: '', unit: 'V' },
+      vectorGroup: { value: 'Dyn11', unit: '' },
+      primaryLineVoltage: { value: '', unit: 'V' },
+      secondaryLineVoltage: { value: '', unit: 'V' },
+      mass: { value: '', unit: 'kg' },
+      fluxDensity: { value: '', unit: 'T' },
+      steinmetzN: { value: '1.6', unit: '' },
+      eddyConstant: { value: '', unit: '' },
+      hysteresisConstant: { value: '', unit: '' },
+      noLoadCurrent: { value: '', unit: 'A' },
+      noLoadPower: { value: '', unit: 'W' },
+      shortCircuitPower: { value: '', unit: 'W' },
+      loadFactor: { value: '100', unit: '%' },
+      // Dedicated TTR Calculator fields
+      ttrPrimaryV: { value: '', unit: 'V' },
+      ttrSecondaryV: { value: '', unit: 'V' },
+      ttrMeasuredRatio: { value: '', unit: 'ratio' },
+      // Dedicated Full Load Current fields
+      ttrKVA: { value: '', unit: 'kVA' },
+      ttrVoltage: { value: '', unit: 'V' },
+      ttrPhases: { value: '3', unit: '' },
+      ttrPF: { value: '0.85', unit: 'pf' },
+      // Dedicated Tan Delta fields
+      tanDeltaLossI: { value: '', unit: 'mA' },
+      tanDeltaChargingI: { value: '', unit: 'mA' },
     });
     setResults(null);
   };
@@ -977,6 +1167,20 @@ export default function ElectricalCalculator() {
       case 'dar-calculator': return { name: 'Dielectric Absorption Ratio (DAR)', formula: 'DAR = R_1min / R_30sec', description: 'Shorter 60-second version of an absorption test primarily used for smaller equipment.' };
       case 'insulation-power-factor': return { name: 'Insulation Power Factor', formula: 'PF = sin(δ)', description: 'Transforms directly from measured tan(δ) Dissipation Factors into fundamental Power Factor percentages.' };
       case 'line-phase-calculator': return { name: 'Line to Phase Conversion', formula: 'Star: V_L = V_ph√3, I_L = I_ph  |  Delta: V_L = V_ph, I_L = I_ph√3', description: 'Converts Voltages and Currents between Line and Phase parameters for 3-Phase Systems.' };
+      case 'ir-test': return { name: 'IR Test (IEEE 43)', formula: 'R_min = kV + 1 MΩ | PI = R_10min / R_1min', description: 'Megger insulation resistance test. Winding-to-earth and winding-to-winding IR measured at DC test voltage.' };
+      case 'pi-transformer': return { name: 'Polarization Index (PI)', formula: 'PI = R_10min / R_1min | DAR = R_1min / R_30sec', description: 'PI > 2: Acceptable. PI < 1: Dangerous. Used to detect moisture and contamination in transformer windings.' };
+      case 'ttr-calculator': return { name: 'Transformer Turns Ratio (TTR)', formula: 'a = Vp/Vs = Np/Ns | Error% = (Measured-Nameplate)/Nameplate × 100', description: 'Verifies transformer turns ratio matches nameplate. Ratio error should be < 0.5% (ANSI C57.12).' };
+      case 'winding-resistance-temp': return { name: 'Winding Resistance Temp Correction (IEC 60076)', formula: 'R_ref = R_m × (K + T_ref) / (K + T_m)', description: 'Corrects measured winding resistance to reference temperature. K=234.5 for copper, K=225 for aluminum.' };
+      case 'tan-delta': return { name: 'Tan Delta (Dissipation Factor)', formula: 'tan(δ) = I_active / I_charging | P = V² × ω × C × tan(δ)', description: 'Measures insulation quality. tan(δ) < 0.005 is excellent. Higher values indicate insulation deterioration.' };
+      case 'oil-bdv': return { name: 'Oil BDV Test (IEC 60156)', formula: 'BDV_avg = ΣBDVi / n', description: 'Transformer oil dielectric breakdown voltage. MV: ≥30kV, HV: ≥40kV, EHV: ≥50kV per IEC 60156.' };
+      case 'oil-dga': return { name: 'Oil DGA - Duval Triangle', formula: 'TDCG = H2 + CH4 + C2H6 + C2H4 + C2H2 + CO', description: 'Dissolved gas analysis. Duval Triangle uses %CH4, %C2H2, %C2H4 to identify fault type (D1, D2, T1-T3, PD).' };
+      case 'ct-ratio': return { name: 'CT Ratio', formula: 'n = Ip / Is | V_burden = Is × Z_burden', description: 'Current transformer ratio and burden calculation. Standard secondary: 5A or 1A.' };
+      case 'earth-resistance-test': return { name: 'Earth Resistance (IEEE 80)', formula: 'Wenner: R = ρ/(2πa) | Rod: R = (ρ/2πL)×[ln(4L/d)-1]', description: 'Calculates soil earth resistance. Target: < 1Ω (substations), < 5Ω (general earthing).' };
+      case 'full-load-current-transformer': return { name: 'Full Load Current', formula: '3φ: FLC = kVA×1000/(√3×V) | 1φ: FLC = kVA×1000/V', description: 'Transformer full load current for protection relay setting and overcurrent protection sizing.' };
+      case 'magnetic-balance': return { name: 'Magnetic Balance Test', formula: 'Unbalance% = (Max dev / Avg) × 100', description: 'Checks core symmetry. For 3-limb core: outer limbs (VRY, VBR) should be ~45-55% of center limb (VYB).' };
+      case 'vector-group': return { name: 'Vector Group Test', formula: 'Phase displacement = Clock number × 30°', description: 'Verifies transformer vector group (Dyn11, Yd1 etc.). Dyn11: 330° phase displacement. Critical for parallel operation.' };
+      case 'core-loss': return { name: 'Core Loss (Iron Loss)', formula: 'Ph = Ch×f^n×Bm^n×m | Pe = Ce×f²×Bm²×m | Pi = Ph + Pe', description: 'Steinmetz equation for hysteresis and eddy current loss. Or directly from open circuit test (P_OC).' };
+      case 'copper-loss': return { name: 'Copper Loss (I²R Loss)', formula: 'Pcu = Ip²×Rp + Is²×Rs | Pcu(x) = x²×Pcu_FL', description: 'Load-dependent winding I²R losses. From short circuit test: Pcu_FL = P_SC. At partial load: scales by square of load factor.' };
       default: return null;
     }
   };
@@ -989,6 +1193,23 @@ export default function ElectricalCalculator() {
   const currentGroup = groups.find(g => g.id === activeGroupId);
   const currentCalculator = calculatorTypes.find(c => c.id === activeCalculator);
   const parentGroup = currentCalculator ? groups.find(g => g.id === currentCalculator.group) : null;
+
+  // --- Safety guard: if calculator not found and not a group view, return to menu ---
+  if (!isGroupView && activeCalculator !== 'menu' && !currentCalculator) {
+    // Unknown calculator ID — show menu instead of blank
+    return (
+      <Card className="mb-6">
+        <CardContent className="p-6">
+          <div className="text-center py-8 text-gray-500">
+            <p className="mb-4">Calculator not found. Please select from the menu.</p>
+            <Button onClick={() => setActiveCalculator('menu')} className="bg-eng-blue text-white">
+              <Grid className="h-4 w-4 mr-2" /> Back to Menu
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   // --- Render: Main Menu (Level 0) ---
   if (activeCalculator === 'menu') return (
@@ -3223,6 +3444,388 @@ export default function ElectricalCalculator() {
                       )}
                     </>
                   )}
+
+                  {/* ============ TRANSFORMER & EQUIPMENT TESTING INPUTS ============ */}
+
+                  {/* IR Test Calculator */}
+                  {['ir-test'].includes(activeCalculator) && (
+                    <>
+                      <div><Label className="text-sm font-medium text-gray-700">Rated Voltage (V) - for min IR calculation</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 11000" value={inputs.ratedVoltage.value} onChange={(e) => handleInputChange('ratedVoltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ratedVoltage.unit} onValueChange={(v) => handleUnitChange('ratedVoltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Test Voltage</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 5000" value={inputs.testVoltage.value} onChange={(e) => handleInputChange('testVoltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.testVoltage.unit} onValueChange={(v) => handleUnitChange('testVoltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">IR at 1 Minute (MΩ)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 500" value={inputs.ir1min.value} onChange={(e) => handleInputChange('ir1min', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ir1min.unit} onValueChange={(v) => handleUnitChange('ir1min', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="MΩ">MΩ</SelectItem><SelectItem value="GΩ">GΩ</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">IR at 10 Minutes (MΩ) - Optional for PI</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 1200" value={inputs.ir10min.value} onChange={(e) => handleInputChange('ir10min', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ir10min.unit} onValueChange={(v) => handleUnitChange('ir10min', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="MΩ">MΩ</SelectItem><SelectItem value="GΩ">GΩ</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* PI Transformer */}
+                  {['pi-transformer'].includes(activeCalculator) && (
+                    <>
+                      <div><Label className="text-sm font-medium text-gray-700">IR at 30 Seconds (MΩ) - Optional for DAR</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 100" value={inputs.ir30sec.value} onChange={(e) => handleInputChange('ir30sec', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ir30sec.unit} onValueChange={(v) => handleUnitChange('ir30sec', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="MΩ">MΩ</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">IR at 1 Minute (MΩ) - Required</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 200" value={inputs.ir1min.value} onChange={(e) => handleInputChange('ir1min', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ir1min.unit} onValueChange={(v) => handleUnitChange('ir1min', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="MΩ">MΩ</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">IR at 10 Minutes (MΩ) - For PI</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 500" value={inputs.ir10min.value} onChange={(e) => handleInputChange('ir10min', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ir10min.unit} onValueChange={(v) => handleUnitChange('ir10min', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="MΩ">MΩ</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* TTR Calculator */}
+                  {['ttr-calculator'].includes(activeCalculator) && (
+                    <>
+                      <div><Label className="text-sm font-medium text-gray-700">Primary Voltage (Vp)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 11000" value={inputs.ttrPrimaryV.value} onChange={(e) => handleInputChange('ttrPrimaryV', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ttrPrimaryV.unit} onValueChange={(v) => handleUnitChange('ttrPrimaryV', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Secondary Voltage (Vs)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 433" value={inputs.ttrSecondaryV.value} onChange={(e) => handleInputChange('ttrSecondaryV', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ttrSecondaryV.unit} onValueChange={(v) => handleUnitChange('ttrSecondaryV', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Measured TTR (from instrument) - Optional</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 25.35" value={inputs.ttrMeasuredRatio.value} onChange={(e) => handleInputChange('ttrMeasuredRatio', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ttrMeasuredRatio.unit || 'ratio'} onValueChange={(v) => handleUnitChange('ttrMeasuredRatio', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="ratio">:1</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* Winding Resistance Temp Correction */}
+                  {['winding-resistance-temp'].includes(activeCalculator) && (
+                    <>
+                      <div><Label className="text-sm font-medium text-gray-700">Measured Resistance (Ω or mΩ)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 0.5" value={inputs.resistance.value} onChange={(e) => handleInputChange('resistance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.resistance.unit} onValueChange={(v) => handleUnitChange('resistance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ω">Ω</SelectItem><SelectItem value="mΩ">mΩ</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Measurement Temperature (°C)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 25" value={inputs.tempMeasured.value} onChange={(e) => handleInputChange('tempMeasured', e.target.value)} className="flex-1" />
+                          <Select value={inputs.tempMeasured.unit} onValueChange={(v) => handleUnitChange('tempMeasured', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="°C">°C</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Reference Temperature (°C) - Default 75°C</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="75" value={inputs.tempReference.value} onChange={(e) => handleInputChange('tempReference', e.target.value)} className="flex-1" />
+                          <Select value={inputs.tempReference.unit} onValueChange={(v) => handleUnitChange('tempReference', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="°C">°C</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Conductor Type</Label>
+                        <Select value={inputs.conductorType.value} onValueChange={(v) => handleInputChange('conductorType', v)}>
+                          <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                          <SelectContent><SelectItem value="copper">Copper (K=234.5)</SelectItem><SelectItem value="aluminum">Aluminum (K=225)</SelectItem></SelectContent>
+                        </Select></div>
+                    </>
+                  )}
+
+
+                  {/* Tan Delta */}
+                  {['tan-delta'].includes(activeCalculator) && (
+                    <>
+                      <div><Label className="text-sm font-medium text-gray-700">Active (Loss) Current (mA)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 2.5" value={inputs.tanDeltaLossI?.value ?? ''} onChange={(e) => handleInputChange('tanDeltaLossI', e.target.value)} className="flex-1" />
+                          <Select value={inputs.tanDeltaLossI?.unit ?? 'mA'} onValueChange={(v) => handleUnitChange('tanDeltaLossI', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="mA">mA</SelectItem><SelectItem value="μA">μA</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Charging (Capacitive) Current (mA)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 500" value={inputs.tanDeltaChargingI?.value ?? ''} onChange={(e) => handleInputChange('tanDeltaChargingI', e.target.value)} className="flex-1" />
+                          <Select value={inputs.tanDeltaChargingI?.unit ?? 'mA'} onValueChange={(v) => handleUnitChange('tanDeltaChargingI', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="mA">mA</SelectItem><SelectItem value="μA">μA</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">OR Direct Tan Delta Value (optional)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 0.005" value={inputs.tanDelta?.value ?? ''} onChange={(e) => handleInputChange('tanDelta', e.target.value)} className="flex-1" />
+                          <Select value={inputs.tanDelta?.unit ?? 'unitless'} onValueChange={(v) => handleUnitChange('tanDelta', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="unitless">unitless</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* Oil BDV */}
+                  {['oil-bdv'].includes(activeCalculator) && (
+                    <>
+                      <div className="bg-blue-50 p-3 rounded-lg mb-2"><p className="text-sm text-blue-800">Enter up to 6 BDV readings (kV). Average will be calculated per IEC 60156.</p></div>
+                      {(['bdv1','bdv2','bdv3','bdv4','bdv5','bdv6'] as const).map((field, i) => (
+                        <div key={field}><Label className="text-sm font-medium text-gray-700">Reading {i+1} (kV){i === 0 ? ' - Required' : ' - Optional'}</Label>
+                          <div className="flex mt-2 space-x-2">
+                            <Input type="number" placeholder={`e.g. ${50+i*2}`} value={inputs[field]?.value ?? ''} onChange={(e) => handleInputChange(field, e.target.value)} className="flex-1" />
+                            <Select value={inputs[field]?.unit ?? 'kV'} onValueChange={(v) => handleUnitChange(field, v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                          </div></div>
+                      ))}
+                      <div><Label className="text-sm font-medium text-gray-700">Transformer Rated Voltage (V) - For IEC Class</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 11000" value={inputs.transformerRating?.value ?? ''} onChange={(e) => handleInputChange('transformerRating', e.target.value)} className="flex-1" />
+                          <Select value={inputs.transformerRating?.unit ?? 'V'} onValueChange={(v) => handleUnitChange('transformerRating', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* Oil DGA */}
+                  {['oil-dga'].includes(activeCalculator) && (
+                    <>
+                      <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg mb-2"><p className="text-sm text-amber-800 font-medium">Enter gas concentrations in ppm from oil lab report. Leave unused gases as 0 or blank.</p></div>
+                      {[
+                        { field: 'hydrogen', label: 'Hydrogen (H₂)', placeholder: '0' },
+                        { field: 'methane', label: 'Methane (CH₄)', placeholder: '0' },
+                        { field: 'ethane', label: 'Ethane (C₂H₆)', placeholder: '0' },
+                        { field: 'ethylene', label: 'Ethylene (C₂H₄)', placeholder: '0' },
+                        { field: 'acetylene', label: 'Acetylene (C₂H₂)', placeholder: '0' },
+                        { field: 'co', label: 'Carbon Monoxide (CO)', placeholder: '0' },
+                        { field: 'co2', label: 'Carbon Dioxide (CO₂)', placeholder: '0' },
+                      ].map(({ field, label, placeholder }) => (
+                        <div key={field}><Label className="text-sm font-medium text-gray-700">{label} (ppm)</Label>
+                          <div className="flex mt-2 space-x-2">
+                             <Input type="number" placeholder={placeholder} value={(inputs as any)[field]?.value ?? ''} onChange={(e) => handleInputChange(field, e.target.value)} className="flex-1" />
+                             <Select value={(inputs as any)[field]?.unit ?? 'ppm'} onValueChange={(v) => handleUnitChange(field, v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="ppm">ppm</SelectItem></SelectContent></Select>
+                          </div></div>
+                      ))}
+                     </>
+                  )}
+
+                  {/* CT Ratio */}
+
+
+                  {['ct-ratio'].includes(activeCalculator) && (
+                    <>
+                      <div><Label className="text-sm font-medium text-gray-700">Primary Current (Ip) - Full Load</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 400" value={inputs.primaryCurrent.value} onChange={(e) => handleInputChange('primaryCurrent', e.target.value)} className="flex-1" />
+                          <Select value={inputs.primaryCurrent.unit} onValueChange={(v) => handleUnitChange('primaryCurrent', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="A">A</SelectItem><SelectItem value="kA">kA</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Secondary Current (Is) - Standard 5A or 1A</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="5" value={inputs.secondaryCurrent.value} onChange={(e) => handleInputChange('secondaryCurrent', e.target.value)} className="flex-1" />
+                          <Select value={inputs.secondaryCurrent.unit} onValueChange={(v) => handleUnitChange('secondaryCurrent', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="A">A</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Burden (Ω) - Optional</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 5" value={inputs.burden.value} onChange={(e) => handleInputChange('burden', e.target.value)} className="flex-1" />
+                          <Select value={inputs.burden.unit} onValueChange={(v) => handleUnitChange('burden', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ω">Ω</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Actual Primary Current (Optional)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 350" value={inputs.actualCurrent.value} onChange={(e) => handleInputChange('actualCurrent', e.target.value)} className="flex-1" />
+                          <Select value={inputs.actualCurrent.unit} onValueChange={(v) => handleUnitChange('actualCurrent', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="A">A</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* Earth Resistance Test */}
+                  {['earth-resistance-test'].includes(activeCalculator) && (
+                    <>
+                      <div><Label className="text-sm font-medium text-gray-700">Soil Resistivity (ρ) in Ω·m</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 100" value={inputs.soilResistivity.value} onChange={(e) => handleInputChange('soilResistivity', e.target.value)} className="flex-1" />
+                          <Select value={inputs.soilResistivity.unit} onValueChange={(v) => handleUnitChange('soilResistivity', v)}><SelectTrigger className="w-24"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ω·m">Ω·m</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div className="bg-blue-50 p-2 rounded text-sm text-blue-700 font-medium">Wenner 4-Pin Method</div>
+                      <div><Label className="text-sm font-medium text-gray-700">Electrode Spacing (a) in m</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 5" value={inputs.electrodeSpacing.value} onChange={(e) => handleInputChange('electrodeSpacing', e.target.value)} className="flex-1" />
+                          <Select value={inputs.electrodeSpacing.unit} onValueChange={(v) => handleUnitChange('electrodeSpacing', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="m">m</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div className="bg-blue-50 p-2 rounded text-sm text-blue-700 font-medium">Single Rod Method</div>
+                      <div><Label className="text-sm font-medium text-gray-700">Rod Length (L)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="3" value={inputs.rodLength.value} onChange={(e) => handleInputChange('rodLength', e.target.value)} className="flex-1" />
+                          <Select value={inputs.rodLength.unit} onValueChange={(v) => handleUnitChange('rodLength', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="m">m</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Rod Diameter (d)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="16" value={inputs.rodDiameter.value} onChange={(e) => handleInputChange('rodDiameter', e.target.value)} className="flex-1" />
+                          <Select value={inputs.rodDiameter.unit} onValueChange={(v) => handleUnitChange('rodDiameter', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="mm">mm</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* Full Load Current Transformer */}
+                  {['full-load-current-transformer'].includes(activeCalculator) && (
+                    <>
+                      <div><Label className="text-sm font-medium text-gray-700">Rated KVA</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 1000" value={inputs.ttrKVA.value} onChange={(e) => handleInputChange('ttrKVA', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ttrKVA.unit} onValueChange={(v) => handleUnitChange('ttrKVA', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="kVA">kVA</SelectItem><SelectItem value="MVA">MVA</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Voltage (V or kV)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 433" value={inputs.ttrVoltage.value} onChange={(e) => handleInputChange('ttrVoltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ttrVoltage.unit} onValueChange={(v) => handleUnitChange('ttrVoltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Phases</Label>
+                        <Select value={inputs.ttrPhases.value} onValueChange={(v) => handleInputChange('ttrPhases', v)}>
+                          <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                          <SelectContent><SelectItem value="3">3-Phase</SelectItem><SelectItem value="1">1-Phase</SelectItem></SelectContent>
+                        </Select></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Power Factor (for kW calculation)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="0.85" value={inputs.ttrPF.value} onChange={(e) => handleInputChange('ttrPF', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ttrPF.unit || 'pf'} onValueChange={(v) => handleUnitChange('ttrPF', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="pf">unitless</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* Magnetic Balance Test */}
+                  {['magnetic-balance'].includes(activeCalculator) && (
+                    <>
+                      <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg mb-2"><p className="text-sm text-amber-800">Apply 1-phase supply to center limb (Y). Measure induced voltages on all three phases.</p></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Voltage R-Y (VRY)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 110" value={inputs.voltageRY.value} onChange={(e) => handleInputChange('voltageRY', e.target.value)} className="flex-1" />
+                          <Select value={inputs.voltageRY.unit} onValueChange={(v) => handleUnitChange('voltageRY', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Voltage Y-B (VYB) - Center Limb</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 230" value={inputs.voltageYB.value} onChange={(e) => handleInputChange('voltageYB', e.target.value)} className="flex-1" />
+                          <Select value={inputs.voltageYB.unit} onValueChange={(v) => handleUnitChange('voltageYB', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Voltage B-R (VBR)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 108" value={inputs.voltageBR.value} onChange={(e) => handleInputChange('voltageBR', e.target.value)} className="flex-1" />
+                          <Select value={inputs.voltageBR.unit} onValueChange={(v) => handleUnitChange('voltageBR', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* Vector Group Test */}
+                  {['vector-group'].includes(activeCalculator) && (
+                    <>
+                      <div><Label className="text-sm font-medium text-gray-700">Vector Group</Label>
+                        <Select value={inputs.vectorGroup.value} onValueChange={(v) => handleInputChange('vectorGroup', v)}>
+                          <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Dyn11">Dyn11 (Most common distribution)</SelectItem>
+                            <SelectItem value="Dyn1">Dyn1</SelectItem>
+                            <SelectItem value="Yd11">Yd11</SelectItem>
+                            <SelectItem value="YNyn0">YNyn0</SelectItem>
+                            <SelectItem value="Yyn0">Yyn0</SelectItem>
+                            <SelectItem value="Dzn0">Dzn0</SelectItem>
+                            <SelectItem value="Dyn5">Dyn5</SelectItem>
+                          </SelectContent>
+                        </Select></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Primary Line Voltage (V) - Optional</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 11000" value={inputs.primaryLineVoltage.value} onChange={(e) => handleInputChange('primaryLineVoltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.primaryLineVoltage.unit} onValueChange={(v) => handleUnitChange('primaryLineVoltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Secondary Line Voltage (V) - Optional</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 433" value={inputs.secondaryLineVoltage.value} onChange={(e) => handleInputChange('secondaryLineVoltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.secondaryLineVoltage.unit} onValueChange={(v) => handleUnitChange('secondaryLineVoltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* Core Loss Calculator */}
+                  {['core-loss'].includes(activeCalculator) && (
+                    <>
+                      <div className="bg-blue-50 p-3 rounded-lg mb-2"><p className="text-sm text-blue-800 font-medium">Method 1: Steinmetz (enter Ch + Ce + Bm + Mass) | Method 2: OC Test (enter No-Load Power P₀)</p></div>
+                      <div className="bg-gray-50 p-2 rounded text-sm font-medium text-gray-600">Method 2: Open Circuit Test (Recommended)</div>
+                      <div><Label className="text-sm font-medium text-gray-700">No-Load Power P₀ (W) - Measured</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 2500" value={inputs.noLoadPower.value} onChange={(e) => handleInputChange('noLoadPower', e.target.value)} className="flex-1" />
+                          <Select value={inputs.noLoadPower.unit} onValueChange={(v) => handleUnitChange('noLoadPower', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="W">W</SelectItem><SelectItem value="kW">kW</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">No-Load Voltage V₀ (V) - Optional</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 433" value={inputs.supplyVoltage.value} onChange={(e) => handleInputChange('supplyVoltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.supplyVoltage.unit} onValueChange={(v) => handleUnitChange('supplyVoltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">No-Load Current I₀ (A) - Optional</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 5.2" value={inputs.noLoadCurrent.value} onChange={(e) => handleInputChange('noLoadCurrent', e.target.value)} className="flex-1" />
+                          <Select value={inputs.noLoadCurrent.unit} onValueChange={(v) => handleUnitChange('noLoadCurrent', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="A">A</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div className="bg-gray-50 p-2 rounded text-sm font-medium text-gray-600">Method 1: Steinmetz Equation</div>
+                      <div><Label className="text-sm font-medium text-gray-700">Flux Density Bm (Tesla)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 1.5" value={inputs.fluxDensity.value} onChange={(e) => handleInputChange('fluxDensity', e.target.value)} className="flex-1" />
+                          <Select value={inputs.fluxDensity.unit} onValueChange={(v) => handleUnitChange('fluxDensity', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="T">T</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Core Mass (kg)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 500" value={inputs.mass.value} onChange={(e) => handleInputChange('mass', e.target.value)} className="flex-1" />
+                          <Select value={inputs.mass.unit} onValueChange={(v) => handleUnitChange('mass', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="kg">kg</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Hysteresis Constant Ch</Label>
+                        <Input type="number" placeholder="e.g. 0.025" value={inputs.hysteresisConstant.value} onChange={(e) => handleInputChange('hysteresisConstant', e.target.value)} className="mt-2" />
+                      </div>
+                      <div><Label className="text-sm font-medium text-gray-700">Eddy Current Constant Ce</Label>
+                        <Input type="number" placeholder="e.g. 0.001" value={inputs.eddyConstant.value} onChange={(e) => handleInputChange('eddyConstant', e.target.value)} className="mt-2" />
+                      </div>
+                      <div><Label className="text-sm font-medium text-gray-700">Frequency (Hz)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="50" value={inputs.frequency.value} onChange={(e) => handleInputChange('frequency', e.target.value)} className="flex-1" />
+                          <Select value={inputs.frequency.unit} onValueChange={(v) => handleUnitChange('frequency', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Hz">Hz</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
+                  {/* Copper Loss Calculator */}
+                  {['copper-loss'].includes(activeCalculator) && (
+                    <>
+                      <div className="bg-blue-50 p-3 rounded-lg mb-2"><p className="text-sm text-blue-800 font-medium">Method 1: Direct (Ip²Rp + Is²Rs) | Method 2: Short Circuit Test (Psc)</p></div>
+                      <div className="bg-gray-50 p-2 rounded text-sm font-medium text-gray-600">Method 2: Short Circuit Test (Recommended)</div>
+                      <div><Label className="text-sm font-medium text-gray-700">Short Circuit Power Psc (W)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 15000" value={inputs.shortCircuitPower.value} onChange={(e) => handleInputChange('shortCircuitPower', e.target.value)} className="flex-1" />
+                          <Select value={inputs.shortCircuitPower.unit} onValueChange={(v) => handleUnitChange('shortCircuitPower', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="W">W</SelectItem><SelectItem value="kW">kW</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Load Factor (%) - For partial load loss</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="100" value={inputs.loadFactor.value} onChange={(e) => handleInputChange('loadFactor', e.target.value)} className="flex-1" />
+                          <Select value={inputs.loadFactor.unit} onValueChange={(v) => handleUnitChange('loadFactor', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="%">%</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Rated kVA (for % loss) - Optional</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 1000" value={inputs.ratedKVA.value} onChange={(e) => handleInputChange('ratedKVA', e.target.value)} className="flex-1" />
+                          <Select value={inputs.ratedKVA.unit} onValueChange={(v) => handleUnitChange('ratedKVA', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="kVA">kVA</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div className="bg-gray-50 p-2 rounded text-sm font-medium text-gray-600">Method 1: Direct I²R</div>
+                      <div><Label className="text-sm font-medium text-gray-700">Primary Current Ip (A)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 52" value={inputs.primaryCurrent.value} onChange={(e) => handleInputChange('primaryCurrent', e.target.value)} className="flex-1" />
+                          <Select value={inputs.primaryCurrent.unit} onValueChange={(v) => handleUnitChange('primaryCurrent', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="A">A</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Primary Winding Resistance Rp (Ω)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 0.5" value={inputs.primaryResistance.value} onChange={(e) => handleInputChange('primaryResistance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.primaryResistance.unit} onValueChange={(v) => handleUnitChange('primaryResistance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ω">Ω</SelectItem><SelectItem value="mΩ">mΩ</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Secondary Current Is (A)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 1333" value={inputs.secondaryCurrent.value} onChange={(e) => handleInputChange('secondaryCurrent', e.target.value)} className="flex-1" />
+                          <Select value={inputs.secondaryCurrent.unit} onValueChange={(v) => handleUnitChange('secondaryCurrent', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="A">A</SelectItem></SelectContent></Select>
+                        </div></div>
+                      <div><Label className="text-sm font-medium text-gray-700">Secondary Winding Resistance Rs (Ω)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 0.008" value={inputs.secondaryResistance.value} onChange={(e) => handleInputChange('secondaryResistance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.secondaryResistance.unit} onValueChange={(v) => handleUnitChange('secondaryResistance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ω">Ω</SelectItem><SelectItem value="mΩ">mΩ</SelectItem></SelectContent></Select>
+                        </div></div>
+                    </>
+                  )}
+
                 </div>
 
                 {/* Error Display */}
@@ -3403,5 +4006,13 @@ export default function ElectricalCalculator() {
         </Card>
       </div>
     </>
+  );
+}
+
+export default function ElectricalCalculator() {
+  return (
+    <ElecCalcErrorBoundary>
+      <ElectricalCalculatorInner />
+    </ElecCalcErrorBoundary>
   );
 }
