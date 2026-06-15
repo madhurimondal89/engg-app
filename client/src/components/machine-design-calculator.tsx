@@ -11,8 +11,8 @@ import { Settings, BarChart3, Edit, Trash2, Save, Share, Printer, AlertTriangle,
 import { getHowToUse, getEngineeringExplanation, getPracticalApplications, getFAQs } from '@/lib/calculator-content';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
-export default function MachineDesignCalculator() {
-    const [activeCalculator, setActiveCalculator] = useState('bolt-torque');
+export default function MachineDesignCalculator({ initialCalc }: { initialCalc?: string | null }) {
+    const [activeCalculator, setActiveCalculator] = useState(initialCalc || 'bolt-torque');
     const [inputs, setInputs] = useState({
         K: { value: '', unit: '' },
         F: { value: '', unit: 'N' },

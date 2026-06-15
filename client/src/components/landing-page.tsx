@@ -9,13 +9,18 @@ import {
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const popularCalculators = [
-  { id: 'ohms-law', name: "Ohm's Law", desc: 'Voltage, Current & Resistance relationships', icon: Zap, discipline: 'electrical', color: 'from-blue-500 to-blue-700' },
-  { id: 'transformer-sizing', name: 'Transformer Sizing', desc: 'KVA rating, turns ratio & efficiency', icon: Activity, discipline: 'electrical', color: 'from-indigo-500 to-indigo-700' },
-  { id: 'cable-sizing', name: 'Cable Sizing', desc: 'Current capacity & voltage drop', icon: Cpu, discipline: 'electrical', color: 'from-violet-500 to-violet-700' },
-  { id: 'tan-delta', name: 'Tan Delta Test', desc: 'Insulation quality & dissipation factor', icon: Shield, discipline: 'electrical', color: 'from-amber-500 to-amber-700' },
-  { id: 'power-factor', name: 'Power Factor', desc: 'PF correction & reactive power', icon: Gauge, discipline: 'electrical', color: 'from-emerald-500 to-emerald-700' },
-  { id: 'short-circuit', name: 'Short Circuit', desc: 'Fault current & protection coordination', icon: Bolt, discipline: 'electrical', color: 'from-red-500 to-red-700' },
+  // Electrical
+  { id: 'ohms-law',              name: "Ohm's Law",            desc: 'Voltage, current & resistance',           icon: Zap,       discipline: 'electrical', color: 'from-blue-500 to-blue-700' },
+  // Mechanical
+  { id: 'gear-ratio',            name: 'Gear Ratio',            desc: 'Output/input teeth & speed ratio',        icon: Cog,       discipline: 'mechanical', color: 'from-emerald-500 to-emerald-700' },
+  { id: 'thermodynamics',        name: 'Heat Transfer',         desc: 'Conduction, convection & efficiency',     icon: Flame,     discipline: 'mechanical', color: 'from-orange-400 to-red-600' },
+  // Electrical
+  { id: 'tan-delta',             name: 'Tan Delta Test',        desc: 'Insulation quality & dissipation factor', icon: Shield,    discipline: 'electrical', color: 'from-amber-500 to-amber-700' },
+  { id: 'power-factor',          name: 'Power Factor',          desc: 'PF correction & reactive power',          icon: Gauge,     discipline: 'electrical', color: 'from-green-500 to-green-700' },
+  // Civil
+  { id: 'construction',          name: 'Concrete Volume',       desc: 'Cement, sand & aggregate quantities',     icon: Building2, discipline: 'civil',      color: 'from-violet-500 to-violet-700' },
 ];
+
 
 const categories = [
   { id: 'electrical', name: 'Electrical Engineering', icon: Zap, color: 'bg-blue-50 text-blue-600 border-blue-200', count: 50, available: true },
@@ -94,59 +99,290 @@ const stats = [
 
 // ─── All searchable items ─────────────────────────────────────────────────────
 const allSearchItems = [
+  // Basic Electrical
   { name: "Ohm's Law", discipline: 'Electrical', id: 'ohms-law' },
-  { name: 'Power Calculator', discipline: 'Electrical', id: 'power' },
-  { name: 'Transformer Sizing', discipline: 'Electrical', id: 'transformer-sizing' },
-  { name: 'Cable Sizing', discipline: 'Electrical', id: 'cable-sizing' },
-  { name: 'Tan Delta Test', discipline: 'Electrical', id: 'tan-delta' },
-  { name: 'Oil BDV Test', discipline: 'Electrical', id: 'oil-bdv' },
-  { name: 'Oil DGA Analysis', discipline: 'Electrical', id: 'oil-dga' },
-  { name: 'Short Circuit Current', discipline: 'Electrical', id: 'short-circuit' },
-  { name: 'Power Factor Correction', discipline: 'Electrical', id: 'power-factor' },
-  { name: 'Voltage Drop', discipline: 'Electrical', id: 'voltage-drop' },
-  { name: 'Motor Starting Current', discipline: 'Electrical', id: 'motor-starting' },
-  { name: 'Transformer TTR', discipline: 'Electrical', id: 'ttr-calculator' },
-  { name: 'Winding Resistance Temp', discipline: 'Electrical', id: 'winding-resistance-temp' },
-  { name: 'CT Ratio', discipline: 'Electrical', id: 'ct-ratio' },
+  { name: 'Voltage Calculator', discipline: 'Electrical', id: 'voltage' },
+  { name: 'Current Calculator', discipline: 'Electrical', id: 'current' },
+  { name: 'Resistance Calculator', discipline: 'Electrical', id: 'resistance' },
+  { name: 'Electrical Power', discipline: 'Electrical', id: 'power' },
+  { name: 'Energy Consumption', discipline: 'Electrical', id: 'energy-consumption' },
+  { name: 'Electrical Cost', discipline: 'Electrical', id: 'electrical-cost' },
+  { name: 'Watt to Amp', discipline: 'Electrical', id: 'watt-to-amp' },
+  { name: 'Amp to Watt', discipline: 'Electrical', id: 'amp-to-watt' },
+  { name: 'Volt to Watt', discipline: 'Electrical', id: 'volt-to-watt' },
+  { name: 'Resistor Color Code Calculator', discipline: 'Electrical', id: 'resistor-color-code' },
+  { name: 'Wheatstone Bridge Calculator', discipline: 'Electrical', id: 'wheatstone-bridge' },
+  // Components
+  { name: 'Capacitance', discipline: 'Electrical', id: 'capacitance' },
+  { name: 'Inductance', discipline: 'Electrical', id: 'inductance' },
+  { name: 'Capacitor Charge', discipline: 'Electrical', id: 'capacitor-charge' },
+  // AC Circuits
+  { name: 'AC Power Calculator', discipline: 'Electrical', id: 'ac-power' },
+  { name: 'Power Factor Calculator', discipline: 'Electrical', id: 'power-factor' },
+  { name: 'Apparent Power Calculator', discipline: 'Electrical', id: 'apparent-power' },
+  { name: 'Reactive Power Calculator', discipline: 'Electrical', id: 'reactive-power' },
+  { name: 'RMS Voltage Calculator', discipline: 'Electrical', id: 'rms-voltage' },
+  { name: 'RMS Current Calculator', discipline: 'Electrical', id: 'rms-current' },
+  { name: 'Impedance', discipline: 'Electrical', id: 'impedance' },
+  { name: 'Phase Angle Calculator', discipline: 'Electrical', id: 'phase-angle' },
+  { name: 'Frequency Calculator', discipline: 'Electrical', id: 'frequency' },
+  { name: 'AC Current Calculator', discipline: 'Electrical', id: 'ac-current' },
+  { name: 'LC Resonant', discipline: 'Electrical', id: 'lc-resonant' },
+  { name: 'RC Time Constant', discipline: 'Electrical', id: 'rc-time' },
+  // DC Circuits
+  { name: 'DC Power Calculator', discipline: 'Electrical', id: 'dc-power' },
+  { name: 'DC Current Calculator', discipline: 'Electrical', id: 'dc-current' },
+  { name: 'DC Voltage Drop Calculator', discipline: 'Electrical', id: 'dc-voltage-drop' },
+  { name: 'Battery Capacity Calculator', discipline: 'Electrical', id: 'battery-capacity' },
+  { name: 'Battery Backup Time Calculator', discipline: 'Electrical', id: 'battery-backup' },
+  { name: 'Battery Charging Time Calculator', discipline: 'Electrical', id: 'battery-charging' },
+  { name: 'Series Resistance Calculator', discipline: 'Electrical', id: 'series-resistance' },
+  { name: 'Parallel Resistance Calculator', discipline: 'Electrical', id: 'parallel-resistance' },
+  { name: 'Voltage Divider Calculator', discipline: 'Electrical', id: 'voltage-divider' },
+  { name: 'Current Divider Calculator', discipline: 'Electrical', id: 'current-divider' },
+  // Power System
+  { name: 'Short Circuit Current Calculator', discipline: 'Electrical', id: 'short-circuit-current' },
+  { name: 'Fault Current Calculator', discipline: 'Electrical', id: 'fault-current' },
+  { name: 'Transformer Efficiency Calculator', discipline: 'Electrical', id: 'transformer-efficiency' },
+  { name: 'Transformer Turns Ratio Calculator', discipline: 'Electrical', id: 'transformer-turns-ratio' },
+  { name: 'Transformer Loss Calculator', discipline: 'Electrical', id: 'transformer-loss' },
+  { name: 'Transmission Line Loss Calculator', discipline: 'Electrical', id: 'transmission-line-loss' },
+  { name: 'Voltage Regulation Calculator', discipline: 'Electrical', id: 'voltage-regulation' },
+  { name: 'Load Demand Calculator', discipline: 'Electrical', id: 'load-demand' },
+  { name: 'Diversity Factor Calculator', discipline: 'Electrical', id: 'diversity-factor' },
+  { name: 'Load Factor Calculator', discipline: 'Electrical', id: 'load-factor' },
+  { name: '% Impedance (Z) Calculator', discipline: 'Electrical', id: 'percent-impedance' },
+  { name: 'Open Circuit Loss Calculator', discipline: 'Electrical', id: 'open-circuit-loss' },
+  // Motors & Machines
+  { name: 'Motor Power Calculator', discipline: 'Electrical', id: 'motor-power' },
+  { name: 'Motor Torque Calculator', discipline: 'Electrical', id: 'motor-torque' },
+  { name: 'Motor Speed Calculator', discipline: 'Electrical', id: 'motor-speed' },
+  { name: 'Slip Calculator', discipline: 'Electrical', id: 'slip' },
+  { name: 'Motor Efficiency Calculator', discipline: 'Electrical', id: 'motor-efficiency' },
+  { name: 'Motor Current Calculator', discipline: 'Electrical', id: 'motor-current' },
+  { name: 'Star-Delta Starter Calculator', discipline: 'Electrical', id: 'star-delta-starter' },
+  { name: 'Single Phase Motor Calculator', discipline: 'Electrical', id: 'single-phase-motor' },
+  { name: 'Three Phase Motor Calculator', discipline: 'Electrical', id: 'three-phase-motor' },
+  { name: 'Synchronous Speed Calculator', discipline: 'Electrical', id: 'synchronous-speed' },
+  // Control & Electronics
+  { name: 'RL Time Constant', discipline: 'Electrical', id: 'rl-time' },
+  { name: 'RLC Circuit', discipline: 'Electrical', id: 'rlc-circuit' },
+  { name: 'Capacitor Charging', discipline: 'Electrical', id: 'capacitor-charging' },
+  { name: 'Capacitor Discharging', discipline: 'Electrical', id: 'capacitor-discharging' },
+  { name: 'Inductor Energy', discipline: 'Electrical', id: 'inductor-energy' },
+  { name: 'Diode Voltage Drop', discipline: 'Electrical', id: 'diode-voltage-drop' },
+  { name: 'Zener Diode', discipline: 'Electrical', id: 'zener-diode' },
+  { name: 'Transistor Gain', discipline: 'Electrical', id: 'transistor-gain' },
+  { name: 'Op-Amp Gain', discipline: 'Electrical', id: 'op-amp-gain' },
+  // Power Electronics
+  { name: 'Rectifier Efficiency', discipline: 'Electrical', id: 'rectifier-efficiency' },
+  { name: 'Ripple Factor', discipline: 'Electrical', id: 'ripple-factor' },
+  { name: 'Inverter Power', discipline: 'Electrical', id: 'inverter-power' },
+  { name: 'Converter Efficiency', discipline: 'Electrical', id: 'converter-efficiency' },
+  { name: 'DC to AC Inverter', discipline: 'Electrical', id: 'dc-to-ac-inverter' },
+  { name: 'PWM Duty Cycle', discipline: 'Electrical', id: 'pwm-duty-cycle' },
+  { name: 'Thyristor Firing Angle', discipline: 'Electrical', id: 'thyristor-firing-angle' },
+  { name: 'Buck Converter', discipline: 'Electrical', id: 'buck-converter' },
+  { name: 'Boost Converter', discipline: 'Electrical', id: 'boost-converter' },
+  { name: 'Buck-Boost Converter', discipline: 'Electrical', id: 'buck-boost-converter' },
+  // Cable, Wiring & Protection
+  { name: 'Cable Size Calculator', discipline: 'Electrical', id: 'cable-size' },
+  { name: 'Wire Gauge Calculator', discipline: 'Electrical', id: 'wire-gauge' },
+  { name: 'Voltage Drop Calculator', discipline: 'Electrical', id: 'voltage-drop-wiring' },
+  { name: 'Earthing Resistance Calculator', discipline: 'Electrical', id: 'earthing-resistance' },
+  { name: 'Fuse Rating Calculator', discipline: 'Electrical', id: 'fuse-rating' },
+  { name: 'MCB Rating Calculator', discipline: 'Electrical', id: 'mcb-rating' },
+  { name: 'MCCB Rating Calculator', discipline: 'Electrical', id: 'mccb-rating' },
+  { name: 'Short Circuit Protection Calculator', discipline: 'Electrical', id: 'short-circuit-protection' },
+  { name: 'Grounding Calculator', discipline: 'Electrical', id: 'grounding' },
+  { name: 'Lightning Protection Calculator', discipline: 'Electrical', id: 'lightning-protection' },
+  // Renewable Energy / Solar
+  { name: 'Solar Panel Calculator', discipline: 'Electrical', id: 'solar-panel' },
+  { name: 'Solar Power Output Calculator', discipline: 'Electrical', id: 'solar-power-output' },
+  { name: 'Solar Inverter Size Calculator', discipline: 'Electrical', id: 'solar-inverter-size' },
+  { name: 'Battery Bank Size Calculator', discipline: 'Electrical', id: 'battery-bank-size-solar' },
+  { name: 'Solar Charge Controller Calculator', discipline: 'Electrical', id: 'solar-charge-controller' },
+  { name: 'Solar Load Calculator', discipline: 'Electrical', id: 'solar-load' },
+  { name: 'Solar Panel Tilt Angle Calculator', discipline: 'Electrical', id: 'solar-panel-tilt' },
+  { name: 'Solar Energy Production Calculator', discipline: 'Electrical', id: 'solar-energy-production' },
+  { name: 'Off-Grid Solar Calculator', discipline: 'Electrical', id: 'off-grid-solar' },
+  { name: 'On-Grid Solar Calculator', discipline: 'Electrical', id: 'on-grid-solar' },
+  // Measurement & Units
+  { name: 'kVA to kW Calculator', discipline: 'Electrical', id: 'kva-to-kw' },
+  { name: 'kW to HP Calculator', discipline: 'Electrical', id: 'kw-to-hp' },
+  { name: 'HP to kW Calculator', discipline: 'Electrical', id: 'hp-to-kw' },
+  { name: 'VA to Watt Calculator', discipline: 'Electrical', id: 'va-to-watt' },
+  { name: 'dB Calculator', discipline: 'Electrical', id: 'db-calculator' },
+  { name: 'Frequency to RPM', discipline: 'Electrical', id: 'freq-to-rpm' },
+  { name: 'RPM to Frequency', discipline: 'Electrical', id: 'rpm-to-freq' },
+  { name: 'Electrical Units Converter', discipline: 'Electrical', id: 'electrical-units' },
+  { name: 'Phase Converter Calculator', discipline: 'Electrical', id: 'phase-converter' },
+  { name: 'Power Loss Calculator', discipline: 'Electrical', id: 'power-loss' },
+  { name: 'Line/Phase Calculator', discipline: 'Electrical', id: 'line-phase-calculator' },
+  // Insulation & Safety Testing
   { name: 'Insulation Resistance', discipline: 'Electrical', id: 'insulation-resistance' },
-  { name: 'Beam Analysis', discipline: 'Mechanical', id: 'beam' },
-  { name: 'Stress Strain', discipline: 'Mechanical', id: 'stress-strain' },
+  { name: 'Minimum IR Acceptable', discipline: 'Electrical', id: 'min-insulation-resistance' },
+  { name: 'Megger Test Voltage', discipline: 'Electrical', id: 'megger-test-voltage' },
+  { name: 'Insulation Test Duration', discipline: 'Electrical', id: 'insulation-test-duration' },
+  { name: 'Leakage Current Calc', discipline: 'Electrical', id: 'leakage-current' },
+  { name: 'Dielectric Strength', discipline: 'Electrical', id: 'dielectric-strength' },
+  { name: 'Dielectric Active Loss', discipline: 'Electrical', id: 'dielectric-loss' },
+  { name: 'Polarization Index (PI)', discipline: 'Electrical', id: 'polarization-index' },
+  { name: 'Dielectric Absorption Ratio', discipline: 'Electrical', id: 'dar-calculator' },
+  { name: 'Insulation Power Factor', discipline: 'Electrical', id: 'insulation-power-factor' },
+  // Transformer & Equipment Testing
+  { name: 'IR Test Calculator', discipline: 'Electrical', id: 'ir-test' },
+  { name: 'Polarization Index Transformer', discipline: 'Electrical', id: 'pi-transformer' },
+  { name: 'TTR Calculator', discipline: 'Electrical', id: 'ttr-calculator' },
+  { name: 'Winding Resistance Temp Correction', discipline: 'Electrical', id: 'winding-resistance-temp' },
+  { name: 'Tan Delta (Dissipation Factor)', discipline: 'Electrical', id: 'tan-delta' },
+  { name: 'Oil BDV Test Calculator', discipline: 'Electrical', id: 'oil-bdv' },
+  { name: 'Oil DGA Analysis', discipline: 'Electrical', id: 'oil-dga' },
+  { name: 'CT Ratio Calculator', discipline: 'Electrical', id: 'ct-ratio' },
+  { name: 'Earth Resistance Calculator', discipline: 'Electrical', id: 'earth-resistance-test' },
+  { name: 'Full Load Current Calculator', discipline: 'Electrical', id: 'full-load-current-transformer' },
+  { name: 'Magnetic Balance Test', discipline: 'Electrical', id: 'magnetic-balance' },
+  { name: 'Vector Group Test', discipline: 'Electrical', id: 'vector-group' },
+  { name: 'Core Loss Calculator', discipline: 'Electrical', id: 'core-loss' },
+  { name: 'Copper Loss Calculator', discipline: 'Electrical', id: 'copper-loss' },
+  // Electromagnetism
+  { name: "Faraday's Law", discipline: 'Electrical', id: 'faraday' },
+  { name: 'Lorentz Force', discipline: 'Electrical', id: 'lorentz' },
+  { name: 'Elec. & Mag. Flux', discipline: 'Electrical', id: 'flux' },
+  // Mechanical - Force, Torque, Pressure (direct)
+  { name: 'Force & Motion', discipline: 'Mechanical', id: 'force' },
+  { name: 'Torque Calculator', discipline: 'Mechanical', id: 'torque' },
+  { name: 'Pressure Calculator', discipline: 'Mechanical', id: 'pressure' },
+  // Mechanical - Strength of Materials
+  { name: 'Normal Stress', discipline: 'Mechanical', id: 'strength' },
+  { name: 'Normal Strain', discipline: 'Mechanical', id: 'strength' },
+  { name: "Young's Modulus", discipline: 'Mechanical', id: 'strength' },
+  { name: 'Shear Stress', discipline: 'Mechanical', id: 'strength' },
+  { name: 'Shear Strain', discipline: 'Mechanical', id: 'strength' },
+  { name: 'Bending Stress', discipline: 'Mechanical', id: 'strength' },
+  { name: 'Bending Moment', discipline: 'Mechanical', id: 'strength' },
+  { name: 'Torsional Stress', discipline: 'Mechanical', id: 'strength' },
+  { name: 'Beam Deflection', discipline: 'Mechanical', id: 'strength' },
+  { name: 'Factor of Safety', discipline: 'Mechanical', id: 'strength' },
+  // Mechanical - Machine Design
+  { name: 'Bolt Torque', discipline: 'Mechanical', id: 'machine-design' },
+  { name: 'Shaft Diameter', discipline: 'Mechanical', id: 'machine-design' },
+  { name: 'Gear Ratio', discipline: 'Mechanical', id: 'machine-design' },
+  { name: 'Gear Speed', discipline: 'Mechanical', id: 'machine-design' },
+  { name: 'Belt Length', discipline: 'Mechanical', id: 'machine-design' },
+  { name: 'Belt Tension', discipline: 'Mechanical', id: 'machine-design' },
+  { name: 'Chain Length', discipline: 'Mechanical', id: 'machine-design' },
+  { name: 'Spring Constant', discipline: 'Mechanical', id: 'machine-design' },
+  { name: 'Bearing Life', discipline: 'Mechanical', id: 'machine-design' },
+  { name: 'Flywheel Energy', discipline: 'Mechanical', id: 'machine-design' },
+  // Mechanical - Thermodynamics
+  { name: 'Heat Transfer', discipline: 'Mechanical', id: 'thermodynamics' },
+  { name: 'Ideal Gas Law', discipline: 'Mechanical', id: 'thermodynamics' },
+  { name: 'Thermal Efficiency', discipline: 'Mechanical', id: 'thermodynamics' },
+  { name: 'Carnot Efficiency', discipline: 'Mechanical', id: 'thermodynamics' },
+  { name: 'Specific Heat', discipline: 'Mechanical', id: 'thermodynamics' },
+  { name: 'Heat Loss', discipline: 'Mechanical', id: 'thermodynamics' },
+  { name: 'Entropy Change', discipline: 'Mechanical', id: 'thermodynamics' },
+  { name: 'Work Done', discipline: 'Mechanical', id: 'thermodynamics' },
+  { name: 'COP Refrigerator', discipline: 'Mechanical', id: 'thermodynamics' },
+  { name: 'Boiler Efficiency', discipline: 'Mechanical', id: 'thermodynamics' },
+  // Mechanical - Fluid Mechanics
+  { name: 'Reynolds Number', discipline: 'Mechanical', id: 'fluid-mechanics' },
+  { name: 'Flow Rate', discipline: 'Mechanical', id: 'fluid-mechanics' },
+  { name: 'Fluid Velocity', discipline: 'Mechanical', id: 'fluid-mechanics' },
+  { name: 'Pressure Drop', discipline: 'Mechanical', id: 'fluid-mechanics' },
+  { name: 'Head Loss', discipline: 'Mechanical', id: 'fluid-mechanics' },
+  { name: 'Darcy Friction Factor', discipline: 'Mechanical', id: 'fluid-mechanics' },
+  { name: 'Pipe Diameter', discipline: 'Mechanical', id: 'fluid-mechanics' },
+  { name: 'Pump Power', discipline: 'Mechanical', id: 'fluid-mechanics' },
+  { name: 'Hydraulic Power', discipline: 'Mechanical', id: 'fluid-mechanics' },
+  { name: 'Bernoulli Equation', discipline: 'Mechanical', id: 'fluid-mechanics' },
+  // Mechanical - Manufacturing
+  { name: 'Cutting Speed', discipline: 'Mechanical', id: 'manufacturing' },
+  { name: 'Feed Rate', discipline: 'Mechanical', id: 'manufacturing' },
+  { name: 'Machining Time', discipline: 'Mechanical', id: 'manufacturing' },
+  { name: 'MRR (Material Removal Rate)', discipline: 'Mechanical', id: 'manufacturing' },
+  { name: 'Surface Roughness', discipline: 'Mechanical', id: 'manufacturing' },
+  { name: 'Welding Heat Input', discipline: 'Mechanical', id: 'manufacturing' },
+  { name: 'Solidification Time', discipline: 'Mechanical', id: 'manufacturing' },
+  { name: 'Tool Life', discipline: 'Mechanical', id: 'manufacturing' },
+  // Mechanical - Dynamics
+  { name: 'Angular Velocity', discipline: 'Mechanical', id: 'dynamics' },
+  { name: 'Centripetal Force', discipline: 'Mechanical', id: 'dynamics' },
+  // Civil - Construction & Estimation
+  { name: 'Concrete Volume', discipline: 'Civil', id: 'construction' },
+  { name: 'Cement Calculator', discipline: 'Civil', id: 'construction' },
+  { name: 'Sand Calculator', discipline: 'Civil', id: 'construction' },
+  { name: 'Aggregate Calculator', discipline: 'Civil', id: 'construction' },
+  { name: 'Brick Count', discipline: 'Civil', id: 'construction' },
+  { name: 'Block Count', discipline: 'Civil', id: 'construction' },
+  { name: 'Mortar Calculator', discipline: 'Civil', id: 'construction' },
+  { name: 'Plastering Calculator', discipline: 'Civil', id: 'construction' },
+  { name: 'Flooring Calculator', discipline: 'Civil', id: 'construction' },
+  { name: 'Paint Calculator', discipline: 'Civil', id: 'construction' },
+  // Civil - Structural
+  { name: 'Beam Load Calculator', discipline: 'Civil', id: 'structural' },
+  { name: 'Bending Moment (Civil)', discipline: 'Civil', id: 'structural' },
+  { name: 'Shear Force', discipline: 'Civil', id: 'structural' },
+  { name: 'Beam Deflection (Civil)', discipline: 'Civil', id: 'structural' },
+  { name: 'Axial Load (Column)', discipline: 'Civil', id: 'structural' },
+  { name: 'Slab Calculator', discipline: 'Civil', id: 'structural' },
+  { name: 'Footing Calculator', discipline: 'Civil', id: 'structural' },
+  { name: 'Steel Reinforcement %', discipline: 'Civil', id: 'structural' },
+  { name: 'Structural Safety Factor', discipline: 'Civil', id: 'structural' },
+  // Civil - Geotechnical
+  { name: 'Bearing Capacity', discipline: 'Civil', id: 'geotechnical' },
+  { name: 'Safe Bearing Capacity', discipline: 'Civil', id: 'geotechnical' },
+  { name: 'Soil Density', discipline: 'Civil', id: 'geotechnical' },
+  { name: 'Earth Pressure', discipline: 'Civil', id: 'geotechnical' },
+  { name: 'Compaction Calculator', discipline: 'Civil', id: 'geotechnical' },
+  { name: 'Slope Stability', discipline: 'Civil', id: 'geotechnical' },
+  { name: 'Settlement Calculator', discipline: 'Civil', id: 'geotechnical' },
+  { name: 'CBR Calculator', discipline: 'Civil', id: 'geotechnical' },
+  { name: 'Pile Capacity', discipline: 'Civil', id: 'geotechnical' },
+  { name: 'Soil Moisture', discipline: 'Civil', id: 'geotechnical' },
+  // Civil - Surveying
+  { name: 'Level Difference', discipline: 'Civil', id: 'surveying' },
+  { name: 'Land Area', discipline: 'Civil', id: 'surveying' },
+  { name: 'Gradient Calculator', discipline: 'Civil', id: 'surveying' },
+  { name: 'Area Conversion', discipline: 'Civil', id: 'surveying' },
+  { name: 'Distance Conversion', discipline: 'Civil', id: 'surveying' },
+  { name: 'Chain Survey', discipline: 'Civil', id: 'surveying' },
+  // Civil - Transportation
+  { name: 'Sight Distance (SSD)', discipline: 'Civil', id: 'transportation' },
+  { name: 'Overtaking Sight Distance (OSD)', discipline: 'Civil', id: 'transportation' },
+  { name: 'Pavement Thickness', discipline: 'Civil', id: 'transportation' },
+  { name: 'Traffic Flow', discipline: 'Civil', id: 'transportation' },
+  // Civil - Environmental
+  { name: 'Water Demand', discipline: 'Civil', id: 'environmental' },
+  { name: 'Rainwater Harvesting', discipline: 'Civil', id: 'environmental' },
+  { name: 'Runoff Calculator', discipline: 'Civil', id: 'environmental' },
+  { name: 'Tank Capacity', discipline: 'Civil', id: 'environmental' },
+  { name: 'Sewage Flow', discipline: 'Civil', id: 'environmental' },
+  // Civil - Quantity & Site
+  { name: 'Staircase Calculator', discipline: 'Civil', id: 'quantity' },
+  { name: 'Railing Calculator', discipline: 'Civil', id: 'quantity' },
+  { name: 'Excavation Calculator', discipline: 'Civil', id: 'quantity' },
+  { name: 'Plinth Area', discipline: 'Civil', id: 'quantity' },
+  { name: 'Carpet Area', discipline: 'Civil', id: 'quantity' },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<typeof allSearchItems>([]);
-  const [showSearch, setShowSearch] = useState(false);
   const [activeFormulaTab, setActiveFormulaTab] = useState('Electrical');
   const [animatedStats, setAnimatedStats] = useState(false);
   const statsRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  // Search logic
-  useEffect(() => {
-    if (searchQuery.trim().length > 1) {
-      const q = searchQuery.toLowerCase();
-      setSearchResults(allSearchItems.filter(item =>
+  // Compute results purely from searchQuery — no state flags needed
+  const q = searchQuery.trim().toLowerCase();
+  const searchResults = q.length > 1
+    ? allSearchItems.filter(item =>
         item.name.toLowerCase().includes(q) || item.discipline.toLowerCase().includes(q)
-      ).slice(0, 8));
-      setShowSearch(true);
-    } else {
-      setShowSearch(false);
-      setSearchResults([]);
-    }
-  }, [searchQuery]);
-
-  // Close search on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setShowSearch(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+      )
+    : [];
+  const showDropdown = searchQuery.trim().length > 1;
 
   // Stats animation on scroll
   useEffect(() => {
@@ -283,8 +519,8 @@ export default function LandingPage() {
       <section className="py-14 bg-white">
         <div className="max-w-3xl mx-auto px-4">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Find Your Calculator</h2>
-            <p className="text-gray-500">Search from 50+ engineering calculators</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">Find Your Calculator <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full">v3✓</span></h2>
+            <p className="text-gray-500">Search from 225+ engineering calculators instantly</p>
           </div>
 
           <div ref={searchRef} className="relative">
@@ -294,40 +530,64 @@ export default function LandingPage() {
                 type="text"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search calculators... e.g. 'Tan Delta', 'Cable Sizing'"
+                placeholder="Search calculators... e.g. 'Torque', 'Solar', 'Concrete'"
                 className="flex-1 bg-transparent text-gray-900 text-lg outline-none placeholder:text-gray-400"
               />
               {searchQuery && (
-                <button onClick={() => { setSearchQuery(''); setShowSearch(false); }}>
+                <button onClick={() => setSearchQuery('')} aria-label="Clear search">
                   <X className="w-5 h-5 text-gray-400 hover:text-gray-600" />
                 </button>
               )}
             </div>
 
-            {/* Search Results Dropdown */}
-            {showSearch && searchResults.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden z-50">
-                {searchResults.map(item => (
-                  <button
-                    key={item.id}
-                    onClick={() => goToCalc('electrical', item.id)}
-                    className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-blue-50 transition-colors text-left group"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <Calculator className="w-4 h-4 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-medium text-gray-900 group-hover:text-blue-700">{item.name}</div>
-                      <div className="text-xs text-gray-400">{item.discipline} Engineering</div>
-                    </div>
-                    <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-blue-500" />
-                  </button>
-                ))}
+            {/* === DEBUG LINE — will remove after fix === */}
+            {searchQuery.length > 0 && (
+              <div className="mt-2 px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-lg text-sm text-yellow-800">
+                🔍 React sees: "<strong>{searchQuery}</strong>" | Results: <strong>{searchResults.length}</strong> | showDropdown: <strong>{String(showDropdown)}</strong>
               </div>
             )}
-            {showSearch && searchResults.length === 0 && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl p-6 text-center text-gray-500 z-50">
-                No calculators found for "{searchQuery}"
+
+            {/* Search Results Dropdown — shows purely based on searchQuery */}
+            {showDropdown && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-2xl z-[9999] overflow-hidden">
+                {searchResults.length > 0 ? (
+                  <div className="max-h-80 overflow-y-auto">
+                    <div className="px-4 py-2 bg-gray-50 border-b border-gray-100 text-xs text-gray-500 font-medium">
+                      {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
+                    </div>
+                    {searchResults.map((item, idx) => (
+                      <button
+                        key={`${item.name}-${idx}`}
+                        onMouseDown={() => goToCalc(item.discipline.toLowerCase(), item.id)}
+                        className="w-full flex items-center gap-4 px-5 py-3 hover:bg-blue-50 transition-colors text-left group border-b border-gray-50 last:border-0"
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                          item.discipline === 'Electrical' ? 'bg-blue-100' :
+                          item.discipline === 'Mechanical' ? 'bg-emerald-100' : 'bg-amber-100'
+                        }`}>
+                          <Calculator className={`w-4 h-4 ${
+                            item.discipline === 'Electrical' ? 'text-blue-600' :
+                            item.discipline === 'Mechanical' ? 'text-emerald-600' : 'text-amber-600'
+                          }`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-gray-900 group-hover:text-blue-700 text-sm">{item.name}</div>
+                          <div className="text-xs text-gray-400 mt-0.5">{item.discipline} Engineering</div>
+                        </div>
+                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                          item.discipline === 'Electrical' ? 'bg-blue-100 text-blue-700' :
+                          item.discipline === 'Mechanical' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+                        }`}>{item.discipline}</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-6 text-center text-gray-400">
+                    <Calculator className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                    <p className="font-medium">No results for &ldquo;{searchQuery}&rdquo;</p>
+                    <p className="text-xs mt-1">Try: Torque, Solar, Concrete, Ohm</p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -370,14 +630,23 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {popularCalculators.map(calc => {
               const Icon = calc.icon;
+              const disciplineBadgeColor =
+                calc.discipline === 'electrical' ? 'bg-blue-100 text-blue-700' :
+                calc.discipline === 'mechanical' ? 'bg-emerald-100 text-emerald-700' :
+                'bg-amber-100 text-amber-700';
               return (
                 <button
                   key={calc.id}
                   onClick={() => goToCalc(calc.discipline, calc.id)}
                   className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-blue-200 shadow-sm hover:shadow-xl transition-all duration-300 text-left hover:-translate-y-1"
                 >
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${calc.color} flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform`}>
-                    <Icon className="w-6 h-6 text-white" />
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${calc.color} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}>
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full capitalize ${disciplineBadgeColor}`}>
+                      {calc.discipline}
+                    </span>
                   </div>
                   <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-blue-700 transition-colors">{calc.name}</h3>
                   <p className="text-gray-500 text-sm leading-relaxed mb-4">{calc.desc}</p>

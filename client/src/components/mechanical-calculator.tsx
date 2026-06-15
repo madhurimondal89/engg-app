@@ -19,9 +19,21 @@ import ManufacturingCalculator from './manufacturing-calculator';
 import DynamicsCalculator from './dynamics-calculator';
 
 export default function MechanicalCalculator() {
+  // Machine Design sub-calculator IDs
+  const machineDesignCalcs = ['gear-ratio', 'gear-speed', 'bolt-torque', 'shaft-diameter', 'belt-length', 'belt-tension', 'chain-length', 'spring-constant', 'bearing-life', 'flywheel-energy'];
+
+  const [initialSubCalc, setInitialSubCalc] = useState<string | null>(() => {
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode') || 'menu';
+    return machineDesignCalcs.includes(mode) ? mode : null;
+  });
+
   const [activeCalculator, setActiveCalculator] = useState(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get('mode') || 'menu';
+    const mode = params.get('mode') || 'menu';
+    // If it's a machine-design sub-calculator, route to machine-design
+    if (machineDesignCalcs.includes(mode)) return 'machine-design';
+    return mode;
   });
 
   React.useEffect(() => {
@@ -190,7 +202,7 @@ export default function MechanicalCalculator() {
         <Button variant="outline" onClick={() => setActiveCalculator('menu')} className="mb-4">
           ← Back to Mechanical Menu
         </Button>
-        <MachineDesignCalculator />
+        <MachineDesignCalculator initialCalc={initialSubCalc} />
       </div>
     </>
   );
