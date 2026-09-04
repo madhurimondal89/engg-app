@@ -546,6 +546,78 @@ export function calculateIdealGas(inputs: {
   return { results, steps, errors };
 }
 
+export function calculateSteamTables(inputs: {
+  pressure?: CalculationInput;
+  temperature?: CalculationInput;
+  quality?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const P_bar = inputs.pressure && inputs.pressure.value > 0 ? inputs.pressure.value : 1.01325;
+    const T_c = inputs.temperature ? inputs.temperature.value : 100;
+    const x = inputs.quality !== undefined && inputs.quality.value !== undefined ? Math.max(0, Math.min(1, inputs.quality.value)) : 1.0;
+
+    // Saturation Temperature approximation from pressure (IAPWS / Antoine)
+    const Tsat = P_bar > 0 ? (3984.923 / (11.6834 - Math.log(P_bar * 100))) - 233.426 : 100;
+    const Psat = T_c > -50 ? Math.exp(11.6834 - (3984.923 / (T_c + 233.426))) / 100 : 1.01325;
+
+    // Liquid enthalpy hf, vapor enthalpy hg, hfg (kJ/kg)
+    const hf = 4.1868 * Math.max(0, Tsat);
+    const hfg = Math.max(0, 2501 - 2.37 * Tsat);
+    const hg = hf + hfg;
+    const h_mix = hf + x * hfg;
+
+    // Entropy sf, sg (kJ/kg.K)
+    const T_k = Tsat + 273.15;
+    const sf = 4.1868 * Math.log(Math.max(273.15, T_k) / 273.15);
+    const sfg = hfg / T_k;
+    const sg = sf + sfg;
+    const s_mix = sf + x * sfg;
+
+    // Specific Volume vf, vg (m^3/kg)
+    const vf = 0.00100 + 0.0000005 * Tsat;
+    const R_steam = 0.4615; // kJ/kg.K
+    const vg = (R_steam * T_k) / (P_bar * 100);
+
+    steps.push({
+      step: 1,
+      description: 'Compute Saturation Temperature and Pressure',
+      formula: 'T_sat(P) = [3984.92 / (11.6834 - ln(P*100))] - 233.43',
+      calculation: `T_sat = ${Tsat.toFixed(2)} °C at P = ${P_bar} bar | P_sat(T=${T_c}°C) = ${Psat.toFixed(3)} bar`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Calculate Saturated Liquid & Vapor Enthalpies (hf, hg, h_mix)',
+      formula: 'hf = c_p * Tsat, hfg = 2501 - 2.37*Tsat, h = hf + x*hfg',
+      calculation: `hf = ${hf.toFixed(1)} kJ/kg, hg = ${hg.toFixed(1)} kJ/kg, Mixture h = ${h_mix.toFixed(1)} kJ/kg (Steam Quality x = ${x})`
+    });
+
+    steps.push({
+      step: 3,
+      description: 'Calculate Saturated Entropy & Specific Volume',
+      formula: 'sf = c_p*ln(T/T0), sg = sf + hfg/T, vg = R*T/P',
+      calculation: `sf = ${sf.toFixed(3)} kJ/kg·K, sg = ${sg.toFixed(3)} kJ/kg·K, vg = ${vg.toFixed(4)} m³/kg`
+    });
+
+    results['saturation_temp'] = { value: Tsat, unit: '°C', formatted: `${Tsat.toFixed(2)} °C` };
+    results['saturation_press'] = { value: Psat, unit: 'bar', formatted: `${Psat.toFixed(3)} bar` };
+    results['enthalpy_hf'] = { value: hf, unit: 'kJ/kg', formatted: `${hf.toFixed(2)} kJ/kg` };
+    results['enthalpy_hg'] = { value: hg, unit: 'kJ/kg', formatted: `${hg.toFixed(2)} kJ/kg` };
+    results['enthalpy_mixture'] = { value: h_mix, unit: 'kJ/kg', formatted: `${h_mix.toFixed(2)} kJ/kg` };
+    results['entropy_sf'] = { value: sf, unit: 'kJ/kg·K', formatted: `${sf.toFixed(4)} kJ/kg·K` };
+    results['entropy_sg'] = { value: sg, unit: 'kJ/kg·K', formatted: `${sg.toFixed(4)} kJ/kg·K` };
+    results['specific_volume_vg'] = { value: vg, unit: 'm³/kg', formatted: `${vg.toFixed(4)} m³/kg` };
+  } catch (err: any) {
+    errors.push(`Calculation error: ${err.message}`);
+  }
+
+  return { results, steps, errors };
+}
+
 // --- Fluid Mechanics ---
 
 export function calculateReynolds(inputs: {
@@ -570,6 +642,353 @@ export function calculateReynolds(inputs: {
   } else {
     errors.push('Enter all values');
   }
+  return { results, steps, errors };
+}
+
+export function calculateManningsOpenChannel(inputs: {
+  bottom_width?: CalculationInput;
+  depth?: CalculationInput;
+  side_slope?: CalculationInput;
+  bed_slope?: CalculationInput;
+  roughness_n?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const b = inputs.bottom_width && inputs.bottom_width.value > 0 ? inputs.bottom_width.value : 2.0; // m
+    const y = inputs.depth && inputs.depth.value > 0 ? inputs.depth.value : 1.2; // m
+    const z = inputs.side_slope ? inputs.side_slope.value : 1.5; // z:1 (H:V)
+    const S = inputs.bed_slope && inputs.bed_slope.value > 0 ? inputs.bed_slope.value : 0.0015; // dimensionless
+    const n = inputs.roughness_n && inputs.roughness_n.value > 0 ? inputs.roughness_n.value : 0.014; // Manning n (concrete: 0.013, earth: 0.025)
+
+    // Geometric properties for trapezoidal channel
+    const A = (b + z * y) * y; // m²
+    const P = b + 2 * y * Math.sqrt(1 + z * z); // m
+    const R_h = A / P; // Hydraulic radius (m)
+    const T = b + 2 * z * y; // Top width (m)
+    const D_h = A / T; // Hydraulic mean depth (m)
+
+    // Manning's Equation: V = (1/n) * R_h^(2/3) * S^(1/2)
+    const V = (1 / n) * Math.pow(R_h, 2 / 3) * Math.sqrt(S); // m/s
+    const Q = A * V; // m³/s
+
+    // Froude Number: Fr = V / sqrt(g * D_h)
+    const g = 9.81;
+    const Fr = V / Math.sqrt(g * D_h);
+    const flowRegime = Fr < 0.95 ? 'Subcritical (Tranquil, Fr < 1)' : Fr > 1.05 ? 'Supercritical (Rapid/Shooting, Fr > 1)' : 'Critical Flow (Fr ≈ 1)';
+
+    steps.push({
+      step: 1,
+      description: 'Compute Cross-Section Area & Wetted Perimeter',
+      formula: 'A = (b + z*y)*y, P = b + 2*y*√(1+z²)',
+      calculation: `A = (${b} + ${z}*${y})*${y} = ${A.toFixed(3)} m², P = ${P.toFixed(3)} m`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Calculate Hydraulic Radius & Flow Velocity (Manning Equation)',
+      formula: 'R_h = A / P, V = (1/n) * R_h^(2/3) * S^(1/2)',
+      calculation: `R_h = ${R_h.toFixed(3)} m, V = (1/${n}) * (${R_h.toFixed(3)})^(2/3) * (${S})^(1/2) = ${V.toFixed(3)} m/s`
+    });
+
+    steps.push({
+      step: 3,
+      description: 'Calculate Volumetric Discharge & Froude Flow Regime',
+      formula: 'Q = A * V, Fr = V / √(g * D_h)',
+      calculation: `Discharge Q = ${Q.toFixed(3)} m³/s (${(Q * 1000).toFixed(0)} L/s), Froude Fr = ${Fr.toFixed(3)} [${flowRegime}]`
+    });
+
+    results['discharge_Q'] = { value: Q, unit: 'm³/s', formatted: `${Q.toFixed(3)} m³/s` };
+    results['velocity_V'] = { value: V, unit: 'm/s', formatted: `${V.toFixed(3)} m/s` };
+    results['flow_area_A'] = { value: A, unit: 'm²', formatted: `${A.toFixed(3)} m²` };
+    results['wetted_perimeter_P'] = { value: P, unit: 'm', formatted: `${P.toFixed(3)} m` };
+    results['hydraulic_radius_Rh'] = { value: R_h, unit: 'm', formatted: `${R_h.toFixed(3)} m` };
+    results['froude_number_Fr'] = { value: Fr, unit: '', formatted: `${Fr.toFixed(3)} (${flowRegime})` };
+  } catch (err: any) {
+    errors.push(`Calculation error: ${err.message}`);
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateWeirDischarge(inputs: {
+  head_H?: CalculationInput;
+  crest_length_L?: CalculationInput;
+  notch_angle?: CalculationInput;
+  weir_type?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const H = inputs.head_H && inputs.head_H.value > 0 ? inputs.head_H.value : 0.35; // m
+    const L = inputs.crest_length_L && inputs.crest_length_L.value > 0 ? inputs.crest_length_L.value : 1.5; // m
+    const theta_deg = inputs.notch_angle && inputs.notch_angle.value > 0 ? inputs.notch_angle.value : 90; // deg
+    const g = 9.81;
+
+    // V-Notch (Thomson Weir): Q = (8/15) * Cd * sqrt(2g) * tan(theta/2) * H^(5/2)
+    const Cd_v = 0.59;
+    const theta_rad = (theta_deg * Math.PI) / 180;
+    const Q_vnotch = (8 / 15) * Cd_v * Math.sqrt(2 * g) * Math.tan(theta_rad / 2) * Math.pow(H, 2.5);
+
+    // Rectangular Suppressed Weir (Francis Formula): Q = (2/3) * Cd * sqrt(2g) * L * H^(3/2)
+    const Cd_r = 0.62;
+    const Q_rect = (2 / 3) * Cd_r * Math.sqrt(2 * g) * L * Math.pow(H, 1.5);
+
+    steps.push({
+      step: 1,
+      description: 'Compute V-Notch (Triangular) Weir Flow',
+      formula: 'Q_v = (8/15) * Cd * √(2g) * tan(θ/2) * H^(5/2)',
+      calculation: `Q_v = (8/15)*${Cd_v}*√(2*${g})*tan(${theta_deg}/2)*(${H})^2.5 = ${Q_vnotch.toFixed(4)} m³/s (${(Q_vnotch * 1000).toFixed(1)} L/s)`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Compute Rectangular Suppressed Weir Flow',
+      formula: 'Q_rect = (2/3) * Cd * √(2g) * L * H^(3/2)',
+      calculation: `Q_rect = (2/3)*${Cd_r}*√(2*${g})*${L}*(${H})^1.5 = ${Q_rect.toFixed(4)} m³/s (${(Q_rect * 1000).toFixed(1)} L/s)`
+    });
+
+    results['vnotch_discharge'] = { value: Q_vnotch, unit: 'm³/s', formatted: `${Q_vnotch.toFixed(4)} m³/s (${(Q_vnotch * 1000).toFixed(1)} L/s)` };
+    results['rect_discharge'] = { value: Q_rect, unit: 'm³/s', formatted: `${Q_rect.toFixed(4)} m³/s (${(Q_rect * 1000).toFixed(1)} L/s)` };
+    results['head_H'] = { value: H, unit: 'm', formatted: `${H.toFixed(3)} m (${(H * 1000).toFixed(0)} mm)` };
+  } catch (err: any) {
+    errors.push(`Calculation error: ${err.message}`);
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateHVACDuctSizing(inputs: {
+  airflow_Q?: CalculationInput;
+  velocity_V?: CalculationInput;
+  aspect_ratio?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const Q_m3s = inputs.airflow_Q && inputs.airflow_Q.value > 0 ? inputs.airflow_Q.value : 1.2; // m³/s (approx 2500 CFM)
+    const V_ms = inputs.velocity_V && inputs.velocity_V.value > 0 ? inputs.velocity_V.value : 6.0; // m/s (approx 1200 FPM)
+    const ar = inputs.aspect_ratio && inputs.aspect_ratio.value > 0 ? inputs.aspect_ratio.value : 1.5; // W:H
+
+    // Area = Q / V
+    const A = Q_m3s / V_ms; // m²
+
+    // Equivalent Round Duct Diameter: D = sqrt(4A / pi)
+    const D_m = Math.sqrt((4 * A) / Math.PI); // m
+    const D_mm = D_m * 1000; // mm
+
+    // Rectangular Duct: A = W * H = (ar * H) * H = ar * H² => H = sqrt(A / ar)
+    const H_m = Math.sqrt(A / ar);
+    const W_m = ar * H_m;
+    const H_mm = Math.round(H_m * 1000 / 25) * 25; // standard 25mm increments
+    const W_mm = Math.round(W_m * 1000 / 25) * 25;
+
+    // Velocity Pressure: Pv = 0.5 * rho * V² (rho ≈ 1.204 kg/m³)
+    const rho = 1.204;
+    const Pv = 0.5 * rho * V_ms * V_ms; // Pa
+
+    // Friction rate approximation (Colebrook / ASHRAE): ΔP/100m ≈ 0.1 * V^1.8 / D^1.22
+    const friction_per_100m = (0.1 * Math.pow(V_ms, 1.82)) / Math.pow(D_m, 1.22); // Pa/m * 100
+
+    steps.push({
+      step: 1,
+      description: 'Compute Required Duct Cross-Section Area',
+      formula: 'A = Q / V',
+      calculation: `A = ${Q_m3s} m³/s / ${V_ms} m/s = ${A.toFixed(4)} m² (${(A * 10000).toFixed(1)} cm²)`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Size Circular and Equivalent Rectangular Ducts',
+      formula: 'D = √(4A/π), H = √(A/AR), W = AR * H',
+      calculation: `Round Diameter D = ${D_mm.toFixed(0)} mm (Ø ${(D_mm / 25.4).toFixed(1)} in), Rectangular = ${W_mm} mm × ${H_mm} mm`
+    });
+
+    steps.push({
+      step: 3,
+      description: 'Calculate Velocity Pressure & Estimated Friction Drop',
+      formula: 'Pv = 0.5 * ρ * V², ΔP_100m = (0.1 * V^1.82) / D^1.22',
+      calculation: `Velocity Pressure Pv = ${Pv.toFixed(1)} Pa, Friction Rate = ${(friction_per_100m).toFixed(2)} Pa / 100m`
+    });
+
+    results['duct_diameter'] = { value: D_mm, unit: 'mm', formatted: `Ø ${D_mm.toFixed(0)} mm (${(D_mm / 25.4).toFixed(1)} in)` };
+    results['rectangular_size'] = { value: W_mm, unit: 'mm', formatted: `${W_mm} mm × ${H_mm} mm` };
+    results['velocity_pressure'] = { value: Pv, unit: 'Pa', formatted: `${Pv.toFixed(1)} Pa` };
+    results['friction_rate'] = { value: friction_per_100m, unit: 'Pa/100m', formatted: `${friction_per_100m.toFixed(2)} Pa/100m` };
+    results['cross_area'] = { value: A, unit: 'm²', formatted: `${A.toFixed(4)} m²` };
+  } catch (err: any) {
+    errors.push(`Calculation error: ${err.message}`);
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculatePsychrometrics(inputs: {
+  dry_bulb_T?: CalculationInput;
+  rel_humidity_RH?: CalculationInput;
+  pressure_P?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const T_db = inputs.dry_bulb_T ? inputs.dry_bulb_T.value : 28; // °C
+    const RH = inputs.rel_humidity_RH && inputs.rel_humidity_RH.value > 0 ? Math.min(100, inputs.rel_humidity_RH.value) : 60; // %
+    const P_atm = inputs.pressure_P && inputs.pressure_P.value > 0 ? inputs.pressure_P.value : 101.325; // kPa
+
+    // Saturated vapor pressure (Tetens formula): Pws (kPa)
+    const Pws = 0.61078 * Math.exp((17.27 * T_db) / (T_db + 237.3)); // kPa
+    // Actual vapor pressure: Pw = (RH / 100) * Pws
+    const Pw = (RH / 100) * Pws; // kPa
+
+    // Humidity Ratio: W = 0.62198 * Pw / (P_atm - Pw) [kg water / kg dry air]
+    const W = (0.62198 * Pw) / (P_atm - Pw);
+    const W_gkg = W * 1000; // g/kg
+
+    // Specific Enthalpy: h = 1.006*Tdb + W*(2501 + 1.86*Tdb) [kJ/kg dry air]
+    const h = 1.006 * T_db + W * (2501 + 1.86 * T_db);
+
+    // Dew Point Temperature: Tdp = (237.3 * ln(Pw/0.61078)) / (17.27 - ln(Pw/0.61078))
+    const alpha = Math.log(Pw / 0.61078);
+    const T_dp = (237.3 * alpha) / (17.27 - alpha);
+
+    // Wet Bulb Temperature approximation (Stull formula):
+    const T_wb = T_db * Math.atan(0.151977 * Math.pow(RH + 8.313659, 0.5)) +
+      Math.atan(T_db + RH) - Math.atan(RH - 1.676331) +
+      0.00391838 * Math.pow(RH, 1.5) * Math.atan(0.023101 * RH) - 4.686035;
+
+    // Specific Volume: v = (R_da * (Tdb + 273.15) / (P_atm - Pw)) [m³/kg]
+    const R_da = 0.287042; // kJ/kg.K
+    const v_spec = (R_da * (T_db + 273.15)) / (P_atm - Pw);
+
+    steps.push({
+      step: 1,
+      description: 'Compute Saturated & Partial Water Vapor Pressure',
+      formula: 'Pws = 0.61078 * e^(17.27*T/(T+237.3)), Pw = (RH/100) * Pws',
+      calculation: `Pws = ${Pws.toFixed(3)} kPa, Actual Pw = ${Pw.toFixed(3)} kPa (RH = ${RH}%)`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Calculate Humidity Ratio & Specific Enthalpy',
+      formula: 'W = 0.622 * Pw / (P_atm - Pw), h = 1.006*T + W*(2501 + 1.86*T)',
+      calculation: `Humidity Ratio W = ${W_gkg.toFixed(2)} g/kg dry air, Enthalpy h = ${h.toFixed(2)} kJ/kg`
+    });
+
+    steps.push({
+      step: 3,
+      description: 'Determine Wet-Bulb, Dew-Point & Specific Volume',
+      formula: 'Tdp = f(Pw), Twb = f(Tdb, RH), v = R_da*T / (P - Pw)',
+      calculation: `Dew Point Tdp = ${T_dp.toFixed(2)} °C, Wet Bulb Twb = ${T_wb.toFixed(2)} °C, Volume v = ${v_spec.toFixed(3)} m³/kg`
+    });
+
+    results['enthalpy'] = { value: h, unit: 'kJ/kg', formatted: `${h.toFixed(2)} kJ/kg` };
+    results['humidity_ratio'] = { value: W_gkg, unit: 'g/kg', formatted: `${W_gkg.toFixed(2)} g/kg dry air` };
+    results['dew_point'] = { value: T_dp, unit: '°C', formatted: `${T_dp.toFixed(2)} °C` };
+    results['wet_bulb'] = { value: T_wb, unit: '°C', formatted: `${T_wb.toFixed(2)} °C` };
+    results['vapor_pressure'] = { value: Pw, unit: 'kPa', formatted: `${Pw.toFixed(3)} kPa` };
+    results['specific_volume'] = { value: v_spec, unit: 'm³/kg', formatted: `${v_spec.toFixed(3)} m³/kg` };
+  } catch (err: any) {
+    errors.push(`Calculation error: ${err.message}`);
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateSteelSectionProperties(inputs: {
+  depth_d?: CalculationInput;
+  flange_width_bf?: CalculationInput;
+  flange_thickness_tf?: CalculationInput;
+  web_thickness_tw?: CalculationInput;
+  yield_strength_fy?: CalculationInput;
+  length_L?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const d = inputs.depth_d && inputs.depth_d.value > 0 ? inputs.depth_d.value : 300; // mm
+    const bf = inputs.flange_width_bf && inputs.flange_width_bf.value > 0 ? inputs.flange_width_bf.value : 150; // mm
+    const tf = inputs.flange_thickness_tf && inputs.flange_thickness_tf.value > 0 ? inputs.flange_thickness_tf.value : 10; // mm
+    const tw = inputs.web_thickness_tw && inputs.web_thickness_tw.value > 0 ? inputs.web_thickness_tw.value : 6.5; // mm
+    const Fy = inputs.yield_strength_fy && inputs.yield_strength_fy.value > 0 ? inputs.yield_strength_fy.value : 250; // MPa
+    const L_m = inputs.length_L && inputs.length_L.value > 0 ? inputs.length_L.value : 5.0; // m
+
+    const hw = d - 2 * tf; // web height (mm)
+    const Area_mm2 = 2 * (bf * tf) + (hw * tw); // mm²
+    const Area_cm2 = Area_mm2 / 100;
+
+    // Moment of inertia Ix (Major axis, mm4)
+    // Ix = (bf * d^3 - (bf - tw) * hw^3) / 12
+    const Ix_mm4 = (bf * Math.pow(d, 3) - (bf - tw) * Math.pow(hw, 3)) / 12;
+    const Ix_cm4 = Ix_mm4 / 10000;
+
+    // Moment of inertia Iy (Minor axis, mm4)
+    // Iy = 2 * (tf * bf^3 / 12) + (hw * tw^3 / 12)
+    const Iy_mm4 = (2 * (tf * Math.pow(bf, 3)) + hw * Math.pow(tw, 3)) / 12;
+    const Iy_cm4 = Iy_mm4 / 10000;
+
+    // Section Modulus Zx, Zy (cm³)
+    const Zx_cm3 = (Ix_mm4 / (d / 2)) / 1000;
+    const Zy_cm3 = (Iy_mm4 / (bf / 2)) / 1000;
+
+    // Plastic Section Modulus Sx (cm³)
+    // Sx = 2 * (bf * tf * (d - tf)/2) + tw * (hw/2)^2
+    const Sx_cm3 = (2 * (bf * tf * (d - tf) / 2) + tw * Math.pow(hw / 2, 2) * 2) / 1000;
+
+    // Radius of Gyration rx, ry (cm)
+    const rx_cm = Math.sqrt(Ix_mm4 / Area_mm2) / 10;
+    const ry_cm = Math.sqrt(Iy_mm4 / Area_mm2) / 10;
+
+    // Nominal Bending Moment Capacity Mp = Fy * Sx (kN·m)
+    const Mp_kNm = (Fy * (Sx_cm3 * 1000)) / 1e6;
+
+    // Euler Buckling Critical Load: Pcr = (pi^2 * E * I) / L^2 (E = 200,000 MPa = 200 GPa)
+    const E_MPa = 200000;
+    const Pcr_x_kN = (Math.PI * Math.PI * E_MPa * Ix_mm4) / (Math.pow(L_m * 1000, 2) * 1000);
+    const Pcr_y_kN = (Math.PI * Math.PI * E_MPa * Iy_mm4) / (Math.pow(L_m * 1000, 2) * 1000);
+
+    steps.push({
+      step: 1,
+      description: 'Calculate Total Cross-Sectional Area',
+      formula: 'A = 2*(bf*tf) + (d - 2*tf)*tw',
+      calculation: `Area = 2*(${bf}*${tf}) + (${hw}*${tw}) = ${Area_mm2.toFixed(0)} mm² (${Area_cm2.toFixed(1)} cm²)`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Compute Moment of Inertia (Ix, Iy) & Elastic/Plastic Modulus',
+      formula: 'Ix = (bf*d³ - (bf-tw)*hw³)/12, Zx = Ix/(d/2), Mp = Fy*Sx',
+      calculation: `Ix = ${Ix_cm4.toFixed(1)} cm⁴, Iy = ${Iy_cm4.toFixed(1)} cm⁴, Zx = ${Zx_cm3.toFixed(1)} cm³, Moment Capacity Mp = ${Mp_kNm.toFixed(1)} kN·m`
+    });
+
+    steps.push({
+      step: 3,
+      description: 'Compute Euler Critical Buckling Load (Major & Minor Axis)',
+      formula: 'Pcr = (π² * E * I) / L²',
+      calculation: `Pcr(Major-X) = ${Pcr_x_kN.toFixed(1)} kN, Pcr(Minor-Y) = ${Pcr_y_kN.toFixed(1)} kN for Span L = ${L_m} m`
+    });
+
+    results['moment_inertia_Ix'] = { value: Ix_cm4, unit: 'cm⁴', formatted: `${Ix_cm4.toFixed(1)} cm⁴` };
+    results['moment_inertia_Iy'] = { value: Iy_cm4, unit: 'cm⁴', formatted: `${Iy_cm4.toFixed(1)} cm⁴` };
+    results['section_modulus_Zx'] = { value: Zx_cm3, unit: 'cm³', formatted: `${Zx_cm3.toFixed(1)} cm³` };
+    results['plastic_modulus_Sx'] = { value: Sx_cm3, unit: 'cm³', formatted: `${Sx_cm3.toFixed(1)} cm³` };
+    results['moment_capacity_Mp'] = { value: Mp_kNm, unit: 'kN·m', formatted: `${Mp_kNm.toFixed(1)} kN·m` };
+    results['buckling_load_Pcr_x'] = { value: Pcr_x_kN, unit: 'kN', formatted: `${Pcr_x_kN.toFixed(1)} kN` };
+    results['buckling_load_Pcr_y'] = { value: Pcr_y_kN, unit: 'kN', formatted: `${Pcr_y_kN.toFixed(1)} kN` };
+    results['radius_gyration'] = { value: rx_cm, unit: 'cm', formatted: `rx = ${rx_cm.toFixed(2)} cm, ry = ${ry_cm.toFixed(2)} cm` };
+  } catch (err: any) {
+    errors.push(`Calculation error: ${err.message}`);
+  }
+
   return { results, steps, errors };
 }
 
@@ -6058,3 +6477,882 @@ export function calculateCopperLoss(inputs: {
   } catch (e) { errors.push('Calculation error'); }
   return { results, steps, errors };
 }
+
+// ----------------------------------------------------
+// Added Comprehensive Electrical Calculators
+// ----------------------------------------------------
+
+export function calculateCapacitance(inputs: {
+  charge?: CalculationInput;
+  voltage?: CalculationInput;
+  capacitance?: CalculationInput;
+  frequency?: CalculationInput;
+  area?: CalculationInput;
+  distance?: CalculationInput;
+  dielectricK?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const Q = inputs.charge ? convertToBaseUnit(inputs.charge.value, inputs.charge.unit, 'charge') : null;
+    const V = inputs.voltage ? convertToBaseUnit(inputs.voltage.value, inputs.voltage.unit, 'voltage') : null;
+    let C = inputs.capacitance ? convertToBaseUnit(inputs.capacitance.value, inputs.capacitance.unit, 'capacitance') : null;
+    const f = inputs.frequency ? convertToBaseUnit(inputs.frequency.value, inputs.frequency.unit, 'frequency') : null;
+    const A = inputs.area ? convertToBaseUnit(inputs.area.value, inputs.area.unit, 'area') : null;
+    const d = inputs.distance ? convertToBaseUnit(inputs.distance.value, inputs.distance.unit, 'length') : null;
+    const k = inputs.dielectricK ? inputs.dielectricK.value : 1.0;
+
+    const eps0 = 8.854187817e-12; // F/m
+
+    if (A !== null && d !== null && d > 0) {
+      C = (eps0 * k * A) / d;
+      results.capacitance = { value: C, unit: 'F', formatted: C < 1e-6 ? `${(C * 1e12).toFixed(2)} pF` : C < 1e-3 ? `${(C * 1e6).toFixed(2)} μF` : `${C.toFixed(6)} F` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Parallel Plate Capacitance',
+        formula: 'C = (ε₀ × k × A) / d',
+        calculation: `C = (${eps0.toExponential(2)} × ${k} × ${A}) / ${d} = ${results.capacitance.formatted}`
+      });
+    } else if (Q !== null && V !== null && V !== 0) {
+      C = Q / V;
+      results.capacitance = { value: C, unit: 'F', formatted: C < 1e-6 ? `${(C * 1e12).toFixed(2)} pF` : C < 1e-3 ? `${(C * 1e6).toFixed(2)} μF` : `${C.toFixed(6)} F` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Capacitance from Charge and Voltage',
+        formula: 'C = Q / V',
+        calculation: `C = ${Q} C / ${V} V = ${results.capacitance.formatted}`
+      });
+    } else if (C !== null && V !== null) {
+      const calcQ = C * V;
+      results.charge = { value: calcQ, unit: 'C', formatted: calcQ < 1e-3 ? `${(calcQ * 1e6).toFixed(2)} μC` : `${calcQ.toFixed(4)} C` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Stored Charge',
+        formula: 'Q = C × V',
+        calculation: `Q = ${C} F × ${V} V = ${results.charge.formatted}`
+      });
+    }
+
+    if (C !== null && V !== null) {
+      const energy = 0.5 * C * V * V;
+      results.storedEnergy = { value: energy, unit: 'J', formatted: energy < 1e-3 ? `${(energy * 1e6).toFixed(2)} μJ` : `${energy.toFixed(4)} J` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Stored Electrostatic Energy',
+        formula: 'E = ½ × C × V²',
+        calculation: `E = 0.5 × ${C} × ${V}² = ${results.storedEnergy.formatted}`
+      });
+    }
+
+    if (C !== null && f !== null && f > 0) {
+      const Xc = 1 / (2 * Math.PI * f * C);
+      results.capacitiveReactance = { value: Xc, unit: 'Ω', formatted: Xc > 1000 ? `${(Xc / 1000).toFixed(2)} kΩ` : `${Xc.toFixed(2)} Ω` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Capacitive Reactance',
+        formula: 'Xc = 1 / (2π × f × C)',
+        calculation: `Xc = 1 / (2 × π × ${f} × ${C}) = ${results.capacitiveReactance.formatted}`
+      });
+    }
+
+    if (Object.keys(results).length === 0) {
+      errors.push('Please provide (Charge & Voltage), (Capacitance & Voltage), or (Plate Area & Distance).');
+    }
+  } catch (e) {
+    errors.push('Calculation error in Capacitance');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateInductance(inputs: {
+  inductance?: CalculationInput;
+  current?: CalculationInput;
+  frequency?: CalculationInput;
+  turns?: CalculationInput;
+  area?: CalculationInput;
+  length?: CalculationInput;
+  permeability?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    let L = inputs.inductance ? convertToBaseUnit(inputs.inductance.value, inputs.inductance.unit, 'inductance') : null;
+    const I = inputs.current ? convertToBaseUnit(inputs.current.value, inputs.current.unit, 'current') : null;
+    const f = inputs.frequency ? convertToBaseUnit(inputs.frequency.value, inputs.frequency.unit, 'frequency') : null;
+    const N = inputs.turns ? inputs.turns.value : null;
+    const A = inputs.area ? convertToBaseUnit(inputs.area.value, inputs.area.unit, 'area') : null;
+    const l = inputs.length ? convertToBaseUnit(inputs.length.value, inputs.length.unit, 'length') : null;
+    const muR = inputs.permeability ? inputs.permeability.value : 1.0;
+
+    const mu0 = 4 * Math.PI * 1e-7; // H/m
+
+    if (N !== null && A !== null && l !== null && l > 0) {
+      L = (mu0 * muR * N * N * A) / l;
+      results.inductance = { value: L, unit: 'H', formatted: L < 1e-3 ? `${(L * 1e6).toFixed(2)} μH` : L < 1 ? `${(L * 1000).toFixed(2)} mH` : `${L.toFixed(4)} H` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Solenoid Inductance',
+        formula: 'L = (μ₀ × μᵣ × N² × A) / l',
+        calculation: `L = (${mu0.toExponential(2)} × ${muR} × ${N}² × ${A}) / ${l} = ${results.inductance.formatted}`
+      });
+    }
+
+    if (L !== null && I !== null) {
+      const energy = 0.5 * L * I * I;
+      results.storedEnergy = { value: energy, unit: 'J', formatted: energy < 1e-3 ? `${(energy * 1000).toFixed(2)} mJ` : `${energy.toFixed(4)} J` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Stored Magnetic Energy',
+        formula: 'E = ½ × L × I²',
+        calculation: `E = 0.5 × ${L} × ${I}² = ${results.storedEnergy.formatted}`
+      });
+    }
+
+    if (L !== null && f !== null && f > 0) {
+      const Xl = 2 * Math.PI * f * L;
+      results.inductiveReactance = { value: Xl, unit: 'Ω', formatted: Xl > 1000 ? `${(Xl / 1000).toFixed(2)} kΩ` : `${Xl.toFixed(2)} Ω` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Inductive Reactance',
+        formula: 'Xl = 2π × f × L',
+        calculation: `Xl = 2 × π × ${f} × ${L} = ${results.inductiveReactance.formatted}`
+      });
+    }
+
+    if (Object.keys(results).length === 0) {
+      errors.push('Please provide Inductance & Current, or Solenoid parameters (Turns, Area, Length).');
+    }
+  } catch (e) {
+    errors.push('Calculation error in Inductance');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateCapacitorCharge(inputs: {
+  capacitance?: CalculationInput;
+  voltage?: CalculationInput;
+  resistance?: CalculationInput;
+  time?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const C = inputs.capacitance ? convertToBaseUnit(inputs.capacitance.value, inputs.capacitance.unit, 'capacitance') : null;
+    const V = inputs.voltage ? convertToBaseUnit(inputs.voltage.value, inputs.voltage.unit, 'voltage') : null;
+    const R = inputs.resistance ? convertToBaseUnit(inputs.resistance.value, inputs.resistance.unit, 'resistance') : null;
+    const t = inputs.time ? convertToBaseUnit(inputs.time.value, inputs.time.unit, 'time') : null;
+
+    if (C === null || V === null) {
+      errors.push('Please enter Capacitance (C) and Supply Voltage (V).');
+      return { results, steps, errors };
+    }
+
+    const Qmax = C * V;
+    const Emax = 0.5 * C * V * V;
+
+    results.maxCharge = { value: Qmax, unit: 'C', formatted: Qmax < 1e-3 ? `${(Qmax * 1e6).toFixed(2)} μC` : `${Qmax.toFixed(4)} C` };
+    results.storedEnergy = { value: Emax, unit: 'J', formatted: Emax < 1e-3 ? `${(Emax * 1e3).toFixed(2)} mJ` : `${Emax.toFixed(4)} J` };
+
+    steps.push({
+      step: 1,
+      description: 'Maximum Theoretical Charge',
+      formula: 'Q_max = C × V',
+      calculation: `Q_max = ${C} F × ${V} V = ${results.maxCharge.formatted}`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Total Stored Energy',
+      formula: 'E = ½ × C × V²',
+      calculation: `E = 0.5 × ${C} × ${V}² = ${results.storedEnergy.formatted}`
+    });
+
+    if (R !== null && R > 0) {
+      const tau = R * C;
+      results.timeConstant = { value: tau, unit: 's', formatted: tau < 1e-3 ? `${(tau * 1e6).toFixed(2)} μs` : tau < 1 ? `${(tau * 1e3).toFixed(2)} ms` : `${tau.toFixed(4)} s` };
+      results.fullChargeTime = { value: 5 * tau, unit: 's', formatted: `${(5 * tau).toFixed(4)} s (5τ)` };
+
+      steps.push({
+        step: 3,
+        description: 'RC Time Constant (τ)',
+        formula: 'τ = R × C',
+        calculation: `τ = ${R} Ω × ${C} F = ${results.timeConstant.formatted}`
+      });
+
+      if (t !== null && t >= 0) {
+        const vt = V * (1 - Math.exp(-t / tau));
+        const qt = Qmax * (1 - Math.exp(-t / tau));
+        const it = (V / R) * Math.exp(-t / tau);
+
+        results.instantVoltage = { value: vt, unit: 'V', formatted: `${vt.toFixed(3)} V (${((vt / V) * 100).toFixed(1)}%)` };
+        results.instantCharge = { value: qt, unit: 'C', formatted: qt < 1e-3 ? `${(qt * 1e6).toFixed(2)} μC` : `${qt.toFixed(4)} C` };
+        results.instantCurrent = { value: it, unit: 'A', formatted: it < 1e-3 ? `${(it * 1e3).toFixed(3)} mA` : `${it.toFixed(4)} A` };
+
+        steps.push({
+          step: 4,
+          description: `Instantaneous Voltage at t = ${t}s`,
+          formula: 'V(t) = V₀ × (1 - e^(-t/τ))',
+          calculation: `V(${t}) = ${V} × (1 - e^(-${t}/${tau.toFixed(4)})) = ${results.instantVoltage.formatted}`
+        });
+      }
+    }
+  } catch (e) {
+    errors.push('Calculation error in Capacitor Charge');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateWheatstoneBridge(inputs: {
+  r1?: CalculationInput;
+  r2?: CalculationInput;
+  r3?: CalculationInput;
+  rx?: CalculationInput;
+  voltage?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const R1 = inputs.r1 ? convertToBaseUnit(inputs.r1.value, inputs.r1.unit, 'resistance') : null;
+    const R2 = inputs.r2 ? convertToBaseUnit(inputs.r2.value, inputs.r2.unit, 'resistance') : null;
+    const R3 = inputs.r3 ? convertToBaseUnit(inputs.r3.value, inputs.r3.unit, 'resistance') : null;
+    let Rx = inputs.rx ? convertToBaseUnit(inputs.rx.value, inputs.rx.unit, 'resistance') : null;
+    const Vs = inputs.voltage ? convertToBaseUnit(inputs.voltage.value, inputs.voltage.unit, 'voltage') : null;
+
+    if (R1 === null || R2 === null || R3 === null || R1 === 0) {
+      errors.push('Please enter R1, R2, and R3 (R1 cannot be zero).');
+      return { results, steps, errors };
+    }
+
+    if (Rx === null) {
+      Rx = (R2 * R3) / R1;
+      results.unknownResistance = { value: Rx, unit: 'Ω', formatted: Rx > 1e6 ? `${(Rx / 1e6).toFixed(3)} MΩ` : Rx > 1e3 ? `${(Rx / 1e3).toFixed(2)} kΩ` : `${Rx.toFixed(2)} Ω` };
+      steps.push({
+        step: 1,
+        description: 'Balanced Bridge Unknown Resistance (Rx)',
+        formula: 'Rx = (R2 × R3) / R1',
+        calculation: `Rx = (${R2} × ${R3}) / ${R1} = ${results.unknownResistance.formatted}`
+      });
+    }
+
+    if (Vs !== null && Rx !== null) {
+      const Vb = Vs * (Rx / (R3 + Rx) - R2 / (R1 + R2));
+      results.bridgeVoltage = { value: Vb, unit: 'V', formatted: `${Vb.toFixed(4)} V` };
+      results.isBalanced = { value: Math.abs(Vb) < 1e-4 ? 1 : 0, unit: '', formatted: Math.abs(Vb) < 1e-4 ? 'Balanced (0V differential)' : 'Unbalanced' };
+
+      steps.push({
+        step: 2,
+        description: 'Bridge Output Differential Voltage (V_out)',
+        formula: 'V_out = Vs × [ Rx/(R3 + Rx) - R2/(R1 + R2) ]',
+        calculation: `V_out = ${Vs} × [ ${Rx.toFixed(2)}/(${(R3 + Rx).toFixed(2)}) - ${R2}/(${(R1 + R2).toFixed(2)}) ] = ${Vb.toFixed(4)} V`
+      });
+    }
+  } catch (e) {
+    errors.push('Calculation error in Wheatstone Bridge');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateResistorColorCode(inputs: {
+  band1?: { value: string | number };
+  band2?: { value: string | number };
+  band3?: { value: string | number };
+  multiplier?: { value: string | number };
+  tolerance?: { value: string | number };
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const b1 = typeof inputs.band1?.value === 'number' ? inputs.band1.value : parseInt(inputs.band1?.value as string || '0', 10);
+    const b2 = typeof inputs.band2?.value === 'number' ? inputs.band2.value : parseInt(inputs.band2?.value as string || '0', 10);
+    const b3 = inputs.band3 !== undefined ? (typeof inputs.band3.value === 'number' ? inputs.band3.value : parseInt(inputs.band3.value as string || '0', 10)) : null;
+    const mult = typeof inputs.multiplier?.value === 'number' ? inputs.multiplier.value : parseFloat(inputs.multiplier?.value as string || '1');
+    const tol = typeof inputs.tolerance?.value === 'number' ? inputs.tolerance.value : parseFloat(inputs.tolerance?.value as string || '5');
+
+    let digits = b3 !== null ? b1 * 100 + b2 * 10 + b3 : b1 * 10 + b2;
+    const resistance = digits * mult;
+    const minR = resistance * (1 - tol / 100);
+    const maxR = resistance * (1 + tol / 100);
+
+    const fmt = (r: number) => r >= 1e6 ? `${(r / 1e6).toFixed(2)} MΩ` : r >= 1e3 ? `${(r / 1e3).toFixed(2)} kΩ` : `${r.toFixed(2)} Ω`;
+
+    results.nominalResistance = { value: resistance, unit: 'Ω', formatted: `${fmt(resistance)} ±${tol}%` };
+    results.minResistance = { value: minR, unit: 'Ω', formatted: fmt(minR) };
+    results.maxResistance = { value: maxR, unit: 'Ω', formatted: fmt(maxR) };
+
+    steps.push({
+      step: 1,
+      description: 'Decode Bands to Significant Digits',
+      formula: b3 !== null ? 'Digits = (Band1 × 100) + (Band2 × 10) + Band3' : 'Digits = (Band1 × 10) + Band2',
+      calculation: `Digits = ${digits}`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Apply Multiplier and Tolerance',
+      formula: 'R = Digits × Multiplier ± Tolerance%',
+      calculation: `R = ${digits} × ${mult} = ${fmt(resistance)} with ±${tol}% tolerance range [${fmt(minR)} to ${fmt(maxR)}]`
+    });
+  } catch (e) {
+    errors.push('Calculation error in Resistor Color Code');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateImpedance(inputs: {
+  resistance?: CalculationInput;
+  inductance?: CalculationInput;
+  capacitance?: CalculationInput;
+  frequency?: CalculationInput;
+  voltage?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const R = inputs.resistance ? convertToBaseUnit(inputs.resistance.value, inputs.resistance.unit, 'resistance') : 0;
+    const L = inputs.inductance ? convertToBaseUnit(inputs.inductance.value, inputs.inductance.unit, 'inductance') : 0;
+    const C = inputs.capacitance ? convertToBaseUnit(inputs.capacitance.value, inputs.capacitance.unit, 'capacitance') : 0;
+    const f = inputs.frequency ? convertToBaseUnit(inputs.frequency.value, inputs.frequency.unit, 'frequency') : 50;
+    const V = inputs.voltage ? convertToBaseUnit(inputs.voltage.value, inputs.voltage.unit, 'voltage') : null;
+
+    const omega = 2 * Math.PI * f;
+    const Xl = L > 0 ? omega * L : 0;
+    const Xc = C > 0 ? 1 / (omega * C) : 0;
+    const Xnet = Xl - Xc;
+    const Z = Math.sqrt(R * R + Xnet * Xnet);
+    const phiRad = Math.atan2(Xnet, R);
+    const phiDeg = (phiRad * 180) / Math.PI;
+    const pf = Math.cos(phiRad);
+
+    results.impedance = { value: Z, unit: 'Ω', formatted: `${Z.toFixed(2)} Ω` };
+    results.inductiveReactance = { value: Xl, unit: 'Ω', formatted: `${Xl.toFixed(2)} Ω` };
+    results.capacitiveReactance = { value: Xc, unit: 'Ω', formatted: `${Xc.toFixed(2)} Ω` };
+    results.netReactance = { value: Xnet, unit: 'Ω', formatted: `${Xnet.toFixed(2)} Ω (${Xnet >= 0 ? 'Inductive' : 'Capacitive'})` };
+    results.phaseAngle = { value: phiDeg, unit: 'deg', formatted: `${phiDeg.toFixed(2)}°` };
+    results.powerFactor = { value: pf, unit: '', formatted: `${pf.toFixed(3)} (${Xnet >= 0 ? 'Lagging' : 'Leading'})` };
+
+    steps.push({
+      step: 1,
+      description: 'Calculate Reactances at Frequency (f)',
+      formula: 'Xl = 2πfL,  Xc = 1/(2πfC)',
+      calculation: `Xl = 2π × ${f} × ${L} = ${Xl.toFixed(2)} Ω,  Xc = ${Xc.toFixed(2)} Ω`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Calculate Total Impedance Magnitude',
+      formula: 'Z = √(R² + (Xl - Xc)²)',
+      calculation: `Z = √(${R}² + (${Xl.toFixed(2)} - ${Xc.toFixed(2)})²) = ${Z.toFixed(2)} Ω`
+    });
+
+    steps.push({
+      step: 3,
+      description: 'Calculate Phase Angle and Power Factor',
+      formula: 'θ = arctan((Xl - Xc)/R),  PF = cos(θ)',
+      calculation: `θ = arctan(${Xnet.toFixed(2)}/${R}) = ${phiDeg.toFixed(2)}°,  PF = ${pf.toFixed(3)}`
+    });
+
+    if (V !== null && Z > 0) {
+      const I = V / Z;
+      results.current = { value: I, unit: 'A', formatted: I < 1 ? `${(I * 1000).toFixed(2)} mA` : `${I.toFixed(2)} A` };
+      steps.push({
+        step: 4,
+        description: 'Circuit RMS Current',
+        formula: 'I = V / Z',
+        calculation: `I = ${V} V / ${Z.toFixed(2)} Ω = ${results.current.formatted}`
+      });
+    }
+  } catch (e) {
+    errors.push('Calculation error in Impedance');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateLCResonant(inputs: {
+  inductance?: CalculationInput;
+  capacitance?: CalculationInput;
+  resistance?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const L = inputs.inductance ? convertToBaseUnit(inputs.inductance.value, inputs.inductance.unit, 'inductance') : null;
+    const C = inputs.capacitance ? convertToBaseUnit(inputs.capacitance.value, inputs.capacitance.unit, 'capacitance') : null;
+    const R = inputs.resistance ? convertToBaseUnit(inputs.resistance.value, inputs.resistance.unit, 'resistance') : null;
+
+    if (L === null || C === null || L <= 0 || C <= 0) {
+      errors.push('Please enter positive values for Inductance (L) and Capacitance (C).');
+      return { results, steps, errors };
+    }
+
+    const f0 = 1 / (2 * Math.PI * Math.sqrt(L * C));
+    const omega0 = 1 / Math.sqrt(L * C);
+    const z0 = Math.sqrt(L / C);
+
+    results.resonantFrequency = { value: f0, unit: 'Hz', formatted: f0 > 1e6 ? `${(f0 / 1e6).toFixed(3)} MHz` : f0 > 1e3 ? `${(f0 / 1e3).toFixed(2)} kHz` : `${f0.toFixed(2)} Hz` };
+    results.angularFrequency = { value: omega0, unit: 'rad/s', formatted: `${omega0.toFixed(2)} rad/s` };
+    results.characteristicImpedance = { value: z0, unit: 'Ω', formatted: `${z0.toFixed(2)} Ω` };
+
+    steps.push({
+      step: 1,
+      description: 'Resonant Frequency (f₀)',
+      formula: 'f₀ = 1 / (2π × √(L × C))',
+      calculation: `f₀ = 1 / (2π × √(${L} × ${C})) = ${results.resonantFrequency.formatted}`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Characteristic Impedance (Z₀)',
+      formula: 'Z₀ = √(L / C)',
+      calculation: `Z₀ = √(${L} / ${C}) = ${z0.toFixed(2)} Ω`
+    });
+
+    if (R !== null && R > 0) {
+      const Q = (1 / R) * Math.sqrt(L / C);
+      const bw = f0 / Q;
+      results.qualityFactor = { value: Q, unit: '', formatted: `${Q.toFixed(2)}` };
+      results.bandwidth = { value: bw, unit: 'Hz', formatted: bw > 1e3 ? `${(bw / 1e3).toFixed(2)} kHz` : `${bw.toFixed(2)} Hz` };
+
+      steps.push({
+        step: 3,
+        description: 'Series Quality Factor (Q) & Bandwidth (BW)',
+        formula: 'Q = (1/R) × √(L/C),  BW = f₀ / Q',
+        calculation: `Q = (1/${R}) × ${z0.toFixed(2)} = ${Q.toFixed(2)},  BW = ${results.bandwidth.formatted}`
+      });
+    }
+  } catch (e) {
+    errors.push('Calculation error in LC Resonant');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateRCTime(inputs: {
+  resistance?: CalculationInput;
+  capacitance?: CalculationInput;
+  voltage?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const R = inputs.resistance ? convertToBaseUnit(inputs.resistance.value, inputs.resistance.unit, 'resistance') : null;
+    const C = inputs.capacitance ? convertToBaseUnit(inputs.capacitance.value, inputs.capacitance.unit, 'capacitance') : null;
+    const V = inputs.voltage ? convertToBaseUnit(inputs.voltage.value, inputs.voltage.unit, 'voltage') : 10;
+
+    if (R === null || C === null || R <= 0 || C <= 0) {
+      errors.push('Please enter positive values for Resistance (R) and Capacitance (C).');
+      return { results, steps, errors };
+    }
+
+    const tau = R * C;
+    const fc = 1 / (2 * Math.PI * R * C);
+    const v1tau = V * 0.63212;
+    const v2tau = V * 0.86466;
+    const v5tau = V * 0.99326;
+
+    results.timeConstant = { value: tau, unit: 's', formatted: tau < 1e-3 ? `${(tau * 1e6).toFixed(2)} μs` : tau < 1 ? `${(tau * 1e3).toFixed(2)} ms` : `${tau.toFixed(4)} s` };
+    results.cutoffFrequency = { value: fc, unit: 'Hz', formatted: fc > 1e3 ? `${(fc / 1e3).toFixed(2)} kHz` : `${fc.toFixed(2)} Hz` };
+    results.charge1Tau = { value: v1tau, unit: 'V', formatted: `${v1tau.toFixed(2)} V (63.2%)` };
+    results.charge5Tau = { value: v5tau, unit: 'V', formatted: `${v5tau.toFixed(2)} V (99.3% full)` };
+
+    steps.push({
+      step: 1,
+      description: 'RC Time Constant (τ)',
+      formula: 'τ = R × C',
+      calculation: `τ = ${R} Ω × ${C} F = ${results.timeConstant.formatted}`
+    });
+
+    steps.push({
+      step: 2,
+      description: '3dB Cutoff Frequency (f_c)',
+      formula: 'f_c = 1 / (2π × R × C)',
+      calculation: `f_c = 1 / (2π × ${R} × ${C}) = ${results.cutoffFrequency.formatted}`
+    });
+
+    steps.push({
+      step: 3,
+      description: 'Charging Thresholds',
+      formula: 'V(1τ) = 63.2% × V,  V(5τ) = 99.3% × V',
+      calculation: `1τ: ${v1tau.toFixed(2)}V,  5τ: ${v5tau.toFixed(2)}V`
+    });
+  } catch (e) {
+    errors.push('Calculation error in RC Time');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateFaradaysLaw(inputs: {
+  turns?: CalculationInput;
+  magneticFlux?: CalculationInput;
+  timePeriod?: CalculationInput;
+  magneticField?: CalculationInput;
+  length?: CalculationInput;
+  velocity?: CalculationInput;
+  angle?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const N = inputs.turns ? inputs.turns.value : 1;
+    const dPhi = inputs.magneticFlux ? convertToBaseUnit(inputs.magneticFlux.value, inputs.magneticFlux.unit, 'magnetic_flux') : null;
+    const dt = inputs.timePeriod ? convertToBaseUnit(inputs.timePeriod.value, inputs.timePeriod.unit, 'time') : null;
+    const B = inputs.magneticField ? convertToBaseUnit(inputs.magneticField.value, inputs.magneticField.unit, 'magnetic_field') : null;
+    const L = inputs.length ? convertToBaseUnit(inputs.length.value, inputs.length.unit, 'length') : null;
+    const v = inputs.velocity ? convertToBaseUnit(inputs.velocity.value, inputs.velocity.unit, 'velocity') : null;
+    const thetaDeg = inputs.angle ? inputs.angle.value : 90;
+    const thetaRad = (thetaDeg * Math.PI) / 180;
+
+    if (dPhi !== null && dt !== null && dt > 0) {
+      const emf = Math.abs(N * (dPhi / dt));
+      results.inducedEMF = { value: emf, unit: 'V', formatted: `${emf.toFixed(3)} V` };
+      steps.push({
+        step: steps.length + 1,
+        description: "Faraday's Law of Induction (Transformer EMF)",
+        formula: '|ε| = N × (ΔΦ / Δt)',
+        calculation: `|ε| = ${N} × (${dPhi} Wb / ${dt} s) = ${emf.toFixed(3)} V`
+      });
+    }
+
+    if (B !== null && L !== null && v !== null) {
+      const motionalEMF = B * L * v * Math.sin(thetaRad);
+      results.motionalEMF = { value: motionalEMF, unit: 'V', formatted: `${motionalEMF.toFixed(3)} V` };
+      steps.push({
+        step: steps.length + 1,
+        description: 'Motional EMF in Moving Conductor',
+        formula: 'ε = B × L × v × sin(θ)',
+        calculation: `ε = ${B} T × ${L} m × ${v} m/s × sin(${thetaDeg}°) = ${motionalEMF.toFixed(3)} V`
+      });
+    }
+
+    if (Object.keys(results).length === 0) {
+      errors.push('Please provide (Turns, ΔΦ, Δt) for coil EMF or (B, Length, Velocity) for motional EMF.');
+    }
+  } catch (e) {
+    errors.push("Calculation error in Faraday's Law");
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateLorentzForce(inputs: {
+  charge?: CalculationInput;
+  electricField?: CalculationInput;
+  velocity?: CalculationInput;
+  magneticField?: CalculationInput;
+  current?: CalculationInput;
+  length?: CalculationInput;
+  angle?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const q = inputs.charge ? convertToBaseUnit(inputs.charge.value, inputs.charge.unit, 'charge') : null;
+    const E = inputs.electricField ? convertToBaseUnit(inputs.electricField.value, inputs.electricField.unit, 'electric_field') : 0;
+    const v = inputs.velocity ? convertToBaseUnit(inputs.velocity.value, inputs.velocity.unit, 'velocity') : null;
+    const B = inputs.magneticField ? convertToBaseUnit(inputs.magneticField.value, inputs.magneticField.unit, 'magnetic_field') : null;
+    const I = inputs.current ? convertToBaseUnit(inputs.current.value, inputs.current.unit, 'current') : null;
+    const L = inputs.length ? convertToBaseUnit(inputs.length.value, inputs.length.unit, 'length') : null;
+    const thetaDeg = inputs.angle ? inputs.angle.value : 90;
+    const thetaRad = (thetaDeg * Math.PI) / 180;
+
+    if (q !== null && B !== null && v !== null) {
+      const fMag = q * v * B * Math.sin(thetaRad);
+      const fElec = q * E;
+      const fTotal = Math.sqrt(fElec * fElec + fMag * fMag);
+
+      results.magneticForce = { value: fMag, unit: 'N', formatted: `${fMag.toExponential(4)} N` };
+      results.lorentzForce = { value: fTotal, unit: 'N', formatted: `${fTotal.toExponential(4)} N` };
+
+      steps.push({
+        step: 1,
+        description: 'Magnetic Lorentz Force on Moving Charge',
+        formula: 'F_mag = q × v × B × sin(θ)',
+        calculation: `F_mag = ${q} C × ${v} m/s × ${B} T × sin(${thetaDeg}°) = ${fMag.toExponential(4)} N`
+      });
+    }
+
+    if (I !== null && L !== null && B !== null) {
+      const fWire = B * I * L * Math.sin(thetaRad);
+      results.wireForce = { value: fWire, unit: 'N', formatted: `${fWire.toFixed(3)} N` };
+
+      steps.push({
+        step: steps.length + 1,
+        description: 'Laplace Force on Current-Carrying Conductor',
+        formula: 'F = B × I × L × sin(θ)',
+        calculation: `F = ${B} T × ${I} A × ${L} m × sin(${thetaDeg}°) = ${fWire.toFixed(3)} N`
+      });
+    }
+
+    if (Object.keys(results).length === 0) {
+      errors.push('Please enter (Charge, Velocity, B Field) or (Current, Conductor Length, B Field).');
+    }
+  } catch (e) {
+    errors.push('Calculation error in Lorentz Force');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateFlux(inputs: {
+  magneticField?: CalculationInput;
+  area?: CalculationInput;
+  angle?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const B = inputs.magneticField ? convertToBaseUnit(inputs.magneticField.value, inputs.magneticField.unit, 'magnetic_field') : null;
+    const A = inputs.area ? convertToBaseUnit(inputs.area.value, inputs.area.unit, 'area') : null;
+    const thetaDeg = inputs.angle ? inputs.angle.value : 0;
+    const thetaRad = (thetaDeg * Math.PI) / 180;
+
+    if (B === null || A === null) {
+      errors.push('Please provide Magnetic Field (B) and Surface Area (A).');
+      return { results, steps, errors };
+    }
+
+    const phi = B * A * Math.cos(thetaRad);
+    const maxwell = phi * 1e8;
+
+    results.magneticFlux = { value: phi, unit: 'Wb', formatted: phi < 1e-3 ? `${(phi * 1e6).toFixed(2)} μWb` : `${phi.toFixed(4)} Wb` };
+    results.maxwells = { value: maxwell, unit: 'Mx', formatted: `${maxwell.toFixed(2)} Maxwells` };
+
+    steps.push({
+      step: 1,
+      description: 'Magnetic Flux Calculation',
+      formula: 'Φ = B × A × cos(θ)',
+      calculation: `Φ = ${B} T × ${A} m² × cos(${thetaDeg}°) = ${results.magneticFlux.formatted}`
+    });
+  } catch (e) {
+    errors.push('Calculation error in Flux');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateBatteryLife(inputs: {
+  capacity?: CalculationInput;
+  voltage?: CalculationInput;
+  power?: CalculationInput;
+  current?: CalculationInput;
+  efficiency?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const cap = inputs.capacity ? convertToBaseUnit(inputs.capacity.value, inputs.capacity.unit, 'capacity') : null;
+    const V = inputs.voltage ? convertToBaseUnit(inputs.voltage.value, inputs.voltage.unit, 'voltage') : 12;
+    const P = inputs.power ? convertToBaseUnit(inputs.power.value, inputs.power.unit, 'power') : null;
+    const I = inputs.current ? convertToBaseUnit(inputs.current.value, inputs.current.unit, 'current') : null;
+    const eff = inputs.efficiency ? inputs.efficiency.value / 100 : 0.85;
+
+    if (cap === null || cap <= 0) {
+      errors.push('Please enter a valid Battery Capacity (Ah).');
+      return { results, steps, errors };
+    }
+
+    const energyWh = cap * V;
+    results.totalEnergy = { value: energyWh, unit: 'Wh', formatted: energyWh >= 1000 ? `${(energyWh / 1000).toFixed(2)} kWh` : `${energyWh.toFixed(1)} Wh` };
+
+    let runtimeHours = 0;
+    if (P !== null && P > 0) {
+      runtimeHours = (energyWh * eff) / P;
+      const loadCurrent = P / V;
+      results.loadCurrent = { value: loadCurrent, unit: 'A', formatted: `${loadCurrent.toFixed(2)} A` };
+
+      steps.push({
+        step: 1,
+        description: 'Runtime from Power Load',
+        formula: 'Runtime = (Capacity × Voltage × Efficiency) / Power',
+        calculation: `Runtime = (${cap} Ah × ${V} V × ${(eff * 100).toFixed(0)}%) / ${P} W = ${runtimeHours.toFixed(2)} hours`
+      });
+    } else if (I !== null && I > 0) {
+      runtimeHours = (cap * eff) / I;
+      steps.push({
+        step: 1,
+        description: 'Runtime from Current Load',
+        formula: 'Runtime = (Capacity × Efficiency) / Current',
+        calculation: `Runtime = (${cap} Ah × ${(eff * 100).toFixed(0)}%) / ${I} A = ${runtimeHours.toFixed(2)} hours`
+      });
+    } else {
+      errors.push('Please enter Load Power (W) or Load Current (A).');
+      return { results, steps, errors };
+    }
+
+    const hrs = Math.floor(runtimeHours);
+    const mins = Math.round((runtimeHours - hrs) * 60);
+
+    results.runtime = { value: runtimeHours, unit: 'h', formatted: `${hrs}h ${mins}m (${runtimeHours.toFixed(2)} hrs)` };
+    results.cRate = { value: 1 / runtimeHours, unit: 'C', formatted: `${(1 / runtimeHours).toFixed(2)}C` };
+  } catch (e) {
+    errors.push('Calculation error in Battery Life');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateMotorGeneral(inputs: {
+  motorPower?: CalculationInput;
+  motorVoltage?: CalculationInput;
+  powerFactor?: CalculationInput;
+  efficiency?: CalculationInput;
+  motorSpeed?: CalculationInput;
+  phases?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const P = inputs.motorPower ? convertToBaseUnit(inputs.motorPower.value, inputs.motorPower.unit, 'power') : null;
+    const V = inputs.motorVoltage ? convertToBaseUnit(inputs.motorVoltage.value, inputs.motorVoltage.unit, 'voltage') : 400;
+    const pf = inputs.powerFactor ? inputs.powerFactor.value : 0.85;
+    const eff = inputs.efficiency ? inputs.efficiency.value / 100 : 0.90;
+    const rpm = inputs.motorSpeed ? inputs.motorSpeed.value : 1450;
+    const phases = inputs.phases ? inputs.phases.value : 3;
+
+    if (P === null || P <= 0) {
+      errors.push('Please enter Motor Power (W or kW).');
+      return { results, steps, errors };
+    }
+
+    const P_hp = P / 745.7;
+    results.horsepower = { value: P_hp, unit: 'HP', formatted: `${P_hp.toFixed(2)} HP` };
+
+    let current = 0;
+    if (phases === 3) {
+      current = P / (Math.sqrt(3) * V * pf * eff);
+      steps.push({
+        step: 1,
+        description: '3-Phase Full Load Current (FLC)',
+        formula: 'I = P / (√3 × V × PF × η)',
+        calculation: `I = ${P} / (1.732 × ${V} × ${pf} × ${eff}) = ${current.toFixed(2)} A`
+      });
+    } else {
+      current = P / (V * pf * eff);
+      steps.push({
+        step: 1,
+        description: '1-Phase Full Load Current (FLC)',
+        formula: 'I = P / (V × PF × η)',
+        calculation: `I = ${P} / (${V} × ${pf} × ${eff}) = ${current.toFixed(2)} A`
+      });
+    }
+
+    results.fullLoadCurrent = { value: current, unit: 'A', formatted: `${current.toFixed(2)} A` };
+
+    if (rpm > 0) {
+      const torque = (9548.8 * (P / 1000)) / rpm;
+      results.fullLoadTorque = { value: torque, unit: 'N·m', formatted: `${torque.toFixed(2)} N·m` };
+      steps.push({
+        step: 2,
+        description: 'Shaft Rated Torque',
+        formula: 'T = (9549 × P_kW) / RPM',
+        calculation: `T = (9549 × ${(P / 1000).toFixed(2)}) / ${rpm} = ${torque.toFixed(2)} N·m`
+      });
+    }
+  } catch (e) {
+    errors.push('Calculation error in Motor Calculator');
+  }
+
+  return { results, steps, errors };
+}
+
+export function calculateCableCapacity(inputs: {
+  current?: CalculationInput;
+  voltage?: CalculationInput;
+  length?: CalculationInput;
+  voltageDrop?: CalculationInput;
+  conductorType?: { value: string };
+  phases?: CalculationInput;
+}): CalculationOutput {
+  const steps: CalculationStep[] = [];
+  const results: { [key: string]: CalculationResult } = {};
+  const errors: string[] = [];
+
+  try {
+    const I = inputs.current ? convertToBaseUnit(inputs.current.value, inputs.current.unit, 'current') : null;
+    const V = inputs.voltage ? convertToBaseUnit(inputs.voltage.value, inputs.voltage.unit, 'voltage') : 230;
+    const L = inputs.length ? convertToBaseUnit(inputs.length.value, inputs.length.unit, 'length') : null;
+    const maxDropPct = inputs.voltageDrop ? inputs.voltageDrop.value : 3;
+    const isCopper = (inputs.conductorType?.value || 'copper').toLowerCase() === 'copper';
+    const phases = inputs.phases ? inputs.phases.value : 1;
+
+    if (I === null || L === null) {
+      errors.push('Please enter Operating Current (I) and Route Length (L).');
+      return { results, steps, errors };
+    }
+
+    const rho = isCopper ? 0.0175 : 0.0282; // Ω·mm²/m
+    const maxVd = V * (maxDropPct / 100);
+
+    const mult = phases === 3 ? Math.sqrt(3) : 2;
+    const reqArea = (mult * rho * L * I) / maxVd;
+
+    // Standard metric sizes: 1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240, 300, 400
+    const standardSizes = [1.5, 2.5, 4, 6, 10, 16, 25, 35, 50, 70, 95, 120, 150, 185, 240, 300, 400];
+    const recSize = standardSizes.find(s => s >= reqArea) || 400;
+
+    const actualVd = (mult * rho * L * I) / recSize;
+    const actualDropPct = (actualVd / V) * 100;
+
+    results.minCrossSection = { value: reqArea, unit: 'mm²', formatted: `${reqArea.toFixed(2)} mm²` };
+    results.recommendedSize = { value: recSize, unit: 'mm²', formatted: `${recSize} mm² (${isCopper ? 'Copper' : 'Aluminum'})` };
+    results.actualVoltageDrop = { value: actualVd, unit: 'V', formatted: `${actualVd.toFixed(2)} V (${actualDropPct.toFixed(2)}%)` };
+
+    steps.push({
+      step: 1,
+      description: `Allowable Voltage Drop (${maxDropPct}%)`,
+      formula: 'V_drop_max = V × (Drop% / 100)',
+      calculation: `V_drop_max = ${V} V × ${maxDropPct}% = ${maxVd.toFixed(2)} V`
+    });
+
+    steps.push({
+      step: 2,
+      description: 'Minimum Required Cable Cross-Section Area',
+      formula: phases === 3 ? 'A = (√3 × ρ × L × I) / V_drop' : 'A = (2 × ρ × L × I) / V_drop',
+      calculation: `A = (${mult.toFixed(2)} × ${rho} × ${L} × ${I}) / ${maxVd.toFixed(2)} = ${reqArea.toFixed(2)} mm²`
+    });
+
+    steps.push({
+      step: 3,
+      description: 'Recommended Standard Cable Size',
+      formula: 'Select standard metric cable size ≥ A_min',
+      calculation: `Selected ${recSize} mm² conductor with actual drop of ${actualVd.toFixed(2)} V (${actualDropPct.toFixed(2)}%)`
+    });
+  } catch (e) {
+    errors.push('Calculation error in Cable Sizing');
+  }
+
+  return { results, steps, errors };
+}
+

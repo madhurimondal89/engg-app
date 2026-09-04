@@ -6,7 +6,6 @@ import path from "path";
 export default defineConfig({
   plugins: [
     react(),
-
   ],
   resolve: {
     alias: {
@@ -19,5 +18,24 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-react": ["react", "react-dom", "wouter"],
+          "vendor-icons": ["lucide-react", "react-icons"],
+          "vendor-math": ["mathjs"],
+          "vendor-charts": ["recharts"],
+          "vendor-ui": [
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-tabs",
+            "@radix-ui/react-tooltip",
+            "@radix-ui/react-popover",
+            "@radix-ui/react-select"
+          ],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
   },
 });

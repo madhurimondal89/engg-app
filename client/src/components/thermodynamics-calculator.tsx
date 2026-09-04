@@ -6,13 +6,30 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { calculateHeatTransfer, calculateIdealGas, calculateThermalEfficiency, calculateCarnotEfficiency, calculateSpecificHeat, calculateHeatLoss, calculateEntropyChange, calculateWorkDone, calculateCOP, calculateBoilerEfficiency, type CalculationInput, type CalculationOutput } from '@/lib/calculations';
+import { calculateHeatTransfer, calculateIdealGas, calculateThermalEfficiency, calculateCarnotEfficiency, calculateSpecificHeat, calculateHeatLoss, calculateEntropyChange, calculateWorkDone, calculateCOP, calculateBoilerEfficiency, calculateSteamTables, calculateHVACDuctSizing, calculatePsychrometrics, type CalculationInput, type CalculationOutput } from '@/lib/calculations';
 import { Settings, BarChart3, Edit, Trash2, Save, Share, Printer, AlertTriangle, CheckCircle, BookOpen } from 'lucide-react';
 import { getHowToUse, getEngineeringExplanation, getPracticalApplications, getFAQs } from '@/lib/calculator-content';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
-export default function ThermodynamicsCalculator() {
-    const [activeCalculator, setActiveCalculator] = useState('heat-transfer');
+export default function ThermodynamicsCalculator({ initialCalc }: { initialCalc?: string }) {
+    const [activeCalculator, setActiveCalculator] = useState(() => {
+        if (initialCalc) return initialCalc;
+        return 'heat-transfer';
+    });
+
+    React.useEffect(() => {
+        if (initialCalc && initialCalc !== activeCalculator) {
+            setActiveCalculator(initialCalc);
+        }
+    }, [initialCalc]);
+
+    React.useEffect(() => {
+        const slug = activeCalculator ? `/${activeCalculator}` : '';
+        const newPath = `/calculators/thermodynamics${slug}`;
+        if (window.location.pathname !== newPath) {
+            window.history.replaceState(null, '', newPath);
+        }
+    }, [activeCalculator]);
     const [inputs, setInputs] = useState({
         k: { value: '', unit: '' },
         A: { value: '', unit: 'm²' },
@@ -33,12 +50,23 @@ export default function ThermodynamicsCalculator() {
         deltaV: { value: '', unit: 'm³' },
         Qc: { value: '', unit: 'J' },
         Win: { value: '', unit: 'J' },
-        Q_out: { value: '', unit: 'J' }
+        Q_out: { value: '', unit: 'J' },
+        steam_pressure: { value: '10', unit: 'bar' },
+        steam_temp: { value: '180', unit: '°C' },
+        steam_quality: { value: '1.0', unit: 'ratio' },
+        dry_bulb_T: { value: '28', unit: '°C' },
+        rel_humidity_RH: { value: '60', unit: '%' },
+        airflow_Q: { value: '1.2', unit: 'm³/s' },
+        velocity_V: { value: '6.0', unit: 'm/s' },
+        aspect_ratio: { value: '1.5', unit: 'ratio' }
     });
     const [results, setResults] = useState<CalculationOutput | null>(null);
 
     const calculatorTypes = [
         { id: 'heat-transfer', name: 'Heat Transfer', active: true },
+        { id: 'steam-tables', name: 'Steam & Fluid Tables', active: true },
+        { id: 'psychrometrics', name: 'Psychrometrics (Moist Air)', active: true },
+        { id: 'duct-sizing', name: 'HVAC Duct Sizing', active: true },
         { id: 'ideal-gas', name: 'Ideal Gas Law', active: true },
         { id: 'thermal-efficiency', name: 'Thermal Efficiency', active: true },
         { id: 'carnot-efficiency', name: 'Carnot Efficiency', active: true },
@@ -78,7 +106,24 @@ export default function ThermodynamicsCalculator() {
 
         let result: CalculationOutput;
 
-        if (activeCalculator === 'heat-transfer') {
+        if (activeCalculator === 'steam-tables') {
+            result = calculateSteamTables({
+                pressure: calculationInputs.steam_pressure,
+                temperature: calculationInputs.steam_temp,
+                quality: calculationInputs.steam_quality
+            });
+        } else if (activeCalculator === 'psychrometrics') {
+            result = calculatePsychrometrics({
+                dry_bulb_T: calculationInputs.dry_bulb_T,
+                rel_humidity_RH: calculationInputs.rel_humidity_RH
+            });
+        } else if (activeCalculator === 'duct-sizing') {
+            result = calculateHVACDuctSizing({
+                airflow_Q: calculationInputs.airflow_Q,
+                velocity_V: calculationInputs.velocity_V,
+                aspect_ratio: calculationInputs.aspect_ratio
+            });
+        } else if (activeCalculator === 'heat-transfer') {
             result = calculateHeatTransfer(calculationInputs);
         } else if (activeCalculator === 'ideal-gas') {
             result = calculateIdealGas(calculationInputs);
@@ -106,7 +151,25 @@ export default function ThermodynamicsCalculator() {
     };
 
     const getFormulaInfo = () => {
-        if (activeCalculator === 'ideal-gas') {
+        if (activeCalculator === 'steam-tables') {
+            return {
+                name: 'Steam & Fluid Thermodynamic Tables',
+                formula: 'T_sat = f(P), h = h_f + x·h_fg, s = s_f + x·s_fg, v = v_f + x·v_fg',
+                description: 'Calculates saturation temperature, latent heat of vaporization, enthalpy, entropy, and specific volume based on IAPWS-IF97 steam formulations.'
+            };
+        } else if (activeCalculator === 'psychrometrics') {
+            return {
+                name: 'Psychrometrics (Moist Air Properties)',
+                formula: 'Pws = 0.61078·e^(17.27T/(T+237.3)), W = 0.622·Pw/(P-Pw), h = 1.006T + W·(2501 + 1.86T)',
+                description: 'Computes moist air thermodynamic state, enthalpy, humidity ratio, dew point, wet bulb, and specific volume for HVAC systems.'
+            };
+        } else if (activeCalculator === 'duct-sizing') {
+            return {
+                name: 'HVAC Air Duct Sizing (Equal Friction)',
+                formula: 'A = Q / V, D = √(4A/π), H = √(A/AR), W = AR·H, Pv = 0.5·ρ·V²',
+                description: 'Sizes circular round duct diameters and equivalent aspect-ratio rectangular HVAC supply and return air duct dimensions.'
+            };
+        } else if (activeCalculator === 'ideal-gas') {
             return {
                 name: 'Ideal Gas Law',
                 formula: 'PV = nRT',
@@ -149,7 +212,15 @@ export default function ThermodynamicsCalculator() {
             deltaV: { value: '', unit: 'm³' },
             Qc: { value: '', unit: 'J' },
             Win: { value: '', unit: 'J' },
-            Q_out: { value: '', unit: 'J' }
+            Q_out: { value: '', unit: 'J' },
+            steam_pressure: { value: '10', unit: 'bar' },
+            steam_temp: { value: '180', unit: '°C' },
+            steam_quality: { value: '1.0', unit: 'ratio' },
+            dry_bulb_T: { value: '28', unit: '°C' },
+            rel_humidity_RH: { value: '60', unit: '%' },
+            airflow_Q: { value: '1.2', unit: 'm³/s' },
+            velocity_V: { value: '6.0', unit: 'm/s' },
+            aspect_ratio: { value: '1.5', unit: 'ratio' }
         });
         setResults(null);
     };
@@ -188,10 +259,30 @@ export default function ThermodynamicsCalculator() {
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-lg font-semibold text-charcoal flex items-center">
-                            <Edit className="h-5 w-5 text-eng-blue mr-2" />
-                            Input Parameters
-                        </CardTitle>
+                        <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg font-semibold text-charcoal flex items-center">
+                                <Edit className="h-5 w-5 text-eng-blue mr-2" />
+                                Input Parameters
+                            </CardTitle>
+                            {(activeCalculator === 'psychrometrics' || activeCalculator === 'duct-sizing') && (
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                        const savedTemp = localStorage.getItem('live_ambient_temp') || '28';
+                                        const savedRH = localStorage.getItem('live_ambient_humidity') || '60';
+                                        setInputs(prev => ({
+                                            ...prev,
+                                            dry_bulb_T: { value: savedTemp, unit: '°C' },
+                                            rel_humidity_RH: { value: savedRH, unit: '%' }
+                                        }));
+                                    }}
+                                    className="text-xs h-8 bg-cyan-50 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 border-cyan-300 hover:bg-cyan-100"
+                                >
+                                    🌤️ Autofill Live Ambient ({localStorage.getItem('live_ambient_temp') || '28'}°C, {localStorage.getItem('live_ambient_humidity') || '60'}% RH)
+                                </Button>
+                            )}
+                        </div>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-4">
@@ -232,6 +323,62 @@ export default function ThermodynamicsCalculator() {
                                                 <SelectContent><SelectItem value="m">m</SelectItem><SelectItem value="mm">mm</SelectItem></SelectContent>
                                             </Select>
                                         </div>
+                                    </div>
+                                </>
+                            )}
+                            {activeCalculator === 'steam-tables' && (
+                                <>
+                                    <div>
+                                        <Label>Steam / Liquid Pressure (P)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input
+                                                type="number"
+                                                value={inputs.steam_pressure.value}
+                                                onChange={(e) => handleInputChange('steam_pressure', e.target.value)}
+                                                placeholder="e.g. 10 bar (1.0 MPa)"
+                                            />
+                                            <Select value={inputs.steam_pressure.unit} onValueChange={(v) => handleUnitChange('steam_pressure', v)}>
+                                                <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="bar">bar</SelectItem>
+                                                    <SelectItem value="kPa">kPa</SelectItem>
+                                                    <SelectItem value="MPa">MPa</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Temperature (T) [Optional if Saturated]</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input
+                                                type="number"
+                                                value={inputs.steam_temp.value}
+                                                onChange={(e) => handleInputChange('steam_temp', e.target.value)}
+                                                placeholder="e.g. 180"
+                                            />
+                                            <Select value={inputs.steam_temp.unit} onValueChange={(v) => handleUnitChange('steam_temp', v)}>
+                                                <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="°C">°C</SelectItem>
+                                                    <SelectItem value="K">K</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Dryness Fraction / Steam Quality (x: 0 = Liquid, 1 = Vapor)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input
+                                                type="number"
+                                                step="0.05"
+                                                min="0"
+                                                max="1"
+                                                value={inputs.steam_quality.value}
+                                                onChange={(e) => handleInputChange('steam_quality', e.target.value)}
+                                                placeholder="1.0"
+                                            />
+                                        </div>
+                                        <p className="text-[11px] text-slate-500 mt-1">x=0 for Saturated Liquid, x=1 for Saturated Vapor, 0 &lt; x &lt; 1 for Wet Steam Mixture</p>
                                     </div>
                                 </>
                             )}
@@ -488,6 +635,107 @@ export default function ThermodynamicsCalculator() {
                                                 <SelectContent><SelectItem value="J">J</SelectItem><SelectItem value="kJ">kJ</SelectItem></SelectContent>
                                             </Select>
                                         </div>
+                                    </div>
+                                </>
+                            )}
+                            {activeCalculator === 'psychrometrics' && (
+                                <>
+                                    <div>
+                                        <Label>Dry Bulb Temperature (T_db)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input
+                                                type="number"
+                                                value={inputs.dry_bulb_T.value}
+                                                onChange={(e) => handleInputChange('dry_bulb_T', e.target.value)}
+                                                placeholder="e.g. 28"
+                                            />
+                                            <Select value={inputs.dry_bulb_T.unit} onValueChange={(v) => handleUnitChange('dry_bulb_T', v)}>
+                                                <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="°C">°C</SelectItem>
+                                                    <SelectItem value="K">K</SelectItem>
+                                                    <SelectItem value="°F">°F</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Relative Humidity (RH %)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input
+                                                type="number"
+                                                min="0"
+                                                max="100"
+                                                value={inputs.rel_humidity_RH.value}
+                                                onChange={(e) => handleInputChange('rel_humidity_RH', e.target.value)}
+                                                placeholder="e.g. 60"
+                                            />
+                                            <Select value={inputs.rel_humidity_RH.unit} onValueChange={(v) => handleUnitChange('rel_humidity_RH', v)}>
+                                                <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="%">%</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <p className="text-[11px] text-slate-500 mt-1">Percentage of water vapor saturation in atmospheric air (0% to 100%)</p>
+                                    </div>
+                                </>
+                            )}
+                            {activeCalculator === 'duct-sizing' && (
+                                <>
+                                    <div>
+                                        <Label>Volumetric Airflow (Q)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input
+                                                type="number"
+                                                value={inputs.airflow_Q.value}
+                                                onChange={(e) => handleInputChange('airflow_Q', e.target.value)}
+                                                placeholder="e.g. 1.2"
+                                            />
+                                            <Select value={inputs.airflow_Q.unit} onValueChange={(v) => handleUnitChange('airflow_Q', v)}>
+                                                <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="m³/s">m³/s</SelectItem>
+                                                    <SelectItem value="CFM">CFM</SelectItem>
+                                                    <SelectItem value="m³/h">m³/h</SelectItem>
+                                                    <SelectItem value="L/s">L/s</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Target Air Velocity (V)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input
+                                                type="number"
+                                                value={inputs.velocity_V.value}
+                                                onChange={(e) => handleInputChange('velocity_V', e.target.value)}
+                                                placeholder="e.g. 6.0"
+                                            />
+                                            <Select value={inputs.velocity_V.unit} onValueChange={(v) => handleUnitChange('velocity_V', v)}>
+                                                <SelectTrigger className="w-28"><SelectValue /></SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="m/s">m/s</SelectItem>
+                                                    <SelectItem value="FPM">FPM</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <p className="text-[11px] text-slate-500 mt-1">Typical main ducts: 5–8 m/s (1000–1600 FPM); Branch ducts: 3–5 m/s (600–1000 FPM)</p>
+                                    </div>
+                                    <div>
+                                        <Label>Rectangular Duct Aspect Ratio (W : H)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input
+                                                type="number"
+                                                step="0.1"
+                                                min="1"
+                                                max="6"
+                                                value={inputs.aspect_ratio.value}
+                                                onChange={(e) => handleInputChange('aspect_ratio', e.target.value)}
+                                                placeholder="1.5"
+                                            />
+                                        </div>
+                                        <p className="text-[11px] text-slate-500 mt-1">Recommended ratio between 1.0 (square) and 2.5 for optimal pressure drop</p>
                                     </div>
                                 </>
                             )}

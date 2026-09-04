@@ -10,6 +10,7 @@ import { Edit, Trash2, BarChart3, Save, Share, AlertTriangle, CheckCircle, Exter
 import { CalculationOutput } from '@/lib/calculations';
 
 import { calculateBeamLoad, calculateBendingMoment, calculateShearForce, calculateBeamDeflection, calculateColumnLoad, calculateSlabThickness, calculateFootingSize, calculateReinforcement, calculateStructuralSafetyFactor } from '@/lib/civil-calculations';
+import { calculateSteelSectionProperties } from '@/lib/calculations';
 import { engineeringDisciplines } from '@/lib/formulas';
 import { getHowToUse, getEngineeringExplanation, getPracticalApplications, getFAQs } from '@/lib/calculator-content';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
@@ -35,6 +36,12 @@ export default function StructuralCalculator() {
         volume: { value: '10', unit: 'm³' },
         percentage: { value: '1', unit: '%' },
         strength: { value: '100', unit: 'kN' }, // Working Load
+        depth_d: { value: '300', unit: 'mm' },
+        flange_width_bf: { value: '150', unit: 'mm' },
+        flange_thickness_tf: { value: '10.7', unit: 'mm' },
+        web_thickness_tw: { value: '7.1', unit: 'mm' },
+        yield_strength_fy: { value: '250', unit: 'MPa' },
+        length_L: { value: '6.0', unit: 'm' }
     });
     const [results, setResults] = useState<CalculationOutput | null>(null);
 
@@ -65,7 +72,9 @@ export default function StructuralCalculator() {
         });
 
         let res: CalculationOutput;
-        if (activeMode === 'beam-load') {
+        if (activeMode === 'steel-section') {
+            res = calculateSteelSectionProperties(calcInputs);
+        } else if (activeMode === 'beam-load') {
             res = calculateBeamLoad(calcInputs);
         } else if (activeMode === 'moment') {
             res = calculateBendingMoment(calcInputs);
@@ -108,6 +117,12 @@ export default function StructuralCalculator() {
             volume: { value: '10', unit: 'm³' },
             percentage: { value: '1', unit: '%' },
             strength: { value: '100', unit: 'kN' },
+            depth_d: { value: '300', unit: 'mm' },
+            flange_width_bf: { value: '150', unit: 'mm' },
+            flange_thickness_tf: { value: '10.7', unit: 'mm' },
+            web_thickness_tw: { value: '7.1', unit: 'mm' },
+            yield_strength_fy: { value: '250', unit: 'MPa' },
+            length_L: { value: '6.0', unit: 'm' }
         });
         setResults(null);
     };
@@ -115,6 +130,13 @@ export default function StructuralCalculator() {
     return (
         <div className="space-y-6">
             <div className="flex space-x-2 overflow-x-auto pb-2">
+                <Button
+                    variant={activeMode === 'steel-section' ? 'default' : 'outline'}
+                    onClick={() => { setActiveMode('steel-section'); setResults(null); }}
+                    className={activeMode === 'steel-section' ? 'bg-eng-blue text-white' : ''}
+                >
+                    Steel I-Beam / Section
+                </Button>
                 <Button
                     variant={activeMode === 'beam-load' ? 'default' : 'outline'}
                     onClick={() => { setActiveMode('beam-load'); setResults(null); }}
@@ -151,6 +173,73 @@ export default function StructuralCalculator() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
+                        {activeMode === 'steel-section' && (
+                            <>
+                                <div className="space-y-2 mb-3">
+                                    <Label className="text-xs text-slate-500">Quick Section Presets</Label>
+                                    <div className="flex flex-wrap gap-1.5">
+                                        {[
+                                            { label: 'ISMB 300', d: '300', bf: '140', tf: '13.1', tw: '7.7' },
+                                            { label: 'W12x50', d: '309.6', bf: '205.2', tf: '16.3', tw: '9.4' },
+                                            { label: 'IPE 300', d: '300', bf: '150', tf: '10.7', tw: '7.1' },
+                                            { label: 'HEA 200', d: '190', bf: '200', tf: '10.0', tw: '6.5' }
+                                        ].map(preset => (
+                                            <button
+                                                key={preset.label}
+                                                type="button"
+                                                onClick={() => {
+                                                    handleInputChange('depth_d', preset.d);
+                                                    handleInputChange('flange_width_bf', preset.bf);
+                                                    handleInputChange('flange_thickness_tf', preset.tf);
+                                                    handleInputChange('web_thickness_tw', preset.tw);
+                                                }}
+                                                className="text-[11px] font-mono bg-slate-100 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 transition-colors"
+                                            >
+                                                {preset.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <Label>Total Section Depth (d)</Label>
+                                        <div className="flex mt-1.5 space-x-2">
+                                            <Input type="number" value={inputs.depth_d.value} onChange={(e) => handleInputChange('depth_d', e.target.value)} placeholder="mm" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Flange Width (bf)</Label>
+                                        <div className="flex mt-1.5 space-x-2">
+                                            <Input type="number" value={inputs.flange_width_bf.value} onChange={(e) => handleInputChange('flange_width_bf', e.target.value)} placeholder="mm" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Flange Thickness (tf)</Label>
+                                        <div className="flex mt-1.5 space-x-2">
+                                            <Input type="number" step="0.1" value={inputs.flange_thickness_tf.value} onChange={(e) => handleInputChange('flange_thickness_tf', e.target.value)} placeholder="mm" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Web Thickness (tw)</Label>
+                                        <div className="flex mt-1.5 space-x-2">
+                                            <Input type="number" step="0.1" value={inputs.web_thickness_tw.value} onChange={(e) => handleInputChange('web_thickness_tw', e.target.value)} placeholder="mm" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Steel Yield Strength (Fy)</Label>
+                                        <div className="flex mt-1.5 space-x-2">
+                                            <Input type="number" value={inputs.yield_strength_fy.value} onChange={(e) => handleInputChange('yield_strength_fy', e.target.value)} placeholder="MPa (e.g. 250, 355)" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Span Length (L)</Label>
+                                        <div className="flex mt-1.5 space-x-2">
+                                            <Input type="number" step="0.5" value={inputs.length_L.value} onChange={(e) => handleInputChange('length_L', e.target.value)} placeholder="meters" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                         {activeMode === 'beam-load' && (
                             <>
                                 <div className="grid grid-cols-2 gap-4">

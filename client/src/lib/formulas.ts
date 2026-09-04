@@ -1096,5 +1096,9 @@ export const unitConversions = {
   apparent_power: { VA: 1, kVA: 1000, MVA: 1000000 },
   reactive_power: { VAR: 1, kVAR: 1000, MVAR: 1000000 },
   angle: { deg: 1, rad: 57.2958 },
-  capacity: { Ah: 1, mAh: 0.001 }
+  capacity: { Ah: 1, mAh: 0.001 },
+  charge: { C: 1, mC: 0.001, 'μC': 0.000001, nC: 0.000000001, pC: 0.000000000001 },
+  magnetic_flux: { Wb: 1, mWb: 0.001, 'μWb': 0.000001, Mx: 0.00000001 },
+  magnetic_field: { T: 1, mT: 0.001, 'μT': 0.000001, G: 0.0001 },
+  electric_field: { 'V/m': 1, 'kV/m': 1000, 'MV/m': 1000000 }
 };

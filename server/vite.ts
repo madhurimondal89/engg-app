@@ -40,6 +40,17 @@ export async function setupVite(app: Express, server: Server) {
     appType: "custom",
   });
 
+  // Prevent browser from caching ANY response in dev mode
+  app.use((_req, res, next) => {
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'Surrogate-Control': 'no-store',
+    });
+    next();
+  });
+
   app.use(vite.middlewares);
   app.use("*", async (req, res, next) => {
     const url = req.originalUrl;
@@ -76,10 +87,24 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  app.use(
+    express.static(distPath, {
+      maxAge: "1d",
+      setHeaders: (res, filePath) => {
+        if (filePath.includes(`${path.sep}assets${path.sep}`) || filePath.includes("/assets/")) {
+          // Hashed static JS/CSS assets can be cached for 1 year
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        } else if (filePath.endsWith(".html")) {
+          // HTML should always revalidate so users get immediate updates
+          res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+        }
+      },
+    }),
+  );
 
   // fall through to index.html if the file doesn't exist
   app.use("*", (_req, res) => {
+    res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }

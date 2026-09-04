@@ -5,6 +5,8 @@ import express from "express";
 import path from "path";
 import { WebSocketServer, WebSocket } from "ws";
 
+import fs from "fs";
+
 // In-memory storage for shared calculations
 interface SharedCalculation {
   roomId: string;
@@ -17,13 +19,8 @@ interface SharedCalculation {
 const sharedCalculations = new Map<string, SharedCalculation>();
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve static files from public directory
-  app.use(express.static(path.join(process.cwd(), 'public')));
-
-  // Handle HTML routes
-  app.get('/', (req, res) => {
-    res.sendFile(path.join(process.cwd(), 'public', 'index.html'));
-  });
+  // Serve static assets from public directory (without hijacking root index)
+  app.use(express.static(path.join(process.cwd(), 'public'), { index: false }));
 
   // Serve SEO files
   app.get('/sitemap.xml', (req, res) => {
@@ -33,13 +30,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.sendFile(path.join(process.cwd(), 'public', 'robots.txt'));
   });
 
-  app.get('/calculators/:calculator', (req, res) => {
+  // If a legacy static HTML exists in public/calculators, serve it; otherwise pass to Vite/SPA
+  app.get('/calculators/:calculator', (req, res, next) => {
     const calculatorFile = path.join(process.cwd(), 'public', 'calculators', `${req.params.calculator}.html`);
-    res.sendFile(calculatorFile, (err) => {
-      if (err) {
-        res.status(404).sendFile(path.join(process.cwd(), 'public', 'index.html'));
-      }
-    });
+    if (fs.existsSync(calculatorFile)) {
+      return res.sendFile(calculatorFile);
+    }
+    return next();
   });
 
   // API routes for shared calculations

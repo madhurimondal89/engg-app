@@ -12,6 +12,9 @@ function Router() {
     <Switch>
       <Route path="/" component={LandingPage} />
       <Route path="/app" component={CalculatorLayout} />
+      <Route path="/calculators" component={CalculatorLayout} />
+      <Route path="/calculators/:discipline" component={CalculatorLayout} />
+      <Route path="/calculators/:discipline/:calculator" component={CalculatorLayout} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -6,13 +6,30 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { calculateReynolds, calculateFlowRate, calculateFluidVelocity, calculatePressureDrop, calculateHeadLoss, calculateDarcyFriction, calculatePipeDiameter, calculatePumpPower, calculateHydraulicPower, calculateBernoulli, type CalculationInput, type CalculationOutput } from '@/lib/calculations';
+import { calculateReynolds, calculateFlowRate, calculateFluidVelocity, calculatePressureDrop, calculateHeadLoss, calculateDarcyFriction, calculatePipeDiameter, calculatePumpPower, calculateHydraulicPower, calculateBernoulli, calculateManningsOpenChannel, calculateWeirDischarge, type CalculationInput, type CalculationOutput } from '@/lib/calculations';
 import { Settings, BarChart3, Edit, Trash2, Save, Share, Printer, AlertTriangle, CheckCircle, BookOpen } from 'lucide-react';
 import { getHowToUse, getEngineeringExplanation, getPracticalApplications, getFAQs } from '@/lib/calculator-content';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 
-export default function FluidCalculator() {
-    const [activeCalculator, setActiveCalculator] = useState('reynolds');
+export default function FluidCalculator({ initialCalc }: { initialCalc?: string }) {
+    const [activeCalculator, setActiveCalculator] = useState(() => {
+        if (initialCalc) return initialCalc;
+        return 'reynolds';
+    });
+
+    React.useEffect(() => {
+        if (initialCalc && initialCalc !== activeCalculator) {
+            setActiveCalculator(initialCalc);
+        }
+    }, [initialCalc]);
+
+    React.useEffect(() => {
+        const slug = activeCalculator ? `/${activeCalculator}` : '';
+        const newPath = `/calculators/fluid${slug}`;
+        if (window.location.pathname !== newPath) {
+            window.history.replaceState(null, '', newPath);
+        }
+    }, [activeCalculator]);
     const [inputs, setInputs] = useState({
         rho: { value: '', unit: 'kg/m³' },
         v: { value: '', unit: 'm/s' },
@@ -30,12 +47,22 @@ export default function FluidCalculator() {
         h2: { value: '', unit: 'm' },
         eta: { value: '', unit: '' },
         dP: { value: '', unit: 'Pa' },
-        P1: { value: '', unit: 'Pa' }
+        P1: { value: '', unit: 'Pa' },
+        bottom_width: { value: '2.0', unit: 'm' },
+        depth: { value: '1.2', unit: 'm' },
+        side_slope: { value: '1.5', unit: 'ratio' },
+        bed_slope: { value: '0.0015', unit: 'm/m' },
+        roughness_n: { value: '0.014', unit: '' },
+        head_H: { value: '0.35', unit: 'm' },
+        crest_length_L: { value: '1.5', unit: 'm' },
+        notch_angle: { value: '90', unit: 'deg' }
     });
     const [results, setResults] = useState<CalculationOutput | null>(null);
 
     const calculatorTypes = [
         { id: 'reynolds', name: 'Reynolds Number', active: true },
+        { id: 'mannings-flow', name: "Manning's Open Channel", active: true },
+        { id: 'weir-discharge', name: 'Weir & Flume Flow', active: true },
         { id: 'flow-rate', name: 'Flow Rate', active: true },
         { id: 'fluid-velocity', name: 'Velocity', active: true },
         { id: 'pressure-drop', name: 'Pressure Drop', active: true },
@@ -75,7 +102,11 @@ export default function FluidCalculator() {
 
         let result: CalculationOutput;
 
-        if (activeCalculator === 'reynolds') {
+        if (activeCalculator === 'mannings-flow') {
+            result = calculateManningsOpenChannel(calculationInputs);
+        } else if (activeCalculator === 'weir-discharge') {
+            result = calculateWeirDischarge(calculationInputs);
+        } else if (activeCalculator === 'reynolds') {
             result = calculateReynolds(calculationInputs);
         } else if (activeCalculator === 'flow-rate') {
             result = calculateFlowRate(calculationInputs);
@@ -103,7 +134,19 @@ export default function FluidCalculator() {
     };
 
     const getFormulaInfo = () => {
-        if (activeCalculator === 'reynolds') {
+        if (activeCalculator === 'mannings-flow') {
+            return {
+                name: "Manning's Open Channel Flow",
+                formula: 'Q = (1/n) * A * R_h^(2/3) * S^(1/2), Fr = V / √(g·D_h)',
+                description: 'Calculates open channel velocity, discharge rate, and Froude number regime (subcritical/supercritical) for drainage canals, culverts, and rivers.'
+            };
+        } else if (activeCalculator === 'weir-discharge') {
+            return {
+                name: 'Weir & Flume Discharge (V-Notch & Rectangular)',
+                formula: 'Q_v = (8/15)Cd√(2g)tan(θ/2)H^(5/2), Q_rect = (2/3)Cd√(2g)LH^(3/2)',
+                description: 'Calculates hydraulic water discharge over sharp-crested triangular (V-notch) and rectangular flow-measurement weirs.'
+            };
+        } else if (activeCalculator === 'reynolds') {
             return {
                 name: 'Reynolds Number',
                 formula: 'Re = (ρ × v × D) / μ',
@@ -143,7 +186,15 @@ export default function FluidCalculator() {
             h2: { value: '', unit: 'm' },
             eta: { value: '', unit: '' },
             dP: { value: '', unit: 'Pa' },
-            P1: { value: '', unit: 'Pa' }
+            P1: { value: '', unit: 'Pa' },
+            bottom_width: { value: '2.0', unit: 'm' },
+            depth: { value: '1.2', unit: 'm' },
+            side_slope: { value: '1.5', unit: 'ratio' },
+            bed_slope: { value: '0.0015', unit: 'm/m' },
+            roughness_n: { value: '0.014', unit: '' },
+            head_H: { value: '0.35', unit: 'm' },
+            crest_length_L: { value: '1.5', unit: 'm' },
+            notch_angle: { value: '90', unit: 'deg' }
         });
         setResults(null);
     };
@@ -189,6 +240,79 @@ export default function FluidCalculator() {
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-4">
+                            {activeCalculator === 'mannings-flow' && (
+                                <>
+                                    <div>
+                                        <Label>Channel Bottom Width (b)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input type="number" value={inputs.bottom_width.value} onChange={(e) => handleInputChange('bottom_width', e.target.value)} placeholder="e.g. 2.0 m" />
+                                            <Select value={inputs.bottom_width.unit} onValueChange={(v) => handleUnitChange('bottom_width', v)}>
+                                                <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                                                <SelectContent><SelectItem value="m">m</SelectItem><SelectItem value="ft">ft</SelectItem></SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Water Flow Depth (y)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input type="number" value={inputs.depth.value} onChange={(e) => handleInputChange('depth', e.target.value)} placeholder="e.g. 1.2 m" />
+                                            <Select value={inputs.depth.unit} onValueChange={(v) => handleUnitChange('depth', v)}>
+                                                <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                                                <SelectContent><SelectItem value="m">m</SelectItem><SelectItem value="ft">ft</SelectItem></SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Side Slope (z:1 Horizontal to Vertical)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input type="number" step="0.1" value={inputs.side_slope.value} onChange={(e) => handleInputChange('side_slope', e.target.value)} placeholder="0 for Rectangular, 1.5 for Trapezoid" />
+                                        </div>
+                                        <p className="text-[11px] text-slate-500 mt-1">z=0: Rectangular, z=1: 45° Trapezoidal, z=1.5: Standard Earth/Concrete canal</p>
+                                    </div>
+                                    <div>
+                                        <Label>Bed Slope (S: Longitudinal Gradient)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input type="number" step="0.0001" value={inputs.bed_slope.value} onChange={(e) => handleInputChange('bed_slope', e.target.value)} placeholder="e.g. 0.0015" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Manning's Roughness Coefficient (n)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input type="number" step="0.001" value={inputs.roughness_n.value} onChange={(e) => handleInputChange('roughness_n', e.target.value)} placeholder="0.013 for Smooth Concrete, 0.025 for Earth" />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            {activeCalculator === 'weir-discharge' && (
+                                <>
+                                    <div>
+                                        <Label>Head over Weir Crest (H)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input type="number" step="0.01" value={inputs.head_H.value} onChange={(e) => handleInputChange('head_H', e.target.value)} placeholder="e.g. 0.35 m" />
+                                            <Select value={inputs.head_H.unit} onValueChange={(v) => handleUnitChange('head_H', v)}>
+                                                <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                                                <SelectContent><SelectItem value="m">m</SelectItem><SelectItem value="cm">cm</SelectItem><SelectItem value="in">in</SelectItem></SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>Rectangular Weir Crest Length (L)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input type="number" step="0.1" value={inputs.crest_length_L.value} onChange={(e) => handleInputChange('crest_length_L', e.target.value)} placeholder="e.g. 1.5 m" />
+                                            <Select value={inputs.crest_length_L.unit} onValueChange={(v) => handleUnitChange('crest_length_L', v)}>
+                                                <SelectTrigger className="w-24"><SelectValue /></SelectTrigger>
+                                                <SelectContent><SelectItem value="m">m</SelectItem><SelectItem value="ft">ft</SelectItem></SelectContent>
+                                            </Select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label>V-Notch Angle (θ in degrees)</Label>
+                                        <div className="flex mt-2 space-x-2">
+                                            <Input type="number" value={inputs.notch_angle.value} onChange={(e) => handleInputChange('notch_angle', e.target.value)} placeholder="90° (Standard Thomson)" />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                             {activeCalculator === 'reynolds' && (
                                 <>
                                     <div>

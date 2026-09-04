@@ -3,98 +3,212 @@ import {
   Zap, Cpu, Building2, Droplets, Flame, Cog, Search, ArrowRight,
   CheckCircle2, Star, TrendingUp, BookOpen, ChevronRight, Bolt,
   BarChart3, FlaskConical, Layers, Shield, Clock, Users, Calculator,
-  Activity, Wrench, Gauge, X, ExternalLink, Sparkles, Award, Globe
+  Activity, Wrench, Gauge, X, ExternalLink, Sparkles, Award, Globe, LineChart, Compass,
+  Sun, Moon, Radio
 } from 'lucide-react';
+import { LiveEngineeringFeed } from './live-engineering-feed';
+import { useSeo } from '@/lib/seo';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
+const coreDisciplines = [
+  {
+    id: 'electrical',
+    name: 'Electrical Engineering',
+    tagline: 'Circuits, Power Systems, Transformers & Solar',
+    icon: Zap,
+    count: '50+ Calculators',
+    status: 'Active',
+    cardBg: 'bg-blue-50/80 hover:bg-blue-50/95 dark:bg-blue-950/30 dark:hover:bg-blue-950/40',
+    borderColor: 'border-blue-200/90 dark:border-blue-800/60 hover:border-blue-400',
+    titleColor: 'text-blue-900 dark:text-blue-200',
+    countColor: 'text-blue-600/80 dark:text-blue-400',
+    iconColor: 'text-amber-500',
+    iconBg: 'bg-amber-500/15',
+    desc: "Ohm's law, 3-Phase AC, Transformer diagnostics (Tan Delta, BDV, DGA, TTR), cable sizing, motors, and solar PV arrays.",
+    featuredCalcs: [
+      { name: "Ohm's Law", id: 'ohms-law' },
+      { name: 'Tan Delta Test', id: 'tan-delta' },
+      { name: 'Cable Sizing', id: 'cable-size' },
+      { name: 'Transformer DGA', id: 'oil-dga' },
+      { name: 'Power Factor', id: 'power-factor' },
+      { name: 'Solar PV Array', id: 'solar-panel' },
+    ]
+  },
+  {
+    id: 'mechanical',
+    name: 'Mechanical Engineering',
+    tagline: 'Machine Design, Stress Tensor & Dynamics',
+    icon: Cog,
+    count: '30+ Calculators',
+    status: 'Active',
+    cardBg: 'bg-emerald-50/80 hover:bg-emerald-50/95 dark:bg-emerald-950/30 dark:hover:bg-emerald-950/40',
+    borderColor: 'border-emerald-200/90 dark:border-emerald-800/60 hover:border-emerald-400',
+    titleColor: 'text-emerald-900 dark:text-emerald-200',
+    countColor: 'text-emerald-600/80 dark:text-emerald-400',
+    iconColor: 'text-purple-500',
+    iconBg: 'bg-purple-500/15',
+    desc: "Gear trains, shaft torsion, bolt torque, springs, beam deflection, Mohr's circle stress, statics, and manufacturing.",
+    featuredCalcs: [
+      { name: 'Beam SFD/BMD', id: 'beam-analyzer' },
+      { name: "Mohr's Circle", id: 'mohr-stress' },
+      { name: 'Gear Ratios', id: 'gear-ratio' },
+      { name: 'Shaft Diameter', id: 'torque' },
+      { name: 'Bolt Torque', id: 'pressure' },
+      { name: 'Spring Constant', id: 'strength' },
+    ]
+  },
+  {
+    id: 'civil',
+    name: 'Civil Engineering',
+    tagline: 'RCC Structures, Soil Bearing & Surveying',
+    icon: Building2,
+    count: '15+ Calculators',
+    status: 'Active',
+    cardBg: 'bg-amber-50/80 hover:bg-amber-50/95 dark:bg-amber-950/30 dark:hover:bg-amber-950/40',
+    borderColor: 'border-amber-200/90 dark:border-amber-800/60 hover:border-amber-400',
+    titleColor: 'text-amber-900 dark:text-amber-200',
+    countColor: 'text-amber-600/80 dark:text-amber-400',
+    iconColor: 'text-amber-600',
+    iconBg: 'bg-amber-500/15',
+    desc: "RCC beam & column sizing, concrete mix (M20/M25), Terzaghi soil bearing capacity, leveling survey, and excavation.",
+    featuredCalcs: [
+      { name: 'Concrete Mix M25', id: 'construction' },
+      { name: 'RCC Beam Design', id: 'structural' },
+      { name: 'Soil Bearing Cap.', id: 'geotechnical' },
+      { name: 'Leveling Survey', id: 'surveying' },
+      { name: 'Column Load', id: 'structural' },
+      { name: 'Rainwater Tank', id: 'environmental' },
+    ]
+  },
+  {
+    id: 'fluid',
+    name: 'Fluid Mechanics',
+    tagline: 'Pipe Friction, Hydraulics & Pumps',
+    icon: Droplets,
+    count: '20+ Calculators',
+    status: 'Coming Soon',
+    cardBg: 'bg-slate-50/90 hover:bg-sky-50/50 dark:bg-slate-900/50 dark:hover:bg-sky-950/30',
+    borderColor: 'border-slate-200/90 dark:border-slate-800/60 hover:border-sky-300',
+    titleColor: 'text-slate-800 dark:text-slate-200',
+    countColor: 'text-slate-500 dark:text-slate-400',
+    iconColor: 'text-sky-500',
+    iconBg: 'bg-sky-500/15',
+    desc: "Darcy-Weisbach friction factor, Reynolds flow regimes, Bernoulli energy equation, pump head power, and Venturi meters.",
+    featuredCalcs: [
+      { name: 'Reynolds Number', id: 'reynolds' },
+      { name: 'Darcy Friction', id: 'darcy-friction' },
+      { name: 'Bernoulli Energy', id: 'bernoulli' },
+      { name: 'Pump Power', id: 'pump-power' },
+      { name: 'Venturi Meter', id: 'venturi' },
+      { name: 'Hydraulic Jump', id: 'hydraulic-jump' },
+    ]
+  },
+  {
+    id: 'thermodynamics',
+    name: 'Thermodynamics',
+    tagline: 'Thermal Cycles, Heat Exchangers & HVAC',
+    icon: Flame,
+    count: '18+ Calculators',
+    status: 'Coming Soon',
+    cardBg: 'bg-slate-50/90 hover:bg-rose-50/50 dark:bg-slate-900/50 dark:hover:bg-rose-950/30',
+    borderColor: 'border-slate-200/90 dark:border-slate-800/60 hover:border-rose-300',
+    titleColor: 'text-slate-800 dark:text-slate-200',
+    countColor: 'text-slate-500 dark:text-slate-400',
+    iconColor: 'text-rose-500',
+    iconBg: 'bg-rose-500/15',
+    desc: "LMTD & NTU heat exchangers, Carnot / Rankine cycle efficiency, Fourier heat conduction, and psychrometric air properties.",
+    featuredCalcs: [
+      { name: 'Heat Exchanger LMTD', id: 'heat-transfer' },
+      { name: 'Carnot Efficiency', id: 'carnot-efficiency' },
+      { name: 'Fourier Conduction', id: 'heat-loss' },
+      { name: 'Rankine Cycle', id: 'thermal-efficiency' },
+      { name: 'Ideal Gas Law', id: 'ideal-gas' },
+      { name: 'Entropy Change', id: 'entropy' },
+    ]
+  },
+  {
+    id: 'mechanical',
+    name: 'Machine Design',
+    tagline: 'Flywheels, Torsion, Gear Trains & Fasteners',
+    icon: Wrench,
+    count: '22+ Calculators',
+    status: 'Coming Soon',
+    cardBg: 'bg-slate-50/90 hover:bg-purple-50/50 dark:bg-slate-900/50 dark:hover:bg-purple-950/30',
+    borderColor: 'border-slate-200/90 dark:border-slate-800/60 hover:border-purple-300',
+    titleColor: 'text-slate-800 dark:text-slate-200',
+    countColor: 'text-slate-500 dark:text-slate-400',
+    iconColor: 'text-purple-500',
+    iconBg: 'bg-purple-500/15',
+    desc: "Flywheels, brakes, clutches, spring stiffness, shaft keyways, belt drives, and fatigue endurance limit.",
+    featuredCalcs: [
+      { name: 'Gear Train Ratio', id: 'gear-ratio' },
+      { name: 'Shaft Key Design', id: 'torque' },
+      { name: 'Spring Stiffness', id: 'strength' },
+      { name: 'Bolt Preload', id: 'pressure' },
+      { name: 'Flywheel Energy', id: 'dynamics' },
+      { name: 'Belt Drive Tension', id: 'power-trans' },
+    ]
+  },
+];
+
+const interactiveStudios = [
+  {
+    id: 'beam-visualizer',
+    discipline: 'mechanical',
+    title: 'Beam Shear (SFD) & Moment (BMD) Analyzer',
+    badge: 'Interactive FEA',
+    icon: Layers,
+    color: 'from-blue-600 to-cyan-600',
+    desc: 'Real-time bending moment and shear force diagram generator with custom point loads, distributed loads, and support reactions.',
+  },
+  {
+    id: 'mohrs-circle',
+    discipline: 'mechanical',
+    title: "Mohr's Circle 2D Stress Tensor Studio",
+    badge: 'Tensor Visualizer',
+    icon: Compass,
+    color: 'from-purple-600 to-indigo-600',
+    desc: 'Compute principal stresses σ₁, σ₂, maximum in-plane shear stress τ_max, and principal orientation angle 2θ_p with live vector canvas.',
+  },
+  {
+    id: 'phasor-visualizer',
+    discipline: 'electrical',
+    title: '3-Phase AC Phasor & Waveforms Studio',
+    badge: '3-Phase Live',
+    icon: Activity,
+    color: 'from-amber-600 to-orange-600',
+    desc: 'Dynamic real-time sine waveforms, voltage-current phasor vectors, phase angle lag/lead, and power triangle (P, Q, S) simulation.',
+  },
+];
+
 const popularCalculators = [
-  // Electrical
-  { id: 'ohms-law',              name: "Ohm's Law",            desc: 'Voltage, current & resistance',           icon: Zap,       discipline: 'electrical', color: 'from-blue-500 to-blue-700' },
-  // Mechanical
-  { id: 'gear-ratio',            name: 'Gear Ratio',            desc: 'Output/input teeth & speed ratio',        icon: Cog,       discipline: 'mechanical', color: 'from-emerald-500 to-emerald-700' },
-  { id: 'thermodynamics',        name: 'Heat Transfer',         desc: 'Conduction, convection & efficiency',     icon: Flame,     discipline: 'mechanical', color: 'from-orange-400 to-red-600' },
-  // Electrical
-  { id: 'tan-delta',             name: 'Tan Delta Test',        desc: 'Insulation quality & dissipation factor', icon: Shield,    discipline: 'electrical', color: 'from-amber-500 to-amber-700' },
-  { id: 'power-factor',          name: 'Power Factor',          desc: 'PF correction & reactive power',          icon: Gauge,     discipline: 'electrical', color: 'from-green-500 to-green-700' },
-  // Civil
-  { id: 'construction',          name: 'Concrete Volume',       desc: 'Cement, sand & aggregate quantities',     icon: Building2, discipline: 'civil',      color: 'from-violet-500 to-violet-700' },
-];
-
-
-const categories = [
-  { id: 'electrical', name: 'Electrical Engineering', icon: Zap, color: 'bg-blue-50 text-blue-600 border-blue-200', count: 50, available: true },
-  { id: 'mechanical', name: 'Mechanical Engineering', icon: Cog, color: 'bg-emerald-50 text-emerald-600 border-emerald-200', count: 30, available: true },
-  { id: 'civil', name: 'Civil Engineering', icon: Building2, color: 'bg-amber-50 text-amber-600 border-amber-200', count: 15, available: true },
-  { id: 'fluid', name: 'Fluid Mechanics', icon: Droplets, color: 'bg-cyan-50 text-cyan-600 border-cyan-200', count: 20, available: false },
-  { id: 'thermo', name: 'Thermodynamics', icon: Flame, color: 'bg-red-50 text-red-600 border-red-200', count: 18, available: false },
-  { id: 'machine', name: 'Machine Design', icon: Wrench, color: 'bg-purple-50 text-purple-600 border-purple-200', count: 22, available: false },
-];
-
-const transformerTools = [
-  'Tan Delta (Dissipation Factor)',
-  'Oil Breakdown Voltage (BDV) Test',
-  'Dissolved Gas Analysis (DGA)',
-  'Transformer Turns Ratio (TTR)',
-  'Winding Resistance Temp. Correction',
-  'Insulation Resistance (IR) Test',
-  'Polarisation Index (PI)',
-  'CT Ratio & Accuracy Class',
-];
-
-const latestCalculators = [
-  { name: 'Oil DGA Analysis', badge: 'New', desc: 'IEC 60599 fault diagnosis', icon: FlaskConical, color: 'text-amber-600 bg-amber-50' },
-  { name: 'Winding Resistance Temp', badge: 'New', desc: 'IEEE correction formula', icon: Gauge, color: 'text-blue-600 bg-blue-50' },
-  { name: 'Polarisation Index', badge: 'Updated', desc: 'PI & DAR test evaluation', icon: BarChart3, color: 'text-indigo-600 bg-indigo-50' },
-  { name: 'Short Circuit Current', badge: 'New', desc: '3-phase fault calculations', icon: Bolt, color: 'text-red-600 bg-red-50' },
-  { name: 'Cable Derating', badge: 'New', desc: 'Temperature & grouping factors', icon: Layers, color: 'text-emerald-600 bg-emerald-50' },
-  { name: 'Earthing Design', badge: 'Updated', desc: 'Touch & step voltage analysis', icon: Shield, color: 'text-violet-600 bg-violet-50' },
+  { id: 'ohms-law',              name: "Ohm's Law & Circuit Power",     desc: 'Voltage, current, resistance & wattage',   icon: Zap,       discipline: 'electrical', color: 'from-blue-500 to-blue-700' },
+  { id: 'beam-analyzer',         name: 'Beam SFD & BMD Analyzer',        desc: 'Shear force & bending moment diagrams',    icon: Layers,    discipline: 'mechanical', color: 'from-indigo-500 to-indigo-700' },
+  { id: 'tan-delta',             name: 'Transformer Tan Delta Test',    desc: 'Insulation dissipation factor & condition',icon: Shield,    discipline: 'electrical', color: 'from-amber-500 to-amber-700' },
+  { id: 'construction',          name: 'Concrete Mix M25 Estimator',    desc: 'Cement, sand, aggregate & water ratios',   icon: Building2, discipline: 'civil',      color: 'from-emerald-500 to-emerald-700' },
+  { id: 'reynolds',              name: 'Reynolds Number & Pipe Flow',    desc: 'Laminar, transitional & turbulent flow',   icon: Droplets,  discipline: 'fluid',      color: 'from-cyan-500 to-cyan-700' },
+  { id: 'heat-transfer',         name: 'Heat Exchanger LMTD & NTU',      desc: 'Log mean temp diff & heat rate',          icon: Flame,     discipline: 'thermodynamics', color: 'from-orange-500 to-red-600' },
 ];
 
 const formulas = [
-  { category: 'Electrical', name: "Ohm's Law", formula: 'V = I × R', desc: 'Fundamental circuit relationship' },
-  { category: 'Electrical', name: 'Power (AC)', formula: 'P = V × I × cos φ', desc: 'Active power in AC circuits' },
-  { category: 'Electrical', name: 'Transformer EMF', formula: 'E = 4.44 × f × N × Φm', desc: 'EMF equation of transformer' },
-  { category: 'Electrical', name: 'Tan Delta', formula: 'tan δ = I_active / I_charging', desc: 'Insulation dissipation factor' },
-  { category: 'Mechanical', name: 'Stress', formula: 'σ = F / A', desc: 'Normal stress in a member' },
-  { category: 'Mechanical', name: 'Beam Deflection', formula: 'δ = FL³ / 48EI', desc: 'Mid-span deflection, simply supported' },
-];
-
-const articles = [
-  {
-    title: 'Understanding Transformer Tan Delta Testing',
-    desc: 'A complete guide to tan delta (dissipation factor) testing for assessing transformer insulation condition and predicting failures before they occur.',
-    category: 'Testing & Commissioning',
-    readTime: '8 min read',
-    date: 'Jun 2025',
-    icon: Shield,
-    color: 'border-blue-400',
-  },
-  {
-    title: 'Dissolved Gas Analysis: IEC 60599 Explained',
-    desc: 'How to interpret DGA results using the Duval Triangle, Rogers Ratio, and IEC methods to diagnose transformer faults from dissolved gases.',
-    category: 'Diagnostics',
-    readTime: '12 min read',
-    date: 'May 2025',
-    icon: FlaskConical,
-    color: 'border-amber-400',
-  },
-  {
-    title: 'Cable Sizing: AS/NZS 3008 vs IEC 60364',
-    desc: 'Comparing the two major cable sizing standards — understand when to apply each, how derating factors work, and how to select the right conductor.',
-    category: 'Power Systems',
-    readTime: '10 min read',
-    date: 'May 2025',
-    icon: Cpu,
-    color: 'border-emerald-400',
-  },
+  { category: 'Electrical', name: "Ohm's Law", formula: 'V = I × R', desc: 'Fundamental relationship between voltage, current and resistance' },
+  { category: 'Electrical', name: '3-Phase Active Power', formula: 'P = √3 × V_L × I_L × cos φ', desc: 'Real active power in 3-phase AC systems' },
+  { category: 'Electrical', name: 'Transformer Tan Delta', formula: 'tan δ = I_resistive / I_capacitive', desc: 'Dielectric insulation dissipation factor (IEC 60076)' },
+  { category: 'Mechanical', name: 'Bending Stress (Euler-Bernoulli)', formula: 'σ = (M × y) / I', desc: 'Maximum normal stress under bending moment' },
+  { category: 'Mechanical', name: 'Torsional Shear Stress', formula: 'τ = (T × r) / J', desc: 'Shear stress in circular shaft under torque' },
+  { category: 'Civil', name: 'RCC Bending Capacity', formula: 'M_u = 0.87 × f_y × A_st × d × [1 - (A_st × f_y)/(b × d × f_ck)]', desc: 'IS 456 / ACI 318 moment capacity' },
+  { category: 'Civil', name: 'Terzaghi Bearing Capacity', formula: 'q_ult = c·N_c + γ·D·N_q + 0.5·γ·B·N_γ', desc: 'Ultimate shallow foundation load capacity' },
+  { category: 'Fluid', name: 'Darcy-Weisbach Head Loss', formula: 'h_f = f × (L / D) × (v² / 2g)', desc: 'Friction head loss in circular pipe flow' },
+  { category: 'Thermodynamics', name: 'LMTD Heat Exchanger', formula: 'ΔT_lm = (ΔT_1 - ΔT_2) / ln(ΔT_1 / ΔT_2)', desc: 'Log mean temperature difference for counter/parallel flow' },
+  { category: 'Math', name: 'Quadratic Equation Roots', formula: 'x = (-b ± √(b² - 4ac)) / (2a)', desc: 'Analytical roots of 2nd order polynomials' },
 ];
 
 const stats = [
-  { value: '50+', label: 'Calculators', icon: Calculator, color: 'text-blue-500' },
-  { value: '500+', label: 'Formulas', icon: BookOpen, color: 'text-indigo-500' },
-  { value: '6', label: 'Disciplines', icon: Layers, color: 'text-violet-500' },
-  { value: '100%', label: 'Free Forever', icon: Star, color: 'text-amber-500' },
+  { value: '180+', label: 'Engineering Calculations', icon: Calculator, color: 'text-blue-500' },
+  { value: '6', label: 'Core Disciplines', icon: Layers, color: 'text-indigo-500' },
+  { value: '3', label: 'Interactive Visualizers', icon: Sparkles, color: 'text-cyan-500' },
+  { value: '100%', label: 'IEEE / ASME / IEC Verified', icon: Star, color: 'text-amber-500' },
 ];
 
 // ─── All searchable items ─────────────────────────────────────────────────────
@@ -369,11 +483,30 @@ const allSearchItems = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function LandingPage() {
+  useSeo({});
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFormulaTab, setActiveFormulaTab] = useState('Electrical');
   const [animatedStats, setAnimatedStats] = useState(false);
   const statsRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') || 'dark';
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   // Compute results purely from searchQuery — no state flags needed
   const q = searchQuery.trim().toLowerCase();
@@ -395,40 +528,90 @@ export default function LandingPage() {
   }, []);
 
   const goToCalc = (discipline = 'electrical', mode?: string) => {
+    const cleanDiscipline = discipline.toLowerCase();
     const url = mode
-      ? `/app?discipline=${discipline}&mode=${mode}`
-      : `/app?discipline=${discipline}`;
+      ? `/calculators/${cleanDiscipline}/${mode}`
+      : `/calculators/${cleanDiscipline}`;
     window.location.href = url;
   };
 
-  const formulaCategories = ['Electrical', 'Mechanical'];
+  const formulaCategories = ['Electrical', 'Mechanical', 'Civil', 'Fluid', 'Thermodynamics', 'Math'];
   const filteredFormulas = formulas.filter(f => f.category === activeFormulaTab);
 
   return (
-    <div className="min-h-screen bg-white font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-cyan-500/20 selection:text-cyan-700 font-sans transition-colors">
       {/* ══════════════════════════════════════════════════════════════════════
           HEADER
       ══════════════════════════════════════════════════════════════════════ */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-sm transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-md">
-                <Calculator className="w-5 h-5 text-white" />
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => (window.location.href = '/')}>
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/25 border border-cyan-400/30">
+                <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">Engineering <span className="text-blue-600">Calculator Hub</span></span>
+              <div>
+                <span className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white font-outfit">
+                  Engineering <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-cyan-400 dark:to-blue-400">SuperHub</span>
+                </span>
+                <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+                  PRO
+                </span>
+              </div>
             </div>
-            <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
-              <a href="#calculators" className="hover:text-blue-600 transition-colors">Calculators</a>
-              <a href="#formulas" className="hover:text-blue-600 transition-colors">Formulas</a>
-              <a href="#articles" className="hover:text-blue-600 transition-colors">Articles</a>
+            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+              <a href="#live-telemetry" className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Live Telemetry
+              </a>
+              <a href="#disciplines" className="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">6 Core Disciplines</a>
+              <a href="#simulators" className="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">Interactive Simulators</a>
+              <a href="#popular" className="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">Popular Tools</a>
+              <a href="#formulas" className="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">Formula Library</a>
             </nav>
-            <button
-              onClick={() => goToCalc()}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all shadow-md hover:shadow-blue-200 hover:shadow-lg"
-            >
-              Open App <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2.5">
+              {/* SuperHub Ecosystem Quick Switchers */}
+              <div className="hidden lg:flex items-center gap-2 mr-1">
+                <a
+                  href="https://financialhub.calculatorfree.in/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs font-semibold transition-all hover:scale-105 shadow-xs"
+                  title="Open Financial Hub - Financial Intelligence & Wealth Engine"
+                >
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>Financial Hub</span>
+                  <ExternalLink className="w-3 h-3 opacity-60" />
+                </a>
+
+                <a
+                  href="https://health-hub.calculatorfree.in/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs font-semibold transition-all hover:scale-105 shadow-xs"
+                  title="Open Health Hub - Health Analytics & Vitals Engine"
+                >
+                  <Activity className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                  <span>Health Hub</span>
+                  <ExternalLink className="w-3 h-3 opacity-60" />
+                </a>
+              </div>
+
+              <button
+                onClick={toggleTheme}
+                className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:text-amber-500 dark:hover:text-amber-400 transition-all hover:scale-105"
+                title="Toggle Light / Dark Mode"
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-blue-600" />}
+              </button>
+              <button
+                onClick={() => goToCalc('electrical')}
+                className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-md shadow-blue-500/20 hover:scale-105"
+              >
+                Launch SuperHub <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -436,222 +619,312 @@ export default function LandingPage() {
       {/* ══════════════════════════════════════════════════════════════════════
           1. HERO BANNER
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="relative overflow-hidden min-h-screen flex items-center" style={{background: 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #1e3a5f 100%)'}}>
-        {/* Animated background blobs */}
+      <section className="relative overflow-hidden pt-28 pb-20 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white">
+        {/* Animated background lights */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 -left-20 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl animate-pulse" style={{animationDelay:'1s'}} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-violet-900/10 rounded-full blur-3xl" />
-          {/* Grid pattern */}
-          <div className="absolute inset-0 opacity-5" style={{backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '40px 40px'}} />
+          <div className="absolute top-1/4 -left-20 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl" />
+          <div className="absolute inset-0 opacity-10 blueprint-grid" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
-          <div className="text-center">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-blue-300 text-sm font-medium px-4 py-2 rounded-full mb-8 backdrop-blur-sm">
-              <Sparkles className="w-4 h-4" />
-              Professional Engineering Tools — 100% Free
-            </div>
-
-            {/* Headline */}
-            <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-tight mb-6">
-              Engineering{' '}
-              <span className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-                Calculations
-              </span>
-              <br />
-              <span className="text-4xl md:text-6xl font-bold text-gray-300">Simplified.</span>
-            </h1>
-
-            <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Solve complex electrical, mechanical, and civil engineering problems instantly.
-              From Ohm's Law to Transformer Tan Delta — all in one place.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
-              <button
-                onClick={() => goToCalc('electrical')}
-                className="group flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-lg px-8 py-4 rounded-2xl transition-all shadow-2xl shadow-blue-900/50 hover:shadow-blue-500/30 hover:scale-105"
-              >
-                <Calculator className="w-5 h-5" />
-                Open Calculator
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <a
-                href="#formulas"
-                className="flex items-center justify-center gap-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-lg px-8 py-4 rounded-2xl transition-all backdrop-blur-sm hover:scale-105"
-              >
-                <BookOpen className="w-5 h-5" />
-                Browse Formulas
-              </a>
-            </div>
-
-            {/* Stats Strip */}
-            <div className="flex flex-wrap justify-center gap-6 md:gap-10">
-              {[
-                { value: '50+', label: 'Calculators' },
-                { value: '500+', label: 'Formulas' },
-                { value: '6', label: 'Disciplines' },
-                { value: '100%', label: 'Free' },
-              ].map(s => (
-                <div key={s.label} className="text-center">
-                  <div className="text-2xl md:text-3xl font-extrabold text-white">{s.value}</div>
-                  <div className="text-xs text-gray-400 uppercase tracking-widest">{s.label}</div>
-                </div>
-              ))}
-            </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-cyan-300 text-xs font-mono font-semibold px-4 py-1.5 rounded-full mb-6 backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            IEEE • ASME • IEC • IS STANDARD VERIFIED
           </div>
-        </div>
 
-        {/* Wave bottom */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 80L1440 80L1440 20C1200 80 960 0 720 20C480 40 240 0 0 20L0 80Z" fill="white"/>
-          </svg>
+          {/* Main Title */}
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight font-outfit leading-tight mb-6">
+            Multi-Discipline Engineering <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-300">
+              Calculation Suite & Visualizers
+            </span>
+          </h1>
+
+          <p className="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed font-normal">
+            High-precision computation engine for professional engineers and students. 
+            Covering 6 core engineering disciplines with 180+ formulas, real-time 2D visualizers, and formal client-ready calculation dossiers.
+          </p>
+
+          {/* Quick 6 Core Pillars Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-2.5 max-w-4xl mx-auto mb-10">
+            {coreDisciplines.map(d => {
+              const Icon = d.icon;
+              return (
+                <button
+                  key={d.id}
+                  onClick={() => goToCalc(d.id)}
+                  className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700/80 hover:border-cyan-400/50 text-xs font-medium text-slate-200 hover:text-white transition-all shadow-md group"
+                >
+                  <Icon className="w-3.5 h-3.5 text-cyan-400 group-hover:scale-110 transition-transform" />
+                  <span>{d.name}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Stats Bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-6 border-t border-slate-800/80 text-center font-mono">
+            {stats.map(s => {
+              const Icon = s.icon;
+              return (
+                <div key={s.label} className="p-3">
+                  <div className="text-2xl sm:text-3xl font-extrabold text-white mb-1 font-outfit">{s.value}</div>
+                  <div className="text-xs text-slate-400">{s.label}</div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          2. SEARCH BOX
+          LIVE TELEMETRY & PUBLIC APIS
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-14 bg-white">
-        <div className="max-w-3xl mx-auto px-4">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">Find Your Calculator <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full">v3✓</span></h2>
-            <p className="text-gray-500">Search from 225+ engineering calculators instantly</p>
-          </div>
+      <LiveEngineeringFeed />
 
-          <div ref={searchRef} className="relative">
-            <div className="flex items-center gap-3 bg-white border-2 border-gray-200 hover:border-blue-400 focus-within:border-blue-500 rounded-2xl px-5 py-4 shadow-lg transition-all">
-              <Search className="w-5 h-5 text-gray-400 flex-shrink-0" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Search calculators... e.g. 'Torque', 'Solar', 'Concrete'"
-                className="flex-1 bg-transparent text-gray-900 text-lg outline-none placeholder:text-gray-400"
-              />
-              {searchQuery && (
-                <button onClick={() => setSearchQuery('')} aria-label="Clear search">
-                  <X className="w-5 h-5 text-gray-400 hover:text-gray-600" />
-                </button>
-              )}
-            </div>
-
-            {/* === DEBUG LINE — will remove after fix === */}
-            {searchQuery.length > 0 && (
-              <div className="mt-2 px-4 py-2 bg-yellow-100 border border-yellow-300 rounded-lg text-sm text-yellow-800">
-                🔍 React sees: "<strong>{searchQuery}</strong>" | Results: <strong>{searchResults.length}</strong> | showDropdown: <strong>{String(showDropdown)}</strong>
-              </div>
-            )}
-
-            {/* Search Results Dropdown — shows purely based on searchQuery */}
-            {showDropdown && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-2xl shadow-2xl z-[9999] overflow-hidden">
-                {searchResults.length > 0 ? (
-                  <div className="max-h-80 overflow-y-auto">
-                    <div className="px-4 py-2 bg-gray-50 border-b border-gray-100 text-xs text-gray-500 font-medium">
-                      {searchResults.length} result{searchResults.length !== 1 ? 's' : ''} found
-                    </div>
-                    {searchResults.map((item, idx) => (
-                      <button
-                        key={`${item.name}-${idx}`}
-                        onMouseDown={() => goToCalc(item.discipline.toLowerCase(), item.id)}
-                        className="w-full flex items-center gap-4 px-5 py-3 hover:bg-blue-50 transition-colors text-left group border-b border-gray-50 last:border-0"
-                      >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                          item.discipline === 'Electrical' ? 'bg-blue-100' :
-                          item.discipline === 'Mechanical' ? 'bg-emerald-100' : 'bg-amber-100'
-                        }`}>
-                          <Calculator className={`w-4 h-4 ${
-                            item.discipline === 'Electrical' ? 'text-blue-600' :
-                            item.discipline === 'Mechanical' ? 'text-emerald-600' : 'text-amber-600'
-                          }`} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-gray-900 group-hover:text-blue-700 text-sm">{item.name}</div>
-                          <div className="text-xs text-gray-400 mt-0.5">{item.discipline} Engineering</div>
-                        </div>
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                          item.discipline === 'Electrical' ? 'bg-blue-100 text-blue-700' :
-                          item.discipline === 'Mechanical' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                        }`}>{item.discipline}</span>
-                      </button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="p-6 text-center text-gray-400">
-                    <Calculator className="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                    <p className="font-medium">No results for &ldquo;{searchQuery}&rdquo;</p>
-                    <p className="text-xs mt-1">Try: Torque, Solar, Concrete, Ohm</p>
-                  </div>
+      {/* ══════════════════════════════════════════════════════════════════════
+          2. ENGINEERING CATEGORIES GRID
+      ══════════════════════════════════════════════════════════════════════ */}
+      <section id="disciplines" className="py-20 bg-white dark:bg-slate-900 transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          {/* Search Trigger Placed Right Above Engineering Categories */}
+          <div className="max-w-2xl mx-auto mb-14">
+            <div ref={searchRef} className="relative">
+              <div className="flex items-center gap-3 bg-slate-50 dark:bg-slate-950/90 border-2 border-slate-200 dark:border-slate-700/80 hover:border-cyan-500/80 rounded-2xl px-5 py-3.5 shadow-md dark:shadow-2xl transition-all">
+                <Search className="w-5 h-5 text-cyan-600 dark:text-cyan-400 flex-shrink-0" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder="Search 180+ calculators... e.g. 'Tan Delta', 'Beam SFD', 'Concrete Mix', 'Reynolds'"
+                  className="flex-1 bg-transparent text-slate-900 dark:text-white text-sm sm:text-base outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery('')} aria-label="Clear search">
+                    <X className="w-5 h-5 text-slate-400 hover:text-slate-600 dark:hover:text-white" />
+                  </button>
                 )}
               </div>
-            )}
+
+              {/* Dropdown Results */}
+              {showDropdown && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl z-[9999] overflow-hidden text-left">
+                  {searchResults.length > 0 ? (
+                    <div className="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+                      <div className="px-4 py-2 bg-slate-50 dark:bg-slate-950 text-xs text-slate-500 dark:text-slate-400 font-mono">
+                        {searchResults.length} calculator{searchResults.length !== 1 ? 's' : ''} found
+                      </div>
+                      {searchResults.map((item, idx) => (
+                        <button
+                          key={`${item.name}-${idx}`}
+                          onClick={() => goToCalc(item.discipline.toLowerCase(), item.id)}
+                          className="w-full flex items-center justify-between px-5 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors group text-left"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-slate-800 flex items-center justify-center text-blue-600 dark:text-cyan-400 group-hover:bg-blue-100 dark:group-hover:bg-cyan-500/10">
+                              <Calculator className="w-4 h-4" />
+                            </div>
+                            <div>
+                              <div className="font-semibold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-white text-sm">{item.name}</div>
+                              <div className="text-[11px] text-slate-400">{item.discipline} Engineering</div>
+                            </div>
+                          </div>
+                          <span className="text-xs font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                            {item.discipline}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-slate-400">
+                      <Calculator className="w-8 h-8 mx-auto mb-2 text-slate-400" />
+                      <p className="font-medium text-slate-700 dark:text-slate-300">No results for &ldquo;{searchQuery}&rdquo;</p>
+                      <p className="text-xs mt-1 text-slate-500">Try: Ohm, Torque, Solar, Mix, Friction</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Quick tags */}
-          <div className="flex flex-wrap gap-2 mt-4 justify-center">
-            {['Tan Delta', 'Ohms Law', 'Cable Sizing', 'Short Circuit', 'Power Factor'].map(tag => (
-              <button
-                key={tag}
-                onClick={() => setSearchQuery(tag)}
-                className="text-sm bg-gray-100 hover:bg-blue-100 hover:text-blue-700 text-gray-600 px-3 py-1.5 rounded-lg transition-colors"
-              >
-                {tag}
-              </button>
-            ))}
+          <div className="text-center mb-12">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white font-outfit tracking-tight">
+              Engineering Categories
+            </h2>
+            <p className="text-slate-500 dark:text-slate-400 mt-2.5 text-sm sm:text-base max-w-xl mx-auto font-medium">
+              Choose your discipline to access specialized calculators
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {coreDisciplines.map(disc => {
+              const Icon = disc.icon;
+              return (
+                <div
+                  key={disc.name}
+                  onClick={() => goToCalc(disc.id)}
+                  className={`relative flex flex-col justify-between ${disc.cardBg} rounded-3xl p-7 sm:p-8 border-2 ${disc.borderColor} shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer group`}
+                >
+                  {/* Coming Soon badge */}
+                  {disc.status === 'Coming Soon' && (
+                    <span className="absolute top-6 right-6 text-[11px] font-semibold bg-slate-200/90 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-3 py-1 rounded-full shadow-sm">
+                      Coming Soon
+                    </span>
+                  )}
+
+                  <div>
+                    {/* Top Icon */}
+                    <div className="mb-6">
+                      <div className={`w-12 h-12 rounded-2xl ${disc.iconBg} flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm`}>
+                        <Icon className={`w-6 h-6 ${disc.iconColor}`} />
+                      </div>
+                    </div>
+
+                    {/* Title and Count */}
+                    <h3 className={`text-xl sm:text-2xl font-bold ${disc.titleColor} font-outfit mb-1`}>
+                      {disc.name}
+                    </h3>
+                    <p className={`text-sm font-semibold ${disc.countColor} mb-3`}>
+                      {disc.count}
+                    </p>
+
+                    <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-5">
+                      {disc.desc}
+                    </p>
+
+                    {/* Quick Calculator Chips */}
+                    <div className="flex flex-wrap gap-1.5 pt-3 border-t border-slate-200/60 dark:border-slate-800/60">
+                      {disc.featuredCalcs.slice(0, 4).map(c => (
+                        <button
+                          key={c.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            goToCalc(disc.id, c.id);
+                          }}
+                          className="text-[11px] font-medium bg-white/90 dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-blue-600 px-2.5 py-1 rounded-lg border border-slate-200/80 dark:border-slate-700 transition-colors shadow-xs"
+                        >
+                          {c.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Footer Link */}
+                  <div className="mt-5 flex items-center justify-between text-xs font-semibold text-slate-500 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors pt-2">
+                    <span>Open {disc.name}</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          3. POPULAR CALCULATORS
+          3. INTERACTIVE SIMULATION STUDIOS SHOWCASE
       ══════════════════════════════════════════════════════════════════════ */}
-      <section id="calculators" className="py-16 bg-gray-50">
+      <section id="simulators" className="py-20 bg-slate-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 blueprint-grid pointer-events-none" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 text-cyan-400 text-xs font-mono font-bold uppercase tracking-wider mb-2">
+              <Sparkles className="w-4 h-4" /> Live Visual Computing
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold font-outfit text-white">
+              Interactive 2D Simulation Studios
+            </h2>
+            <p className="text-slate-400 mt-3 max-w-2xl mx-auto text-sm sm:text-base">
+              Real-time graphical visualizers for structural stress, tensor transformations, and alternating current waveforms.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {interactiveStudios.map(sim => {
+              const Icon = sim.icon;
+              return (
+                <div
+                  key={sim.id}
+                  className="flex flex-col justify-between bg-slate-950/80 border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-6 shadow-xl hover:shadow-cyan-500/10 transition-all duration-300 group"
+                >
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-tr ${sim.color} flex items-center justify-center text-white shadow-lg`}>
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/20">
+                        {sim.badge}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold font-outfit text-white mb-2 group-hover:text-cyan-400 transition-colors">
+                      {sim.title}
+                    </h3>
+                    <p className="text-xs text-slate-400 leading-relaxed mb-6">
+                      {sim.desc}
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={() => goToCalc(sim.discipline, sim.id)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold shadow-lg shadow-cyan-500/20 transition-all"
+                  >
+                    Launch Interactive Studio
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          4. POPULAR HIGH-IMPACT CALCULATORS
+      ══════════════════════════════════════════════════════════════════════ */}
+      <section id="popular" className="py-20 bg-slate-50 dark:bg-slate-950 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-12">
             <div>
-              <div className="inline-flex items-center gap-2 text-blue-600 text-sm font-semibold uppercase tracking-widest mb-2">
-                <TrendingUp className="w-4 h-4" /> Most Used
+              <div className="inline-flex items-center gap-2 text-blue-600 dark:text-cyan-400 text-xs font-mono font-bold uppercase tracking-wider mb-2">
+                <TrendingUp className="w-4 h-4" /> Frequently Used
               </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Popular Calculators</h2>
+              <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white font-outfit">Popular Engineering Tools</h2>
             </div>
             <button
-              onClick={() => goToCalc()}
-              className="hidden md:flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors"
+              onClick={() => goToCalc('electrical')}
+              className="inline-flex items-center gap-2 text-xs font-bold text-blue-600 dark:text-cyan-400 hover:text-blue-700 bg-white dark:bg-slate-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm transition-all"
             >
-              View All <ArrowRight className="w-4 h-4" />
+              View Full Index <ArrowRight className="w-4 h-4" />
             </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {popularCalculators.map(calc => {
               const Icon = calc.icon;
-              const disciplineBadgeColor =
-                calc.discipline === 'electrical' ? 'bg-blue-100 text-blue-700' :
-                calc.discipline === 'mechanical' ? 'bg-emerald-100 text-emerald-700' :
-                'bg-amber-100 text-amber-700';
               return (
                 <button
                   key={calc.id}
                   onClick={() => goToCalc(calc.discipline, calc.id)}
-                  className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-blue-200 shadow-sm hover:shadow-xl transition-all duration-300 text-left hover:-translate-y-1"
+                  className="group bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200/80 dark:border-slate-800 hover:border-blue-400 dark:hover:border-cyan-400 shadow-sm hover:shadow-xl transition-all duration-300 text-left hover:-translate-y-1"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${calc.color} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <span className={`text-xs font-semibold px-2 py-1 rounded-full capitalize ${disciplineBadgeColor}`}>
+                    <span className="text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
                       {calc.discipline}
                     </span>
                   </div>
-                  <h3 className="font-bold text-gray-900 text-lg mb-1 group-hover:text-blue-700 transition-colors">{calc.name}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed mb-4">{calc.desc}</p>
-                  <div className="flex items-center gap-1 text-blue-600 text-sm font-semibold">
-                    Open Calculator <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <h3 className="font-bold text-slate-900 dark:text-white text-base mb-1 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors font-outfit">
+                    {calc.name}
+                  </h3>
+                  <p className="text-slate-500 dark:text-slate-400 text-xs leading-relaxed mb-4">{calc.desc}</p>
+                  <div className="flex items-center gap-1 text-blue-600 dark:text-cyan-400 text-xs font-semibold">
+                    Launch Calculator <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </button>
               );
@@ -661,284 +934,300 @@ export default function LandingPage() {
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          4. ENGINEERING CATEGORIES
+          5. FORMULA LIBRARY REFERENCE
       ══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-16 bg-white">
+      <section id="formulas" className="py-20 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 text-indigo-600 text-sm font-semibold uppercase tracking-widest mb-2">
-              <Layers className="w-4 h-4" /> All Disciplines
+            <div className="inline-flex items-center gap-2 text-cyan-400 text-xs font-mono font-bold uppercase tracking-wider mb-2">
+              <BookOpen className="w-4 h-4" /> Verified Equations
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Engineering Categories</h2>
-            <p className="text-gray-500 mt-3 max-w-xl mx-auto">Choose your engineering discipline to access specialized calculators</p>
+            <h2 className="text-3xl sm:text-4xl font-extrabold font-outfit text-white">
+              Formula Library & Equations
+            </h2>
+            <p className="text-slate-400 mt-2 text-sm max-w-xl mx-auto">
+              Governing engineering formulas with mathematical breakdown and reference standards.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {categories.map(cat => {
-              const Icon = cat.icon;
-              return (
-                <div
-                  key={cat.id}
-                  onClick={() => cat.available && goToCalc(cat.id)}
-                  className={`relative group border-2 rounded-2xl p-6 transition-all duration-300 ${cat.available ? 'cursor-pointer hover:shadow-lg hover:-translate-y-1 ' + cat.color : 'bg-gray-50 border-gray-100 text-gray-400 cursor-not-allowed opacity-60'}`}
-                >
-                  {!cat.available && (
-                    <span className="absolute top-4 right-4 text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full font-medium">Coming Soon</span>
-                  )}
-                  <Icon className={`w-10 h-10 mb-3 ${cat.available ? '' : 'text-gray-300'}`} />
-                  <h3 className="font-bold text-lg mb-1">{cat.name}</h3>
-                  <p className="text-sm opacity-75">{cat.count}+ Calculators</p>
-                  {cat.available && (
-                    <div className="flex items-center gap-1 mt-3 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-                      Explore <ArrowRight className="w-4 h-4" />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          5. TRANSFORMER TESTING SUITE
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-16 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-700 text-sm font-semibold px-3 py-1.5 rounded-full mb-6">
-                <Zap className="w-4 h-4" /> Featured Suite
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Transformer & Equipment<br />
-                <span className="text-amber-600">Testing Suite</span>
-              </h2>
-              <p className="text-gray-600 leading-relaxed mb-8">
-                A comprehensive collection of transformer diagnostic and commissioning calculators built to IEC, IEEE & IS standards.
-                Perfect for power engineers, testing teams, and maintenance professionals.
-              </p>
-              <button
-                onClick={() => goToCalc('electrical', 'group:Transformer & Equipment Testing')}
-                className="flex items-center gap-3 bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 py-3.5 rounded-xl transition-all shadow-lg shadow-amber-200 hover:shadow-amber-300 hover:scale-105"
-              >
-                <Zap className="w-5 h-5" />
-                Open Transformer Suite
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {transformerTools.map(tool => (
-                <div
-                  key={tool}
-                  className="flex items-center gap-3 bg-white border border-amber-100 rounded-xl px-4 py-3 shadow-sm hover:shadow-md hover:border-amber-300 transition-all cursor-pointer group"
-                  onClick={() => goToCalc('electrical')}
-                >
-                  <CheckCircle2 className="w-5 h-5 text-amber-500 flex-shrink-0" />
-                  <span className="text-sm font-medium text-gray-700 group-hover:text-amber-700 transition-colors">{tool}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          6. LATEST CALCULATORS
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <div className="inline-flex items-center gap-2 text-emerald-600 text-sm font-semibold uppercase tracking-widest mb-2">
-                <Clock className="w-4 h-4" /> Recently Added
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Latest Calculators</h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {latestCalculators.map(calc => {
-              const Icon = calc.icon;
-              return (
-                <div
-                  key={calc.name}
-                  onClick={() => goToCalc('electrical')}
-                  className="group bg-white border border-gray-100 hover:border-gray-200 rounded-2xl p-5 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer hover:-translate-y-0.5"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`w-11 h-11 rounded-xl ${calc.color} flex items-center justify-center flex-shrink-0`}>
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-gray-900 text-sm group-hover:text-blue-700 transition-colors truncate">{calc.name}</h3>
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0 ${calc.badge === 'New' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
-                          {calc.badge}
-                        </span>
-                      </div>
-                      <p className="text-gray-400 text-xs">{calc.desc}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          7. FORMULA LIBRARY
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section id="formulas" className="py-16 bg-gradient-to-b from-slate-900 to-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 text-blue-400 text-sm font-semibold uppercase tracking-widest mb-2">
-              <BookOpen className="w-4 h-4" /> Reference
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white">Formula Library</h2>
-            <p className="text-gray-400 mt-3">Essential engineering formulas at a glance</p>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex gap-2 justify-center mb-8">
+          {/* Discipline Tabs */}
+          <div className="flex flex-wrap gap-2 justify-center mb-10">
             {formulaCategories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setActiveFormulaTab(cat)}
-                className={`px-5 py-2 rounded-xl font-semibold text-sm transition-all ${activeFormulaTab === cat ? 'bg-blue-600 text-white shadow-lg' : 'bg-white/10 text-gray-400 hover:bg-white/20 hover:text-white'}`}
+                className={`px-4 py-2 rounded-xl font-medium text-xs transition-all ${
+                  activeFormulaTab === cat
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25 font-semibold'
+                    : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white border border-slate-700'
+                }`}
               >
                 {cat}
               </button>
             ))}
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredFormulas.map(f => (
-              <div key={f.name} className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/40 rounded-2xl p-5 transition-all group cursor-default">
-                <div className="text-xs text-blue-400 font-semibold uppercase tracking-widest mb-2">{f.category}</div>
-                <h3 className="font-bold text-white text-base mb-2">{f.name}</h3>
-                <div className="bg-slate-900/60 rounded-xl px-4 py-3 mb-3 font-mono text-cyan-300 text-sm border border-white/5">
+              <div key={f.name} className="bg-slate-950/80 border border-slate-800 hover:border-blue-500/40 rounded-2xl p-5 transition-all">
+                <div className="text-[10px] text-cyan-400 font-mono uppercase tracking-wider mb-1.5">{f.category} Engineering</div>
+                <h3 className="font-bold text-white text-sm mb-2">{f.name}</h3>
+                <div className="bg-slate-900 rounded-xl px-3.5 py-2.5 mb-2.5 font-mono text-cyan-300 text-xs border border-slate-800">
                   {f.formula}
                 </div>
-                <p className="text-gray-400 text-xs">{f.desc}</p>
+                <p className="text-slate-400 text-xs leading-relaxed">{f.desc}</p>
               </div>
             ))}
-          </div>
-
-          <div className="text-center mt-8">
-            <button
-              onClick={() => goToCalc()}
-              className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 font-semibold transition-colors"
-            >
-              Explore All Formulas <ArrowRight className="w-4 h-4" />
-            </button>
           </div>
         </div>
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════
-          8. ENGINEERING ARTICLES
+          6. PROFESSIONAL REPORT & DOSSIER CTA
       ══════════════════════════════════════════════════════════════════════ */}
-      <section id="articles" className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <div className="inline-flex items-center gap-2 text-violet-600 text-sm font-semibold uppercase tracking-widest mb-2">
-                <Globe className="w-4 h-4" /> Knowledge Base
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Engineering Articles</h2>
-            </div>
+      <section className="py-20 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-2 text-cyan-200 text-xs font-mono font-bold uppercase tracking-wider mb-3">
+            <Award className="w-4 h-4" /> Client-Ready Calculation Dossiers
           </div>
+          <h2 className="text-3xl sm:text-4xl font-extrabold font-outfit mb-4">
+            Generate Formal Engineering Reports (PDF)
+          </h2>
+          <p className="text-blue-100 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mb-8">
+            Create professional calculation sheets with project metadata, governing equation documentation, compliance stamps, and reviewer sign-offs.
+          </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {articles.map(article => {
-              const Icon = article.icon;
-              return (
-                <div
-                  key={article.title}
-                  className={`group bg-white rounded-2xl overflow-hidden border-l-4 ${article.color} shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer`}
-                >
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-xs font-semibold bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">{article.category}</span>
-                      <span className="text-xs text-gray-400">{article.readTime}</span>
-                    </div>
-                    <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center mb-4">
-                      <Icon className="w-5 h-5 text-gray-600" />
-                    </div>
-                    <h3 className="font-bold text-gray-900 text-lg leading-snug mb-3 group-hover:text-blue-700 transition-colors">{article.title}</h3>
-                    <p className="text-gray-500 text-sm leading-relaxed mb-5 line-clamp-3">{article.desc}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-400">
-                      <span>{article.date}</span>
-                      <div className="flex items-center gap-1 text-blue-600 font-semibold group-hover:gap-2 transition-all">
-                        Read More <ExternalLink className="w-3.5 h-3.5" />
+          <button
+            onClick={() => goToCalc('electrical')}
+            className="inline-flex items-center gap-3 bg-white text-blue-700 hover:bg-blue-50 font-bold text-sm sm:text-base px-8 py-3.5 rounded-2xl shadow-2xl shadow-blue-900/40 hover:scale-105 transition-all"
+          >
+            <Calculator className="w-5 h-5" />
+            Open Engineering SuperHub
+            <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          FOOTER - SUPERHUB ECOSYSTEM
+      ══════════════════════════════════════════════════════════════════════ */}
+      <footer className="bg-slate-950 border-t border-slate-800 text-slate-400 pt-16 pb-12 text-xs font-sans transition-colors">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800/80">
+            {/* Column 1: Brand & Identity */}
+            <div className="lg:col-span-2 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/25 border border-cyan-400/30">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <span className="text-lg font-extrabold tracking-tight text-white font-outfit">
+                    Engineering <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">SuperHub</span>
+                  </span>
+                  <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+                    PRO
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
+                Next-generation computational platform delivering 180+ multi-discipline engineering solvers, real-time 2D simulation studios, and formal client-ready PDF calculation dossiers.
+              </p>
+
+              <div className="flex flex-wrap gap-2 pt-1 font-mono text-[10px]">
+                <span className="px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-cyan-400">IEEE C57</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-blue-400">ASME SEC VIII</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-indigo-400">IEC 60076</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-emerald-400">IS 456</span>
+                <span className="px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-amber-400">AS/NZS 3008</span>
+              </div>
+            </div>
+
+            {/* Column 2: 6 Core Disciplines */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+                Core Disciplines
+              </h3>
+              <ul className="space-y-2 text-xs">
+                <li>
+                  <button onClick={() => goToCalc('electrical')} className="hover:text-cyan-400 transition-colors">
+                    Electrical Engineering
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => goToCalc('mechanical')} className="hover:text-cyan-400 transition-colors">
+                    Mechanical Engineering
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => goToCalc('civil')} className="hover:text-cyan-400 transition-colors">
+                    Civil & Structural
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => goToCalc('fluid')} className="hover:text-cyan-400 transition-colors">
+                    Fluid Mechanics
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => goToCalc('thermodynamics')} className="hover:text-cyan-400 transition-colors">
+                    Thermodynamics & Heat
+                  </button>
+                </li>
+                <li>
+                  <button onClick={() => goToCalc('math')} className="hover:text-cyan-400 transition-colors">
+                    Engineering Math & Unit Solver
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            {/* Column 3: SuperHub Suite Apps */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+                SuperHub Suite
+              </h3>
+              <ul className="space-y-2.5 text-xs">
+                <li>
+                  <a
+                    href="https://financialhub.calculatorfree.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-start gap-2 text-slate-300 hover:text-emerald-400 transition-colors"
+                  >
+                    <TrendingUp className="w-3.5 h-3.5 text-emerald-500 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                    <div>
+                      <div className="font-semibold flex items-center gap-1">
+                        Financial Hub <ExternalLink className="w-2.5 h-2.5 opacity-60" />
                       </div>
+                      <div className="text-[11px] text-slate-500">Financial Intelligence & Wealth Suite</div>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://health-hub.calculatorfree.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-start gap-2 text-slate-300 hover:text-rose-400 transition-colors"
+                  >
+                    <Activity className="w-3.5 h-3.5 text-rose-500 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                    <div>
+                      <div className="font-semibold flex items-center gap-1">
+                        Health Hub <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                      </div>
+                      <div className="text-[11px] text-slate-500">Health & Medical Analytics Engine</div>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <div className="flex items-start gap-2 text-cyan-400">
+                    <Sparkles className="w-3.5 h-3.5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <div className="font-semibold">Engineering SuperHub</div>
+                      <div className="text-[11px] text-slate-500">Multi-Discipline Engineering Hub</div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          9. STATS / TRUST SECTION
-      ══════════════════════════════════════════════════════════════════════ */}
-      <section ref={statsRef} className="py-16 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 text-blue-200 text-sm font-semibold uppercase tracking-widest mb-3">
-              <Award className="w-4 h-4" /> Trusted by Engineers
+                </li>
+              </ul>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white">Built for Professionals</h2>
-            <p className="text-blue-200 mt-3 max-w-xl mx-auto">Accurate calculations following IEC, IEEE, IS, and AS/NZS standards</p>
+
+            {/* Column 4: Interactive Studios & Solvers */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-200">
+                Tools & Simulators
+              </h3>
+              <ul className="space-y-2 text-xs">
+                <li>
+                  <a href="/calculators/beam-visualizer" className="hover:text-cyan-400 transition-colors">
+                    Beam SFD & BMD Visualizer
+                  </a>
+                </li>
+                <li>
+                  <a href="/calculators/mohrs-circle" className="hover:text-cyan-400 transition-colors">
+                    Mohr's Circle 2D Stress Tensor
+                  </a>
+                </li>
+                <li>
+                  <a href="/calculators/phasor-visualizer" className="hover:text-cyan-400 transition-colors">
+                    3-Phase AC Phasor Studio
+                  </a>
+                </li>
+                <li>
+                  <a href="#live-telemetry" className="hover:text-emerald-400 transition-colors flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Live Atmospheric Sensor
+                  </a>
+                </li>
+                <li>
+                  <a href="#popular" className="hover:text-cyan-400 transition-colors">
+                    180+ Formula Library
+                  </a>
+                </li>
+              </ul>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {stats.map(s => {
-              const Icon = s.icon;
-              return (
-                <div key={s.label} className="text-center bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                  <div className="flex justify-center mb-3">
-                    <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-                  <div className={`text-4xl font-extrabold text-white mb-1 ${animatedStats ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} transition-all duration-700`}>
-                    {s.value}
-                  </div>
-                  <div className="text-blue-200 text-sm font-medium">{s.label}</div>
-                </div>
-              );
-            })}
+          {/* Legal / Policy Navigation Links */}
+          <div className="py-4 border-b border-slate-800/60 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[11px] text-slate-400">
+            <a href="https://www.calculatorfree.in/about-us/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">About Us</a>
+            <span className="text-slate-700">|</span>
+            <a href="https://www.calculatorfree.in/contact-us/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Contact</a>
+            <span className="text-slate-700">|</span>
+            <a href="https://www.calculatorfree.in/privacy-policy/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Privacy</a>
+            <span className="text-slate-700">|</span>
+            <a href="https://www.calculatorfree.in/disclaimer/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Disclaimer</a>
+            <span className="text-slate-700">|</span>
+            <a href="https://www.calculatorfree.in/terms-conditions/" target="_blank" rel="noopener noreferrer" className="hover:text-cyan-400 transition-colors">Terms</a>
           </div>
 
-          {/* Trust badges */}
-          <div className="flex flex-wrap justify-center gap-4">
-            {['IEC Standards', 'IEEE Compliant', 'IS Standards', 'AS/NZS Methods', 'Free & Open'].map(badge => (
-              <div key={badge} className="flex items-center gap-2 bg-white/15 border border-white/20 text-white text-sm font-medium px-4 py-2 rounded-full">
-                <CheckCircle2 className="w-4 h-4 text-green-300" />
-                {badge}
-              </div>
-            ))}
-          </div>
-
-          {/* Final CTA */}
-          <div className="text-center mt-12">
-            <button
-              onClick={() => goToCalc()}
-              className="group inline-flex items-center gap-3 bg-white text-blue-700 font-bold text-lg px-8 py-4 rounded-2xl hover:bg-blue-50 transition-all shadow-2xl shadow-blue-900/30 hover:scale-105"
-            >
-              <Calculator className="w-5 h-5" />
-              Start Calculating Now
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </button>
+          {/* Bottom Sub-Footer Bar */}
+          <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-mono">
+            <div>
+              © {new Date().getFullYear()}{' '}
+              <a
+                href="https://www.calculatorfree.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-300 hover:text-cyan-400 font-semibold underline transition-colors"
+              >
+                calculatorfree.in
+              </a>{' '}
+              — All Rights Reserved.
+            </div>
+            <div className="text-center sm:text-right text-slate-400">
+              Part of the{' '}
+              <a
+                href="https://www.calculatorfree.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-cyan-400 hover:underline font-medium"
+              >
+                Main Suite
+              </a>{' '}
+              •{' '}
+              <a
+                href="https://financialhub.calculatorfree.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-emerald-400 hover:underline"
+              >
+                Financial Hub
+              </a>{' '}
+              •{' '}
+              <a
+                href="https://health-hub.calculatorfree.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-rose-400 hover:underline"
+              >
+                Health Hub
+              </a>{' '}
+              • <span className="text-blue-400">EnggHub</span>
+            </div>
           </div>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }

@@ -131,11 +131,259 @@ import {
   calculateVectorGroup,
   calculateCoreLoss,
   calculateCopperLoss,
+  calculateCapacitance,
+  calculateInductance,
+  calculateCapacitorCharge,
+  calculateWheatstoneBridge,
+  calculateResistorColorCode,
+  calculateImpedance,
+  calculateLCResonant,
+  calculateRCTime,
+  calculateFaradaysLaw,
+  calculateLorentzForce,
+  calculateFlux,
+  calculateBatteryLife,
+  calculateMotorGeneral,
+  calculateCableCapacity,
   type CalculationInput,
   type CalculationOutput
 } from '@/lib/calculations';
 import { getHowToUse, getEngineeringExplanation, getPracticalApplications, getFAQs } from '@/lib/calculator-content';
 import { Zap, BarChart3, Edit, Trash2, Save, Share, Printer, AlertTriangle, CheckCircle, ExternalLink, Cpu, Magnet, Activity, Battery, Grid, UtilityPole, Shield, Sun, Scale, ActivitySquare, AlertOctagon, BookOpen } from 'lucide-react';
+import PhasorVisualizer from './visualizers/phasor-visualizer';
+
+const calculatorTypes = [
+  { id: 'phasor-simulator', name: '⚡ AC Phasor & Waveforms Simulator', group: 'Basic', description: 'Interactive voltage/current waveforms, phase angle & power triangle' },
+  { id: 'ohms-law', name: "Ohm's Law", group: 'Basic', description: 'Calculate Voltage, Current, Resistance' },
+  { id: 'voltage', name: 'Voltage Calculator', group: 'Basic', description: 'Calculate Voltage' },
+  { id: 'current', name: 'Current Calculator', group: 'Basic', description: 'Calculate Current' },
+  { id: 'resistance', name: 'Resistance Calculator', group: 'Basic', description: 'Calculate Resistance' },
+  { id: 'power', name: 'Electrical Power', group: 'Basic', description: 'Calculate Electrical Power' },
+  { id: 'energy-consumption', name: 'Energy Consumption', group: 'Basic', description: 'Calculate Energy Consumption' },
+  { id: 'electrical-cost', name: 'Electrical Cost', group: 'Basic', description: 'Calculate Electrical Cost' },
+  { id: 'watt-to-amp', name: 'Watt to Amp', group: 'Basic', description: 'Convert Watt to Amp' },
+  { id: 'amp-to-watt', name: 'Amp to Watt', group: 'Basic', description: 'Convert Amp to Watt' },
+  { id: 'volt-to-watt', name: 'Volt to Watt', group: 'Basic', description: 'Convert Volt to Watt' },
+  { id: 'resistor-color-code', name: 'Resistor Color Code Calculator', group: 'Basic', description: 'Decode Resistor Value' },
+  { id: 'wheatstone-bridge', name: 'Wheatstone Bridge Calculator', group: 'Basic', description: 'Unknown Resistance' },
+
+  { id: 'capacitance', name: 'Capacitance', group: 'Components', description: 'Calculate capacitance' },
+  { id: 'inductance', name: 'Inductance', group: 'Components', description: 'Calculate inductance' },
+  { id: 'capacitor-charge', name: 'Capacitor Charge', group: 'Components', description: 'Charge/Discharge calculation' },
+
+  { id: 'ac-power', name: 'AC Power Calculator', group: 'AC Circuits', description: 'Real/Active Power' },
+  { id: 'power-factor', name: 'Power Factor Calculator', group: 'AC Circuits', description: 'Power Factor calculation' },
+  { id: 'apparent-power', name: 'Apparent Power Calculator', group: 'AC Circuits', description: 'Apparent Power calculation' },
+  { id: 'reactive-power', name: 'Reactive Power Calculator', group: 'AC Circuits', description: 'Reactive Power calculation' },
+  { id: 'rms-voltage', name: 'RMS Voltage Calculator', group: 'AC Circuits', description: 'RMS Voltage from Peak' },
+  { id: 'rms-current', name: 'RMS Current Calculator', group: 'AC Circuits', description: 'RMS Current from Peak' },
+  { id: 'impedance', name: 'Impedance', group: 'AC Circuits', description: 'RLC Circuit Impedance' },
+  { id: 'phase-angle', name: 'Phase Angle Calculator', group: 'AC Circuits', description: 'Calculate Phase Angle' },
+  { id: 'frequency', name: 'Frequency Calculator', group: 'AC Circuits', description: 'Frequency from time period' },
+  { id: 'ac-current', name: 'AC Current Calculator', group: 'AC Circuits', description: 'Current in AC circuits' },
+  { id: 'lc-resonant', name: 'LC Resonant', group: 'AC Circuits', description: 'Resonant frequency' },
+  { id: 'rc-time', name: 'RC Time Constant', group: 'AC Circuits', description: 'Time constant calculation' },
+
+  { id: 'dc-power', name: 'DC Power Calculator', group: 'DC Circuits', description: 'World-class DC power analyzer' },
+  { id: 'dc-current', name: 'DC Current Calculator', group: 'DC Circuits', description: 'World-class DC current analyzer' },
+  { id: 'dc-voltage-drop', name: 'DC Voltage Drop Calculator', group: 'DC Circuits', description: 'Wire span voltage drop limit' },
+  { id: 'battery-capacity', name: 'Battery Capacity Calculator', group: 'DC Circuits', description: 'Amp-hours calculation' },
+  { id: 'battery-backup', name: 'Battery Backup Time Calculator', group: 'DC Circuits', description: 'Runtime duration analysis' },
+  { id: 'battery-charging', name: 'Battery Charging Time Calculator', group: 'DC Circuits', description: 'Charge completion time' },
+  { id: 'series-resistance', name: 'Series Resistance Calculator', group: 'DC Circuits', description: 'Add series resistance' },
+  { id: 'parallel-resistance', name: 'Parallel Resistance Calculator', group: 'DC Circuits', description: 'Add parallel resistance' },
+  { id: 'voltage-divider', name: 'Voltage Divider Calculator', group: 'DC Circuits', description: 'Ratio derived voltage limits' },
+  { id: 'current-divider', name: 'Current Divider Calculator', group: 'DC Circuits', description: 'Ratio derived current limits' },
+
+  { id: 'short-circuit-current', name: 'Short Circuit Current Calculator', group: 'Power System', description: 'Fault current limit analysis' },
+  { id: 'fault-current', name: 'Fault Current Calculator', group: 'Power System', description: 'System fault level calculation' },
+  { id: 'transformer-efficiency', name: 'Transformer Efficiency Calculator', group: 'Power System', description: 'Transformer performance analysis' },
+  { id: 'transformer-turns-ratio', name: 'Transformer Turns Ratio Calculator', group: 'Power System', description: 'Voltage transformation ratio' },
+  { id: 'transformer-loss', name: 'Transformer Loss Calculator', group: 'Power System', description: 'Copper & Iron loss analysis' },
+  { id: 'transmission-line-loss', name: 'Transmission Line Loss Calculator', group: 'Power System', description: 'Line power dissipation' },
+  { id: 'voltage-regulation', name: 'Voltage Regulation Calculator', group: 'Power System', description: 'Load-voltage stability score' },
+  { id: 'load-demand', name: 'Load Demand Calculator', group: 'Power System', description: 'Peak demand estimation' },
+  { id: 'diversity-factor', name: 'Diversity Factor Calculator', group: 'Power System', description: 'Coincident demand analysis' },
+  { id: 'load-factor', name: 'Load Factor Calculator', group: 'Power System', description: 'Average vs peak load score' },
+  { id: 'percent-impedance', name: '% Impedance (Z) Calculator', group: 'Power System', description: 'Percentage impedance calculation' },
+  { id: 'open-circuit-loss', name: 'Open Circuit Loss Calculator', group: 'Power System', description: 'Core loss and magnetizing parameters' },
+
+  { id: 'motor-power', name: 'Motor Power Calculator', group: 'Motors & Machines', description: 'Calculate motor output horsepower' },
+  { id: 'motor-torque', name: 'Motor Torque Calculator', group: 'Motors & Machines', description: 'Calculate motor shaft torque' },
+  { id: 'motor-speed', name: 'Motor Speed Calculator', group: 'Motors & Machines', description: 'Calculate sync and rotor speed' },
+  { id: 'slip', name: 'Slip Calculator', group: 'Motors & Machines', description: 'Calculate induction motor slip' },
+  { id: 'motor-efficiency', name: 'Motor Efficiency Calculator', group: 'Motors & Machines', description: 'Calculate motor operating efficiency' },
+  { id: 'motor-current', name: 'Motor Current Calculator', group: 'Motors & Machines', description: 'Calculate motor full-load current' },
+  { id: 'star-delta-starter', name: 'Star-Delta Starter Calculator', group: 'Motors & Machines', description: 'Calculate starting parameters' },
+  { id: 'single-phase-motor', name: 'Single Phase Motor Calculator', group: 'Motors & Machines', description: 'Single phase calculations' },
+  { id: 'three-phase-motor', name: 'Three Phase Motor Calculator', group: 'Motors & Machines', description: 'Three phase calculations' },
+  { id: 'synchronous-speed', name: 'Synchronous Speed Calculator', group: 'Motors & Machines', description: 'Calculate synchronous speed directly' },
+
+  { id: 'rc-time-adv', name: 'RC Time Constant', group: 'Control & Electronics', description: 'Advanced RC time constant' },
+  { id: 'rl-time', name: 'RL Time Constant', group: 'Control & Electronics', description: 'RL circuit time constant' },
+  { id: 'rlc-circuit', name: 'RLC Circuit', group: 'Control & Electronics', description: 'Resonant frequency & damping' },
+  { id: 'capacitor-charging', name: 'Capacitor Charging', group: 'Control & Electronics', description: 'RC charging phase equations' },
+  { id: 'capacitor-discharging', name: 'Capacitor Discharging', group: 'Control & Electronics', description: 'RC discharging phase equations' },
+  { id: 'inductor-energy', name: 'Inductor Energy', group: 'Control & Electronics', description: 'Stored magnetic energy' },
+  { id: 'diode-voltage-drop', name: 'Diode Voltage Drop', group: 'Control & Electronics', description: 'Forward voltage analysis' },
+  { id: 'zener-diode', name: 'Zener Diode', group: 'Control & Electronics', description: 'Zener voltage regulation' },
+  { id: 'transistor-gain', name: 'Transistor Gain', group: 'Control & Electronics', description: 'Alpha and Beta (hFE) calculation' },
+  { id: 'op-amp-gain', name: 'Op-Amp Gain', group: 'Control & Electronics', description: 'Inverting & Non-inverting gain' },
+
+  { id: 'rectifier-efficiency', name: 'Rectifier Efficiency', group: 'Power Electronics', description: 'AC to DC conversion efficiency' },
+  { id: 'ripple-factor', name: 'Ripple Factor', group: 'Power Electronics', description: 'Output DC waveform smoothness' },
+  { id: 'inverter-power', name: 'Inverter Power', group: 'Power Electronics', description: 'DC to AC real power conversion' },
+  { id: 'converter-efficiency', name: 'Converter Efficiency', group: 'Power Electronics', description: 'Power Converter Efficiency' },
+  { id: 'dc-to-ac-inverter', name: 'DC to AC Inverter', group: 'Power Electronics', description: 'Single-phase inverter RMS AC' },
+  { id: 'pwm-duty-cycle', name: 'PWM Duty Cycle', group: 'Power Electronics', description: 'Calculate duty cycle and switching frequency' },
+  { id: 'thyristor-firing-angle', name: 'Thyristor Firing Angle', group: 'Power Electronics', description: 'Controlled Rectifier Output Voltage' },
+  { id: 'buck-converter', name: 'Buck Converter', group: 'Power Electronics', description: 'Step-down DC-DC Converter' },
+  { id: 'boost-converter', name: 'Boost Converter', group: 'Power Electronics', description: 'Step-up DC-DC Converter' },
+  { id: 'buck-boost-converter', name: 'Buck-Boost Converter', group: 'Power Electronics', description: 'Inverting DC-DC Converter' },
+
+  { id: 'cable-size', name: 'Cable Size Calculator', group: 'Cable, Wiring & Protection', description: 'Calculate required cable area' },
+  { id: 'wire-gauge', name: 'Wire Gauge Calculator', group: 'Cable, Wiring & Protection', description: 'AWG to mm2 conversion' },
+  { id: 'voltage-drop-wiring', name: 'Voltage Drop Calculator', group: 'Cable, Wiring & Protection', description: 'AC/DC wiring voltage drop' },
+  { id: 'earthing-resistance', name: 'Earthing Resistance Calculator', group: 'Cable, Wiring & Protection', description: 'Earth rod resistance' },
+  { id: 'fuse-rating', name: 'Fuse Rating Calculator', group: 'Cable, Wiring & Protection', description: 'Calculate minimum fuse size' },
+  { id: 'mcb-rating', name: 'MCB Rating Calculator', group: 'Cable, Wiring & Protection', description: 'Calculate MCB breaker size' },
+  { id: 'mccb-rating', name: 'MCCB Rating Calculator', group: 'Cable, Wiring & Protection', description: 'Industrial MCCB sizing' },
+  { id: 'short-circuit-protection', name: 'Short Circuit Protection Calculator', group: 'Cable, Wiring & Protection', description: 'Max short circuit fault current' },
+  { id: 'grounding', name: 'Grounding Calculator', group: 'Cable, Wiring & Protection', description: 'Min grounding conductor size' },
+  { id: 'lightning-protection', name: 'Lightning Protection Calculator', group: 'Cable, Wiring & Protection', description: 'Protection cone radius' },
+
+  { id: 'solar-panel', name: 'Solar Panel Calculator', group: 'Renewable Energy / Solar', description: 'Calculate solar panel efficiency' },
+  { id: 'solar-power-output', name: 'Solar Power Output Calculator', group: 'Renewable Energy / Solar', description: 'Daily solar energy out' },
+  { id: 'solar-inverter-size', name: 'Solar Inverter Size Calculator', group: 'Renewable Energy / Solar', description: 'Recommend inverter sizing' },
+  { id: 'battery-bank-size-solar', name: 'Battery Bank Size Calculator', group: 'Renewable Energy / Solar', description: 'Size battery bank for solar' },
+  { id: 'solar-charge-controller', name: 'Solar Charge Controller Calculator', group: 'Renewable Energy / Solar', description: 'Size charge controller' },
+  { id: 'solar-load', name: 'Solar Load Calculator', group: 'Renewable Energy / Solar', description: 'Daily energy consumption' },
+  { id: 'solar-panel-tilt', name: 'Solar Panel Tilt Angle Calculator', group: 'Renewable Energy / Solar', description: 'Optimal tilt angles' },
+  { id: 'solar-energy-production', name: 'Solar Energy Production Calculator', group: 'Renewable Energy / Solar', description: 'Array energy production' },
+  { id: 'off-grid-solar', name: 'Off-Grid Solar Calculator', group: 'Renewable Energy / Solar', description: 'Off-grid setup sizing' },
+  { id: 'on-grid-solar', name: 'On-Grid Solar Calculator', group: 'Renewable Energy / Solar', description: 'On-grid system size' },
+
+  { id: 'kva-to-kw', name: 'kVA to kW Calculator', group: 'Measurement & Units', description: 'Apparent to Real Power' },
+  { id: 'kw-to-hp', name: 'kW to HP Calculator', group: 'Measurement & Units', description: 'Kilowatts to Horsepower' },
+  { id: 'hp-to-kw', name: 'HP to kW Calculator', group: 'Measurement & Units', description: 'Horsepower to Kilowatts' },
+  { id: 'va-to-watt', name: 'VA to Watt Calculator', group: 'Measurement & Units', description: 'Volt-Amps to Watts' },
+  { id: 'db-calculator', name: 'dB Calculator', group: 'Measurement & Units', description: 'Power Ratio to Decibels' },
+  { id: 'freq-to-rpm', name: 'Frequency to RPM', group: 'Measurement & Units', description: 'Hz to Sync Speed' },
+  { id: 'rpm-to-freq', name: 'RPM to Frequency', group: 'Measurement & Units', description: 'Sync Speed to Hz' },
+  { id: 'electrical-units', name: 'Electrical Units Converter', group: 'Measurement & Units', description: 'Scale engineering prefixes' },
+  { id: 'phase-converter', name: 'Phase Converter Calculator', group: 'Measurement & Units', description: '3-Ph equiv on 1-Ph source' },
+  { id: 'power-loss', name: 'Power Loss Calculator', group: 'Measurement & Units', description: 'I²R Joule heating loss' },
+
+  { id: 'insulation-resistance', name: 'Insulation Resistance', group: 'Insulation & Safety Testing', description: 'R = V / I mapping' },
+  { id: 'min-insulation-resistance', name: 'Minimum IR Acceptable', group: 'Insulation & Safety Testing', description: 'IEEE Standard threshold' },
+  { id: 'megger-test-voltage', name: 'Megger Test Voltage', group: 'Insulation & Safety Testing', description: 'Recommended test voltages' },
+  { id: 'insulation-test-duration', name: 'Insulation Test Duration', group: 'Insulation & Safety Testing', description: 'Wait time based on Capacitance' },
+  { id: 'leakage-current', name: 'Leakage Current Calc', group: 'Insulation & Safety Testing', description: 'Calculate I leak based on R' },
+  { id: 'dielectric-strength', name: 'Dielectric Strength', group: 'Insulation & Safety Testing', description: 'Breakdown kv/mm field limit' },
+  { id: 'dielectric-loss', name: 'Dielectric Active Loss', group: 'Insulation & Safety Testing', description: 'Watt dissipation' },
+  { id: 'polarization-index', name: 'Polarization Index (PI)', group: 'Insulation & Safety Testing', description: 'R10 / R1 Absorption condition' },
+  { id: 'dar-calculator', name: 'Dielectric Absorption Ratio', group: 'Insulation & Safety Testing', description: 'R1 / R30s (DAR) condition' },
+  { id: 'insulation-power-factor', name: 'Insulation Power Factor', group: 'Insulation & Safety Testing', description: 'tan(delta) to PF translation' },
+  { id: 'line-phase-calculator', name: 'Line/Phase Calculator', group: 'Measurement & Units', description: 'Star/Delta V & I Conversions' },
+
+  { id: 'faraday', name: "Faraday's Law", group: 'Electromagnetism', description: 'Induced EMF calculation' },
+  { id: 'lorentz', name: 'Lorentz Force', group: 'Electromagnetism', description: 'Force on moving charge' },
+  { id: 'flux', name: 'Elec. & Mag. Flux', group: 'Electromagnetism', description: 'Flux calculations' },
+
+  { id: 'battery', name: 'Battery Life', group: 'Systems', description: 'Estimate battery runtime' },
+  { id: 'motor', name: 'Motor Calculator', group: 'Systems', description: 'Motor power and efficiency' },
+  { id: 'cable', name: 'Cable Capacity', group: 'Systems', description: 'Cable sizing and ampacity' },
+
+  // Transformer & Equipment Testing
+  { id: 'ir-test', name: 'IR Test Calculator', group: 'Transformer & Equipment Testing', description: 'Insulation Resistance & PI grading' },
+  { id: 'pi-transformer', name: 'Polarization Index (PI)', group: 'Transformer & Equipment Testing', description: 'R10/R1 winding absorption test' },
+  { id: 'ttr-calculator', name: 'TTR Calculator', group: 'Transformer & Equipment Testing', description: 'Turns ratio & ratio error check' },
+  { id: 'winding-resistance-temp', name: 'Winding Resistance Temp Correction', group: 'Transformer & Equipment Testing', description: 'IEC 60076 temperature correction' },
+  { id: 'tan-delta', name: 'Tan Delta (Dissipation Factor)', group: 'Transformer & Equipment Testing', description: 'Insulation deterioration test' },
+  { id: 'oil-bdv', name: 'Oil BDV Test Calculator', group: 'Transformer & Equipment Testing', description: 'IEC 60156 dielectric strength' },
+  { id: 'oil-dga', name: 'Oil DGA Analysis', group: 'Transformer & Equipment Testing', description: 'Dissolved gas Duval Triangle fault' },
+  { id: 'ct-ratio', name: 'CT Ratio Calculator', group: 'Transformer & Equipment Testing', description: 'Current transformer ratio & burden' },
+  { id: 'earth-resistance-test', name: 'Earth Resistance Calculator', group: 'Transformer & Equipment Testing', description: 'Wenner & single rod method' },
+  { id: 'full-load-current-transformer', name: 'Full Load Current Calculator', group: 'Transformer & Equipment Testing', description: '1φ & 3φ transformer FLC' },
+  { id: 'magnetic-balance', name: 'Magnetic Balance Test', group: 'Transformer & Equipment Testing', description: 'Core balance voltage ratio' },
+  { id: 'vector-group', name: 'Vector Group Test', group: 'Transformer & Equipment Testing', description: 'Dyn11, Yd1 phase displacement' },
+  { id: 'core-loss', name: 'Core Loss Calculator', group: 'Transformer & Equipment Testing', description: 'Iron loss: Hysteresis + Eddy current' },
+  { id: 'copper-loss', name: 'Copper Loss Calculator', group: 'Transformer & Equipment Testing', description: 'I²R winding loss calculation' },
+];
+
+const groups = [
+  { id: 'Basic', name: 'Basic Electrical', icon: Zap, description: 'Fundamental laws and basic components' },
+  { id: 'Components', name: 'Components', icon: Cpu, description: 'Capacitors, Inductors, and specific parts' },
+  { id: 'DC Circuits', name: 'DC Circuits', icon: Battery, description: 'Direct Current analysis and batteries' },
+  { id: 'AC Circuits', name: 'AC Circuits', icon: Activity, description: 'Alternating Current analysis' },
+  { id: 'Electromagnetism', name: 'Electromagnetism', icon: Magnet, description: 'Fields, Forces, and Flux' },
+  { id: 'Power System', name: 'Power System', icon: UtilityPole, description: 'Transmission, faults, and load analysis' },
+  { id: 'Motors & Machines', name: 'Motors & Machines', icon: Cpu, description: 'Motor analysis, performance, and theory' },
+  { id: 'Control & Electronics', name: 'Control & Electronics', icon: Activity, description: 'Op-amps, RLC, and semiconductors' },
+  { id: 'Power Electronics', name: 'Power Electronics', icon: Zap, description: 'Converters, Inverters, and choppers' },
+  { id: 'Cable, Wiring & Protection', name: 'Cable, Wiring & Protection', icon: Shield, description: 'Cable sizing, CB ratings, and earthing' },
+  { id: 'Renewable Energy / Solar', name: 'Renewable Energy / Solar', icon: Sun, description: 'Solar sizing, off-grid and on-grid analysis' },
+  { id: 'Insulation & Safety Testing', name: 'Insulation & Safety Testing', icon: ActivitySquare, description: 'Megger, PI, DAR, Dielectric Strength and Leakage' },
+  { id: 'Measurement & Units', name: 'Measurement & Units', icon: Scale, description: 'Unit conversion, prefixes, power equivalents' },
+  { id: 'Systems', name: 'Systems', icon: Grid, description: 'Power systems, motors, and cabling' },
+  { id: 'Transformer & Equipment Testing', name: 'Transformer & Equipment Testing', icon: AlertOctagon, description: 'IR, PI, TTR, Oil BDV, DGA, CT Ratio, Core/Copper Loss' },
+];
+
+const externalLinks: { [key: string]: string } = {
+  'ohms-law': '/calculators/ohms-law.html',
+  'power': '/calculators/power-calculator.html',
+  'resistor-color-code': '/calculators/resistor-color-code.html',
+  'wheatstone-bridge': '/calculators/wheatstone-bridge.html',
+  'capacitance': '/calculators/capacitance.html',
+  'inductance': '/calculators/inductance.html',
+  'capacitor-charge': '/calculators/capacitor-charge.html',
+  'impedance': '/calculators/impedance-calculator.html',
+  'lc-resonant': '/calculators/lc-resonant.html',
+  'rc-time': '/calculators/rc-time-constant.html',
+  'faraday': '/calculators/faradays-law.html',
+  'lorentz': '/calculators/lorentz-force.html',
+  'flux': '/calculators/flux-calculator.html',
+  'battery': '/calculators/battery-life.html',
+  'motor': '/calculators/motor-calculator.html',
+  'cable': '/calculators/cable-capacity.html',
+  'parallel-resistance': '/calculators/parallel-resistor.html',
+};
+
+// Helper arrays for internal calculators
+const internalCalculators = [
+  'ohms-law', 'voltage', 'current', 'resistance', 'power',
+  'energy-consumption', 'electrical-cost', 'watt-to-amp',
+  'amp-to-watt', 'volt-to-watt',
+  'resistor-color-code', 'wheatstone-bridge',
+  'capacitance', 'inductance', 'capacitor-charge',
+  'ac-power', 'power-factor', 'apparent-power', 'reactive-power',
+  'rms-voltage', 'rms-current', 'phase-angle', 'frequency', 'ac-current',
+  'impedance', 'lc-resonant', 'rc-time',
+  'dc-power', 'dc-current', 'dc-voltage-drop', 'battery-capacity',
+  'battery-backup', 'battery-charging', 'series-resistance',
+  'parallel-resistance', 'voltage-divider', 'current-divider',
+  'short-circuit-current', 'fault-current', 'transformer-efficiency',
+  'transformer-turns-ratio', 'transformer-loss', 'transmission-line-loss',
+  'voltage-regulation', 'load-demand', 'diversity-factor', 'load-factor', 'percent-impedance', 'open-circuit-loss',
+  'motor-power', 'motor-torque', 'motor-speed', 'slip', 'motor-efficiency', 'motor-current', 'star-delta-starter', 'single-phase-motor', 'three-phase-motor', 'synchronous-speed',
+  'rc-time-adv', 'rl-time', 'rlc-circuit', 'capacitor-charging', 'capacitor-discharging', 'inductor-energy', 'diode-voltage-drop', 'zener-diode', 'transistor-gain', 'op-amp-gain',
+  'rectifier-efficiency', 'ripple-factor', 'inverter-power', 'converter-efficiency', 'dc-to-ac-inverter', 'pwm-duty-cycle', 'thyristor-firing-angle', 'buck-converter', 'boost-converter', 'buck-boost-converter',
+  'cable-size', 'wire-gauge', 'voltage-drop-wiring', 'earthing-resistance', 'fuse-rating',
+  'mcb-rating', 'mccb-rating', 'short-circuit-protection', 'grounding', 'lightning-protection',
+  'solar-panel', 'solar-power-output', 'solar-inverter-size', 'battery-bank-size-solar',
+  'solar-charge-controller', 'solar-load', 'solar-panel-tilt', 'solar-energy-production',
+  'off-grid-solar', 'on-grid-solar', 'kva-to-kw', 'kw-to-hp', 'hp-to-kw', 'va-to-watt', 'db-calculator',
+  'freq-to-rpm', 'rpm-to-freq', 'electrical-units', 'phase-converter', 'power-loss',
+  'insulation-resistance', 'min-insulation-resistance', 'megger-test-voltage', 'insulation-test-duration',
+  'leakage-current', 'dielectric-strength', 'dielectric-loss', 'polarization-index', 'dar-calculator',
+  'insulation-power-factor', 'line-phase-calculator',
+  // Electromagnetics & Systems
+  'faraday', 'lorentz', 'flux', 'battery', 'motor', 'cable',
+  // Transformer & Equipment Testing
+  'ir-test', 'pi-transformer', 'ttr-calculator', 'winding-resistance-temp', 'tan-delta',
+  'oil-bdv', 'oil-dga', 'ct-ratio', 'earth-resistance-test', 'full-load-current-transformer',
+  'magnetic-balance', 'vector-group', 'core-loss', 'copper-loss'
+];
 
 class ElecCalcErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean, error: any}> {
   constructor(props: any) { super(props); this.state = { hasError: false, error: null }; }
@@ -159,11 +407,40 @@ class ElecCalcErrorBoundary extends React.Component<{children: React.ReactNode},
   }
 }
 
-function ElectricalCalculatorInner() {
-  const [activeCalculator, setActiveCalculator] = useState(() => {
+function ElectricalCalculatorInner({ initialCalc }: { initialCalc?: string }) {
+  const resolveActive = (calcId?: string) => {
+    if (!calcId || calcId === 'menu') return 'menu';
+    const cleanId = calcId.replace(/^group[:-]/i, '').trim();
+    // Check if it's a group
+    const matchedGroup = groups.find(g => g.id.toLowerCase() === cleanId.toLowerCase() || g.name.toLowerCase() === cleanId.toLowerCase());
+    if (matchedGroup) return `group:${matchedGroup.id}`;
+    // Check if it's a calculator
+    const matchedCalc = calculatorTypes.find(c => c.id.toLowerCase() === calcId.toLowerCase());
+    if (matchedCalc) return matchedCalc.id;
+    return calcId;
+  };
+
+  const [activeCalculator, setActiveCalculator] = useState<string>(() => {
+    if (initialCalc) return resolveActive(initialCalc);
     const params = new URLSearchParams(window.location.search);
-    return params.get('mode') || 'menu';
+    const mode = params.get('mode');
+    return mode ? resolveActive(mode) : 'menu';
   });
+
+  React.useEffect(() => {
+    setActiveCalculator(resolveActive(initialCalc));
+  }, [initialCalc]);
+
+  React.useEffect(() => {
+    let slug = '';
+    if (activeCalculator && activeCalculator !== 'menu') {
+      slug = `/${activeCalculator.replace(/^group:/, 'group-')}`;
+    }
+    const newPath = `/calculators/electrical${slug}`;
+    if (window.location.pathname !== newPath) {
+      window.history.replaceState(null, '', newPath);
+    }
+  }, [activeCalculator]);
 
   const [inputs, setInputs] = useState({
     voltage: { value: '', unit: 'V' },
@@ -337,235 +614,26 @@ function ElectricalCalculatorInner() {
     // Dedicated fields for Tan Delta
     tanDeltaLossI: { value: '', unit: 'mA' },
     tanDeltaChargingI: { value: '', unit: 'mA' },
+    // Fields for Capacitance, Inductance, Electromagnetics, etc.
+    charge: { value: '', unit: 'μC' },
+    magneticFlux: { value: '', unit: 'Wb' },
+    magneticField: { value: '', unit: 'T' },
+    electricField: { value: '', unit: 'V/m' },
+    velocity: { value: '', unit: 'm/s' },
+    conductorLength: { value: '', unit: 'm' },
+    distance: { value: '', unit: 'mm' },
+    turns: { value: '', unit: '' },
+    permeability: { value: '1', unit: '' },
+    dielectricK: { value: '1', unit: '' },
+    rx: { value: '', unit: 'Ω' },
+    band1: { value: '1', unit: '' },
+    band2: { value: '0', unit: '' },
+    band3: { value: '0', unit: '' },
+    multiplier: { value: '100', unit: '' },
+    tolerance: { value: '5', unit: '%' },
+    conductorMaterial: { value: 'copper', unit: '' },
   });
   const [results, setResults] = useState<CalculationOutput | null>(null);
-
-  const calculatorTypes = [
-    { id: 'ohms-law', name: "Ohm's Law", group: 'Basic', description: 'Calculate Voltage, Current, Resistance' },
-    { id: 'voltage', name: 'Voltage Calculator', group: 'Basic', description: 'Calculate Voltage' },
-    { id: 'current', name: 'Current Calculator', group: 'Basic', description: 'Calculate Current' },
-    { id: 'resistance', name: 'Resistance Calculator', group: 'Basic', description: 'Calculate Resistance' },
-    { id: 'power', name: 'Electrical Power', group: 'Basic', description: 'Calculate Electrical Power' },
-    { id: 'energy-consumption', name: 'Energy Consumption', group: 'Basic', description: 'Calculate Energy Consumption' },
-    { id: 'electrical-cost', name: 'Electrical Cost', group: 'Basic', description: 'Calculate Electrical Cost' },
-    { id: 'watt-to-amp', name: 'Watt to Amp', group: 'Basic', description: 'Convert Watt to Amp' },
-    { id: 'amp-to-watt', name: 'Amp to Watt', group: 'Basic', description: 'Convert Amp to Watt' },
-    { id: 'volt-to-watt', name: 'Volt to Watt', group: 'Basic', description: 'Convert Volt to Watt' },
-    { id: 'resistor-color-code', name: 'Resistor Color Code Calculator', group: 'Basic', description: 'Decode Resistor Value' },
-    { id: 'wheatstone-bridge', name: 'Wheatstone Bridge Calculator', group: 'Basic', description: 'Unknown Resistance' },
-
-    { id: 'capacitance', name: 'Capacitance', group: 'Components', description: 'Calculate capacitance' },
-    { id: 'inductance', name: 'Inductance', group: 'Components', description: 'Calculate inductance' },
-    { id: 'capacitor-charge', name: 'Capacitor Charge', group: 'Components', description: 'Charge/Discharge calculation' },
-
-    { id: 'ac-power', name: 'AC Power Calculator', group: 'AC Circuits', description: 'Real/Active Power' },
-    { id: 'power-factor', name: 'Power Factor Calculator', group: 'AC Circuits', description: 'Power Factor calculation' },
-    { id: 'apparent-power', name: 'Apparent Power Calculator', group: 'AC Circuits', description: 'Apparent Power calculation' },
-    { id: 'reactive-power', name: 'Reactive Power Calculator', group: 'AC Circuits', description: 'Reactive Power calculation' },
-    { id: 'rms-voltage', name: 'RMS Voltage Calculator', group: 'AC Circuits', description: 'RMS Voltage from Peak' },
-    { id: 'rms-current', name: 'RMS Current Calculator', group: 'AC Circuits', description: 'RMS Current from Peak' },
-    { id: 'impedance', name: 'Impedance', group: 'AC Circuits', description: 'RLC Circuit Impedance' },
-    { id: 'phase-angle', name: 'Phase Angle Calculator', group: 'AC Circuits', description: 'Calculate Phase Angle' },
-    { id: 'frequency', name: 'Frequency Calculator', group: 'AC Circuits', description: 'Frequency from time period' },
-    { id: 'ac-current', name: 'AC Current Calculator', group: 'AC Circuits', description: 'Current in AC circuits' },
-    { id: 'lc-resonant', name: 'LC Resonant', group: 'AC Circuits', description: 'Resonant frequency' },
-    { id: 'rc-time', name: 'RC Time Constant', group: 'AC Circuits', description: 'Time constant calculation' },
-
-    { id: 'dc-power', name: 'DC Power Calculator', group: 'DC Circuits', description: 'World-class DC power analyzer' },
-    { id: 'dc-current', name: 'DC Current Calculator', group: 'DC Circuits', description: 'World-class DC current analyzer' },
-    { id: 'dc-voltage-drop', name: 'DC Voltage Drop Calculator', group: 'DC Circuits', description: 'Wire span voltage drop limit' },
-    { id: 'battery-capacity', name: 'Battery Capacity Calculator', group: 'DC Circuits', description: 'Amp-hours calculation' },
-    { id: 'battery-backup', name: 'Battery Backup Time Calculator', group: 'DC Circuits', description: 'Runtime duration analysis' },
-    { id: 'battery-charging', name: 'Battery Charging Time Calculator', group: 'DC Circuits', description: 'Charge completion time' },
-    { id: 'series-resistance', name: 'Series Resistance Calculator', group: 'DC Circuits', description: 'Add series resistance' },
-    { id: 'parallel-resistance', name: 'Parallel Resistance Calculator', group: 'DC Circuits', description: 'Add parallel resistance' },
-    { id: 'voltage-divider', name: 'Voltage Divider Calculator', group: 'DC Circuits', description: 'Ratio derived voltage limits' },
-    { id: 'current-divider', name: 'Current Divider Calculator', group: 'DC Circuits', description: 'Ratio derived current limits' },
-
-    { id: 'short-circuit-current', name: 'Short Circuit Current Calculator', group: 'Power System', description: 'Fault current limit analysis' },
-    { id: 'fault-current', name: 'Fault Current Calculator', group: 'Power System', description: 'System fault level calculation' },
-    { id: 'transformer-efficiency', name: 'Transformer Efficiency Calculator', group: 'Power System', description: 'Transformer performance analysis' },
-    { id: 'transformer-turns-ratio', name: 'Transformer Turns Ratio Calculator', group: 'Power System', description: 'Voltage transformation ratio' },
-    { id: 'transformer-loss', name: 'Transformer Loss Calculator', group: 'Power System', description: 'Copper & Iron loss analysis' },
-    { id: 'transmission-line-loss', name: 'Transmission Line Loss Calculator', group: 'Power System', description: 'Line power dissipation' },
-    { id: 'voltage-regulation', name: 'Voltage Regulation Calculator', group: 'Power System', description: 'Load-voltage stability score' },
-    { id: 'load-demand', name: 'Load Demand Calculator', group: 'Power System', description: 'Peak demand estimation' },
-    { id: 'diversity-factor', name: 'Diversity Factor Calculator', group: 'Power System', description: 'Coincident demand analysis' },
-    { id: 'load-factor', name: 'Load Factor Calculator', group: 'Power System', description: 'Average vs peak load score' },
-    { id: 'percent-impedance', name: '% Impedance (Z) Calculator', group: 'Power System', description: 'Percentage impedance calculation' },
-    { id: 'open-circuit-loss', name: 'Open Circuit Loss Calculator', group: 'Power System', description: 'Core loss and magnetizing parameters' },
-
-    { id: 'motor-power', name: 'Motor Power Calculator', group: 'Motors & Machines', description: 'Calculate motor output horsepower' },
-    { id: 'motor-torque', name: 'Motor Torque Calculator', group: 'Motors & Machines', description: 'Calculate motor shaft torque' },
-    { id: 'motor-speed', name: 'Motor Speed Calculator', group: 'Motors & Machines', description: 'Calculate sync and rotor speed' },
-    { id: 'slip', name: 'Slip Calculator', group: 'Motors & Machines', description: 'Calculate induction motor slip' },
-    { id: 'motor-efficiency', name: 'Motor Efficiency Calculator', group: 'Motors & Machines', description: 'Calculate motor operating efficiency' },
-    { id: 'motor-current', name: 'Motor Current Calculator', group: 'Motors & Machines', description: 'Calculate motor full-load current' },
-    { id: 'star-delta-starter', name: 'Star-Delta Starter Calculator', group: 'Motors & Machines', description: 'Calculate starting parameters' },
-    { id: 'single-phase-motor', name: 'Single Phase Motor Calculator', group: 'Motors & Machines', description: 'Single phase calculations' },
-    { id: 'three-phase-motor', name: 'Three Phase Motor Calculator', group: 'Motors & Machines', description: 'Three phase calculations' },
-    { id: 'synchronous-speed', name: 'Synchronous Speed Calculator', group: 'Motors & Machines', description: 'Calculate synchronous speed directly' },
-
-    { id: 'rc-time-adv', name: 'RC Time Constant', group: 'Control & Electronics', description: 'Advanced RC time constant' },
-    { id: 'rl-time', name: 'RL Time Constant', group: 'Control & Electronics', description: 'RL circuit time constant' },
-    { id: 'rlc-circuit', name: 'RLC Circuit', group: 'Control & Electronics', description: 'Resonant frequency & damping' },
-    { id: 'capacitor-charging', name: 'Capacitor Charging', group: 'Control & Electronics', description: 'RC charging phase equations' },
-    { id: 'capacitor-discharging', name: 'Capacitor Discharging', group: 'Control & Electronics', description: 'RC discharging phase equations' },
-    { id: 'inductor-energy', name: 'Inductor Energy', group: 'Control & Electronics', description: 'Stored magnetic energy' },
-    { id: 'diode-voltage-drop', name: 'Diode Voltage Drop', group: 'Control & Electronics', description: 'Forward voltage analysis' },
-    { id: 'zener-diode', name: 'Zener Diode', group: 'Control & Electronics', description: 'Zener voltage regulation' },
-    { id: 'transistor-gain', name: 'Transistor Gain', group: 'Control & Electronics', description: 'Alpha and Beta (hFE) calculation' },
-    { id: 'op-amp-gain', name: 'Op-Amp Gain', group: 'Control & Electronics', description: 'Inverting & Non-inverting gain' },
-
-    { id: 'rectifier-efficiency', name: 'Rectifier Efficiency', group: 'Power Electronics', description: 'AC to DC conversion efficiency' },
-    { id: 'ripple-factor', name: 'Ripple Factor', group: 'Power Electronics', description: 'Output DC waveform smoothness' },
-    { id: 'inverter-power', name: 'Inverter Power', group: 'Power Electronics', description: 'DC to AC real power conversion' },
-    { id: 'converter-efficiency', name: 'Converter Efficiency', group: 'Power Electronics', description: 'Power Converter Efficiency' },
-    { id: 'dc-to-ac-inverter', name: 'DC to AC Inverter', group: 'Power Electronics', description: 'Single-phase inverter RMS AC' },
-    { id: 'pwm-duty-cycle', name: 'PWM Duty Cycle', group: 'Power Electronics', description: 'Calculate duty cycle and switching frequency' },
-    { id: 'thyristor-firing-angle', name: 'Thyristor Firing Angle', group: 'Power Electronics', description: 'Controlled Rectifier Output Voltage' },
-    { id: 'buck-converter', name: 'Buck Converter', group: 'Power Electronics', description: 'Step-down DC-DC Converter' },
-    { id: 'boost-converter', name: 'Boost Converter', group: 'Power Electronics', description: 'Step-up DC-DC Converter' },
-    { id: 'buck-boost-converter', name: 'Buck-Boost Converter', group: 'Power Electronics', description: 'Inverting DC-DC Converter' },
-
-    { id: 'cable-size', name: 'Cable Size Calculator', group: 'Cable, Wiring & Protection', description: 'Calculate required cable area' },
-    { id: 'wire-gauge', name: 'Wire Gauge Calculator', group: 'Cable, Wiring & Protection', description: 'AWG to mm2 conversion' },
-    { id: 'voltage-drop-wiring', name: 'Voltage Drop Calculator', group: 'Cable, Wiring & Protection', description: 'AC/DC wiring voltage drop' },
-    { id: 'earthing-resistance', name: 'Earthing Resistance Calculator', group: 'Cable, Wiring & Protection', description: 'Earth rod resistance' },
-    { id: 'fuse-rating', name: 'Fuse Rating Calculator', group: 'Cable, Wiring & Protection', description: 'Calculate minimum fuse size' },
-    { id: 'mcb-rating', name: 'MCB Rating Calculator', group: 'Cable, Wiring & Protection', description: 'Calculate MCB breaker size' },
-    { id: 'mccb-rating', name: 'MCCB Rating Calculator', group: 'Cable, Wiring & Protection', description: 'Industrial MCCB sizing' },
-    { id: 'short-circuit-protection', name: 'Short Circuit Protection Calculator', group: 'Cable, Wiring & Protection', description: 'Max short circuit fault current' },
-    { id: 'grounding', name: 'Grounding Calculator', group: 'Cable, Wiring & Protection', description: 'Min grounding conductor size' },
-    { id: 'lightning-protection', name: 'Lightning Protection Calculator', group: 'Cable, Wiring & Protection', description: 'Protection cone radius' },
-
-    { id: 'solar-panel', name: 'Solar Panel Calculator', group: 'Renewable Energy / Solar', description: 'Calculate solar panel efficiency' },
-    { id: 'solar-power-output', name: 'Solar Power Output Calculator', group: 'Renewable Energy / Solar', description: 'Daily solar energy out' },
-    { id: 'solar-inverter-size', name: 'Solar Inverter Size Calculator', group: 'Renewable Energy / Solar', description: 'Recommend inverter sizing' },
-    { id: 'battery-bank-size-solar', name: 'Battery Bank Size Calculator', group: 'Renewable Energy / Solar', description: 'Size battery bank for solar' },
-    { id: 'solar-charge-controller', name: 'Solar Charge Controller Calculator', group: 'Renewable Energy / Solar', description: 'Size charge controller' },
-    { id: 'solar-load', name: 'Solar Load Calculator', group: 'Renewable Energy / Solar', description: 'Daily energy consumption' },
-    { id: 'solar-panel-tilt', name: 'Solar Panel Tilt Angle Calculator', group: 'Renewable Energy / Solar', description: 'Optimal tilt angles' },
-    { id: 'solar-energy-production', name: 'Solar Energy Production Calculator', group: 'Renewable Energy / Solar', description: 'Array energy production' },
-    { id: 'off-grid-solar', name: 'Off-Grid Solar Calculator', group: 'Renewable Energy / Solar', description: 'Off-grid setup sizing' },
-    { id: 'on-grid-solar', name: 'On-Grid Solar Calculator', group: 'Renewable Energy / Solar', description: 'On-grid system size' },
-
-    { id: 'kva-to-kw', name: 'kVA to kW Calculator', group: 'Measurement & Units', description: 'Apparent to Real Power' },
-    { id: 'kw-to-hp', name: 'kW to HP Calculator', group: 'Measurement & Units', description: 'Kilowatts to Horsepower' },
-    { id: 'hp-to-kw', name: 'HP to kW Calculator', group: 'Measurement & Units', description: 'Horsepower to Kilowatts' },
-    { id: 'va-to-watt', name: 'VA to Watt Calculator', group: 'Measurement & Units', description: 'Volt-Amps to Watts' },
-    { id: 'db-calculator', name: 'dB Calculator', group: 'Measurement & Units', description: 'Power Ratio to Decibels' },
-    { id: 'freq-to-rpm', name: 'Frequency to RPM', group: 'Measurement & Units', description: 'Hz to Sync Speed' },
-    { id: 'rpm-to-freq', name: 'RPM to Frequency', group: 'Measurement & Units', description: 'Sync Speed to Hz' },
-    { id: 'electrical-units', name: 'Electrical Units Converter', group: 'Measurement & Units', description: 'Scale engineering prefixes' },
-    { id: 'phase-converter', name: 'Phase Converter Calculator', group: 'Measurement & Units', description: '3-Ph equiv on 1-Ph source' },
-    { id: 'power-loss', name: 'Power Loss Calculator', group: 'Measurement & Units', description: 'I²R Joule heating loss' },
-
-    { id: 'insulation-resistance', name: 'Insulation Resistance', group: 'Insulation & Safety Testing', description: 'R = V / I mapping' },
-    { id: 'min-insulation-resistance', name: 'Minimum IR Acceptable', group: 'Insulation & Safety Testing', description: 'IEEE Standard threshold' },
-    { id: 'megger-test-voltage', name: 'Megger Test Voltage', group: 'Insulation & Safety Testing', description: 'Recommended test voltages' },
-    { id: 'insulation-test-duration', name: 'Insulation Test Duration', group: 'Insulation & Safety Testing', description: 'Wait time based on Capacitance' },
-    { id: 'leakage-current', name: 'Leakage Current Calc', group: 'Insulation & Safety Testing', description: 'Calculate I leak based on R' },
-    { id: 'dielectric-strength', name: 'Dielectric Strength', group: 'Insulation & Safety Testing', description: 'Breakdown kv/mm field limit' },
-    { id: 'dielectric-loss', name: 'Dielectric Active Loss', group: 'Insulation & Safety Testing', description: 'Watt dissipation' },
-    { id: 'polarization-index', name: 'Polarization Index (PI)', group: 'Insulation & Safety Testing', description: 'R10 / R1 Absorption condition' },
-    { id: 'dar-calculator', name: 'Dielectric Absorption Ratio', group: 'Insulation & Safety Testing', description: 'R1 / R30s (DAR) condition' },
-    { id: 'insulation-power-factor', name: 'Insulation Power Factor', group: 'Insulation & Safety Testing', description: 'tan(delta) to PF translation' },
-    { id: 'line-phase-calculator', name: 'Line/Phase Calculator', group: 'Measurement & Units', description: 'Star/Delta V & I Conversions' },
-
-    { id: 'faraday', name: "Faraday's Law", group: 'Electromagnetism', description: 'Induced EMF calculation' },
-    { id: 'lorentz', name: 'Lorentz Force', group: 'Electromagnetism', description: 'Force on moving charge' },
-    { id: 'flux', name: 'Elec. & Mag. Flux', group: 'Electromagnetism', description: 'Flux calculations' },
-
-    { id: 'battery', name: 'Battery Life', group: 'Systems', description: 'Estimate battery runtime' },
-    { id: 'motor', name: 'Motor Calculator', group: 'Systems', description: 'Motor power and efficiency' },
-    { id: 'cable', name: 'Cable Capacity', group: 'Systems', description: 'Cable sizing and ampacity' },
-
-    // Transformer & Equipment Testing
-    { id: 'ir-test', name: 'IR Test Calculator', group: 'Transformer & Equipment Testing', description: 'Insulation Resistance & PI grading' },
-    { id: 'pi-transformer', name: 'Polarization Index (PI)', group: 'Transformer & Equipment Testing', description: 'R10/R1 winding absorption test' },
-    { id: 'ttr-calculator', name: 'TTR Calculator', group: 'Transformer & Equipment Testing', description: 'Turns ratio & ratio error check' },
-    { id: 'winding-resistance-temp', name: 'Winding Resistance Temp Correction', group: 'Transformer & Equipment Testing', description: 'IEC 60076 temperature correction' },
-    { id: 'tan-delta', name: 'Tan Delta (Dissipation Factor)', group: 'Transformer & Equipment Testing', description: 'Insulation deterioration test' },
-    { id: 'oil-bdv', name: 'Oil BDV Test Calculator', group: 'Transformer & Equipment Testing', description: 'IEC 60156 dielectric strength' },
-    { id: 'oil-dga', name: 'Oil DGA Analysis', group: 'Transformer & Equipment Testing', description: 'Dissolved gas Duval Triangle fault' },
-    { id: 'ct-ratio', name: 'CT Ratio Calculator', group: 'Transformer & Equipment Testing', description: 'Current transformer ratio & burden' },
-    { id: 'earth-resistance-test', name: 'Earth Resistance Calculator', group: 'Transformer & Equipment Testing', description: 'Wenner & single rod method' },
-    { id: 'full-load-current-transformer', name: 'Full Load Current Calculator', group: 'Transformer & Equipment Testing', description: '1φ & 3φ transformer FLC' },
-    { id: 'magnetic-balance', name: 'Magnetic Balance Test', group: 'Transformer & Equipment Testing', description: 'Core balance voltage ratio' },
-    { id: 'vector-group', name: 'Vector Group Test', group: 'Transformer & Equipment Testing', description: 'Dyn11, Yd1 phase displacement' },
-    { id: 'core-loss', name: 'Core Loss Calculator', group: 'Transformer & Equipment Testing', description: 'Iron loss: Hysteresis + Eddy current' },
-    { id: 'copper-loss', name: 'Copper Loss Calculator', group: 'Transformer & Equipment Testing', description: 'I²R winding loss calculation' },
-  ];
-
-  const groups = [
-    { id: 'Basic', name: 'Basic Electrical', icon: Zap, description: 'Fundamental laws and basic components' },
-    { id: 'Components', name: 'Components', icon: Cpu, description: 'Capacitors, Inductors, and specific parts' },
-    { id: 'DC Circuits', name: 'DC Circuits', icon: Battery, description: 'Direct Current analysis and batteries' },
-    { id: 'AC Circuits', name: 'AC Circuits', icon: Activity, description: 'Alternating Current analysis' },
-    { id: 'Electromagnetism', name: 'Electromagnetism', icon: Magnet, description: 'Fields, Forces, and Flux' },
-    { id: 'Power System', name: 'Power System', icon: UtilityPole, description: 'Transmission, faults, and load analysis' },
-    { id: 'Motors & Machines', name: 'Motors & Machines', icon: Cpu, description: 'Motor analysis, performance, and theory' },
-    { id: 'Control & Electronics', name: 'Control & Electronics', icon: Activity, description: 'Op-amps, RLC, and semiconductors' },
-    { id: 'Power Electronics', name: 'Power Electronics', icon: Zap, description: 'Converters, Inverters, and choppers' },
-    { id: 'Cable, Wiring & Protection', name: 'Cable, Wiring & Protection', icon: Shield, description: 'Cable sizing, CB ratings, and earthing' },
-    { id: 'Renewable Energy / Solar', name: 'Renewable Energy / Solar', icon: Sun, description: 'Solar sizing, off-grid and on-grid analysis' },
-    { id: 'Insulation & Safety Testing', name: 'Insulation & Safety Testing', icon: ActivitySquare, description: 'Megger, PI, DAR, Dielectric Strength and Leakage' },
-    { id: 'Measurement & Units', name: 'Measurement & Units', icon: Scale, description: 'Unit conversion, prefixes, power equivalents' },
-    { id: 'Systems', name: 'Systems', icon: Grid, description: 'Power systems, motors, and cabling' },
-    { id: 'Transformer & Equipment Testing', name: 'Transformer & Equipment Testing', icon: AlertOctagon, description: 'IR, PI, TTR, Oil BDV, DGA, CT Ratio, Core/Copper Loss' },
-  ];
-
-  const externalLinks: { [key: string]: string } = {
-    'ohms-law': '/calculators/ohms-law.html',
-    'power': '/calculators/power-calculator.html',
-    'resistor-color-code': '/calculators/resistor-color-code.html',
-    'wheatstone-bridge': '/calculators/wheatstone-bridge.html',
-    'capacitance': '/calculators/capacitance.html',
-    'inductance': '/calculators/inductance.html',
-    'capacitor-charge': '/calculators/capacitor-charge.html',
-    'impedance': '/calculators/impedance-calculator.html',
-    'lc-resonant': '/calculators/lc-resonant.html',
-    'rc-time': '/calculators/rc-time-constant.html',
-    'faraday': '/calculators/faradays-law.html',
-    'lorentz': '/calculators/lorentz-force.html',
-    'flux': '/calculators/flux-calculator.html',
-    'battery': '/calculators/battery-life.html',
-    'motor': '/calculators/motor-calculator.html',
-    'cable': '/calculators/cable-capacity.html',
-    'parallel-resistance': '/calculators/parallel-resistor.html',
-  };
-
-  // Helper arrays for internal calculators
-  const internalCalculators = [
-    'ohms-law', 'voltage', 'current', 'resistance', 'power',
-    'energy-consumption', 'electrical-cost', 'watt-to-amp',
-    'amp-to-watt', 'volt-to-watt',
-    'ac-power', 'power-factor', 'apparent-power', 'reactive-power',
-    'rms-voltage', 'rms-current', 'phase-angle', 'frequency', 'ac-current',
-    'dc-power', 'dc-current', 'dc-voltage-drop', 'battery-capacity',
-    'battery-backup', 'battery-charging', 'series-resistance',
-    'parallel-resistance', 'voltage-divider', 'current-divider',
-    'short-circuit-current', 'fault-current', 'transformer-efficiency',
-    'transformer-turns-ratio', 'transformer-loss', 'transmission-line-loss',
-    'voltage-regulation', 'load-demand', 'diversity-factor', 'load-factor', 'percent-impedance', 'open-circuit-loss',
-    'motor-power', 'motor-torque', 'motor-speed', 'slip', 'motor-efficiency', 'motor-current', 'star-delta-starter', 'single-phase-motor', 'three-phase-motor', 'synchronous-speed',
-    'rc-time-adv', 'rl-time', 'rlc-circuit', 'capacitor-charging', 'capacitor-discharging', 'inductor-energy', 'diode-voltage-drop', 'zener-diode', 'transistor-gain', 'op-amp-gain',
-    'rectifier-efficiency', 'ripple-factor', 'inverter-power', 'converter-efficiency', 'dc-to-ac-inverter', 'pwm-duty-cycle', 'thyristor-firing-angle', 'buck-converter', 'boost-converter', 'buck-boost-converter',
-    'cable-size', 'wire-gauge', 'voltage-drop-wiring', 'earthing-resistance', 'fuse-rating',
-    'mcb-rating', 'mccb-rating', 'short-circuit-protection', 'grounding', 'lightning-protection',
-    'solar-panel', 'solar-power-output', 'solar-inverter-size', 'battery-bank-size-solar',
-    'solar-charge-controller', 'solar-load', 'solar-panel-tilt', 'solar-energy-production',
-    'off-grid-solar', 'on-grid-solar', 'kva-to-kw', 'kw-to-hp', 'hp-to-kw', 'va-to-watt', 'db-calculator',
-    'freq-to-rpm', 'rpm-to-freq', 'electrical-units', 'phase-converter', 'power-loss',
-    'insulation-resistance', 'min-insulation-resistance', 'megger-test-voltage', 'insulation-test-duration',
-    'leakage-current', 'dielectric-strength', 'dielectric-loss', 'polarization-index', 'dar-calculator',
-    'insulation-power-factor', 'line-phase-calculator',
-    // Transformer & Equipment Testing
-    'ir-test', 'pi-transformer', 'ttr-calculator', 'winding-resistance-temp', 'tan-delta',
-    'oil-bdv', 'oil-dga', 'ct-ratio', 'earth-resistance-test', 'full-load-current-transformer',
-    'magnetic-balance', 'vector-group', 'core-loss', 'copper-loss'
-  ];
 
   // Sync state with URL and clear previous results
   React.useEffect(() => {
@@ -894,6 +962,27 @@ function ElectricalCalculatorInner() {
       case 'vector-group': result = calculateVectorGroup(calculationInputs); break;
       case 'core-loss': result = calculateCoreLoss(calculationInputs); break;
       case 'copper-loss': result = calculateCopperLoss(calculationInputs); break;
+      // Added Integrated Calculators
+      case 'capacitance': result = calculateCapacitance(calculationInputs); break;
+      case 'inductance': result = calculateInductance(calculationInputs); break;
+      case 'capacitor-charge': result = calculateCapacitorCharge(calculationInputs); break;
+      case 'wheatstone-bridge': result = calculateWheatstoneBridge(calculationInputs); break;
+      case 'resistor-color-code': result = calculateResistorColorCode({
+        band1: inputs.band1,
+        band2: inputs.band2,
+        band3: inputs.band3.value !== '' ? inputs.band3 : undefined,
+        multiplier: inputs.multiplier,
+        tolerance: inputs.tolerance
+      }); break;
+      case 'impedance': result = calculateImpedance(calculationInputs); break;
+      case 'lc-resonant': result = calculateLCResonant(calculationInputs); break;
+      case 'rc-time': result = calculateRCTime(calculationInputs); break;
+      case 'faraday': result = calculateFaradaysLaw(calculationInputs); break;
+      case 'lorentz': result = calculateLorentzForce(calculationInputs); break;
+      case 'flux': result = calculateFlux(calculationInputs); break;
+      case 'battery': result = calculateBatteryLife(calculationInputs); break;
+      case 'motor': result = calculateMotorGeneral(calculationInputs); break;
+      case 'cable': result = calculateCableCapacity(calculationInputs); break;
       default:
         // Use default error set prior
         break;
@@ -1075,6 +1164,24 @@ function ElectricalCalculatorInner() {
       // Dedicated Tan Delta fields
       tanDeltaLossI: { value: '', unit: 'mA' },
       tanDeltaChargingI: { value: '', unit: 'mA' },
+      // Electromagnetics, components and systems
+      charge: { value: '', unit: 'μC' },
+      magneticFlux: { value: '', unit: 'Wb' },
+      magneticField: { value: '', unit: 'T' },
+      electricField: { value: '', unit: 'V/m' },
+      velocity: { value: '', unit: 'm/s' },
+      conductorLength: { value: '', unit: 'm' },
+      distance: { value: '', unit: 'mm' },
+      turns: { value: '', unit: '' },
+      permeability: { value: '1', unit: '' },
+      dielectricK: { value: '1', unit: '' },
+      rx: { value: '', unit: 'Ω' },
+      band1: { value: '1', unit: '' },
+      band2: { value: '0', unit: '' },
+      band3: { value: '0', unit: '' },
+      multiplier: { value: '100', unit: '' },
+      tolerance: { value: '5', unit: '%' },
+      conductorMaterial: { value: 'copper', unit: '' },
     });
     setResults(null);
   };
@@ -1084,6 +1191,20 @@ function ElectricalCalculatorInner() {
     switch (activeCalculator) {
       case 'ohms-law': return { name: "Ohm's Law", formula: 'V = I × R', description: 'Voltage (V) = Current (I) × Resistance (R)' };
       case 'power': return { name: 'Power Formulas', formula: 'P = V × I', description: 'Power calculation' };
+      case 'resistor-color-code': return { name: 'Resistor Color Code', formula: 'R = (Band1×10 + Band2) × Multiplier ± Tol%', description: 'Decode standard 4-band and 5-band EIA axial resistor color bands into nominal resistance and tolerance limits.' };
+      case 'wheatstone-bridge': return { name: 'Wheatstone Bridge', formula: 'R_x = (R_2 × R_3) / R_1 | V_out = V_s × [R_x/(R_3+R_x) - R_2/(R_1+R_2)]', description: 'Precision unknown resistance and bridge deflection voltage calculation for sensor null-balance circuits.' };
+      case 'capacitance': return { name: 'Capacitance & Stored Energy', formula: 'C = Q / V | E = ½ × C × V² | X_c = 1 / (2πfC)', description: 'Calculates capacitance, stored electrostatic energy, and AC capacitive reactance.' };
+      case 'inductance': return { name: 'Inductance & Magnetic Energy', formula: 'L = (μ₀μᵣN²A)/l | E = ½ × L × I² | X_l = 2πfL', description: 'Calculates solenoid coil inductance, stored magnetic energy, and AC inductive reactance.' };
+      case 'capacitor-charge': return { name: 'Capacitor Charge & Transient', formula: 'Q = C × V | τ = R × C | V(t) = V_s(1 - e^(-t/τ))', description: 'Evaluates maximum charge capacity, RC time constant, and instantaneous charging voltage waveform.' };
+      case 'impedance': return { name: 'AC Circuit Impedance', formula: 'Z = √(R² + (X_L - X_C)²) | θ = arctan((X_L - X_C)/R)', description: 'Calculates total complex impedance magnitude, net reactance, phase angle, and power factor in RLC circuits.' };
+      case 'lc-resonant': return { name: 'LC Resonant Frequency', formula: 'f₀ = 1 / (2π√(LC)) | Q = (1/R)√(L/C) | BW = f₀/Q', description: 'Calculates resonant frequency, angular speed, quality factor, and bandwidth for LC resonant tank circuits.' };
+      case 'rc-time': return { name: 'RC Time Constant', formula: 'τ = R × C | f_c = 1 / (2πRC)', description: 'Determines the RC time constant, charging thresholds (1τ = 63.2%, 5τ = 99.3%), and 3dB low-pass cutoff frequency.' };
+      case 'faraday': return { name: "Faraday's Law of Induction", formula: '|ε| = N × (ΔΦ / Δt) | ε = B × L × v × sin(θ)', description: 'Calculates induced electromotive force (EMF) from changing magnetic flux or moving conductors.' };
+      case 'lorentz': return { name: 'Lorentz & Laplace Force', formula: 'F_charge = q(E + v×B) | F_wire = B × I × L × sin(θ)', description: 'Determines the electromagnetic force on charged particles and current-carrying conductors in magnetic fields.' };
+      case 'flux': return { name: 'Magnetic Flux', formula: 'Φ = B × A × cos(θ)', description: 'Calculates magnetic flux in Webers and Maxwells passing through a given surface area.' };
+      case 'battery': return { name: 'Battery Runtime & Life', formula: 'Runtime = (Ah × V × η) / Power (W)', description: 'Estimates battery runtime, total Watt-hour capacity, and discharge current under electrical loads.' };
+      case 'motor': return { name: 'AC Electric Motor Sizing', formula: 'I = P / (√3 × V × PF × η) | T = (9549 × P_kW) / RPM', description: 'Calculates motor full load current (FLC), mechanical horsepower, and rated shaft torque.' };
+      case 'cable': return { name: 'Cable Capacity & Sizing', formula: 'A = (2 × ρ × L × I) / V_drop', description: 'Determines required cable cross-section area, standard metric size, and actual line voltage drop percentage.' };
       case 'short-circuit-current': return { name: 'Short Circuit Current Formuala', formula: 'Isc = V / Z', description: 'Short Circuit Current equals Voltage divided by Impedance (where Z is usually minimal resistance/inductance)' };
       case 'fault-current': return { name: 'Fault Current Formula', formula: 'I_fault = I_base / (Z% / 100)', description: 'Fault Level Calculation using Base parameters and Per Unit Impedance percentage' };
       case 'transformer-efficiency': return { name: 'Transformer Efficiency', formula: 'η = (P_out / (P_out + P_cu + P_fe)) * 100', description: 'Measures Transformer Efficiency by calculating the ratio between the total power output over the input power (where P_in = P_out + Losses)' };
@@ -1188,28 +1309,23 @@ function ElectricalCalculatorInner() {
   const formulaInfo = getFormulaInfo();
 
   // Helper to determine navigation state
-  const isGroupView = activeCalculator.startsWith('group:');
-  const activeGroupId = isGroupView ? activeCalculator.split(':')[1] : null;
-  const currentGroup = groups.find(g => g.id === activeGroupId);
-  const currentCalculator = calculatorTypes.find(c => c.id === activeCalculator);
+  const rawId = (activeCalculator || 'menu').trim();
+  const isGroupView = rawId.startsWith('group:') || rawId.startsWith('group-') || groups.some(g => g.id.toLowerCase() === rawId.toLowerCase());
+  const activeGroupId = isGroupView 
+    ? (rawId.startsWith('group:') ? rawId.slice(6) : rawId.startsWith('group-') ? rawId.slice(6) : rawId)
+    : null;
+  const currentGroup = groups.find(g => g.id.toLowerCase() === activeGroupId?.toLowerCase() || g.name.toLowerCase() === activeGroupId?.toLowerCase());
+  const currentCalculator = calculatorTypes.find(c => c.id.toLowerCase() === rawId.toLowerCase());
   const parentGroup = currentCalculator ? groups.find(g => g.id === currentCalculator.group) : null;
 
-  // --- Safety guard: if calculator not found and not a group view, return to menu ---
-  if (!isGroupView && activeCalculator !== 'menu' && !currentCalculator) {
-    // Unknown calculator ID — show menu instead of blank
-    return (
-      <Card className="mb-6">
-        <CardContent className="p-6">
-          <div className="text-center py-8 text-gray-500">
-            <p className="mb-4">Calculator not found. Please select from the menu.</p>
-            <Button onClick={() => setActiveCalculator('menu')} className="bg-eng-blue text-white">
-              <Grid className="h-4 w-4 mr-2" /> Back to Menu
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
+  if (activeCalculator === 'phasor-simulator') return (
+    <div className="mb-6">
+      <Button variant="outline" onClick={() => setActiveCalculator('menu')} className="mb-4">
+        ← Back to Electrical Menu
+      </Button>
+      <PhasorVisualizer />
+    </div>
+  );
 
   // --- Render: Main Menu (Level 0) ---
   if (activeCalculator === 'menu') return (
@@ -1306,29 +1422,16 @@ function ElectricalCalculatorInner() {
       {/* Content Area */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-        {/* Input Panel / External Tool Prompt */}
+        {/* Input Panel */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-charcoal flex items-center">
               <Edit className="h-5 w-5 text-eng-blue mr-2" />
-              {externalLinks[activeCalculator] && activeCalculator !== 'ohms-law' && activeCalculator !== 'power' ? 'External Tool' : 'Input Parameters'}
+              Input Parameters
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-
-            {/* If strictly external tool, show link button */}
-            {!internalCalculators.includes(activeCalculator) ? (
-              <div className="text-center py-8">
-                <p className="text-gray-600 mb-6">
-                  This calculation requires our advanced external tool.
-                </p>
-                <Button onClick={() => window.open(externalLinks[activeCalculator], '_blank')} className="bg-eng-blue text-white hover:bg-eng-blue/90">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Open {calculatorTypes.find(c => c.id === activeCalculator)?.name || 'Calculator'}
-                </Button>
-              </div>
-            ) : (
-              <>
+            <>
                 {/* Formula Display */}
                 {formulaInfo && (
                   <div className="bg-blue-50 border-l-4 border-eng-blue p-4">
@@ -3826,6 +3929,514 @@ function ElectricalCalculatorInner() {
                     </>
                   )}
 
+                  {/* Resistor Color Code Calculator */}
+                  {['resistor-color-code'].includes(activeCalculator) && (
+                    <>
+                      <div className="bg-slate-900 border border-slate-700 p-4 rounded-xl text-white mb-3">
+                        <div className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2">Resistor Preview Band Colors</div>
+                        <div className="h-10 bg-amber-100 rounded-lg flex items-center justify-around px-4 border-2 border-amber-300">
+                          <div className={`w-3 h-8 rounded-sm ${inputs.band1.value === '0' ? 'bg-black' : inputs.band1.value === '1' ? 'bg-amber-800' : inputs.band1.value === '2' ? 'bg-red-600' : inputs.band1.value === '3' ? 'bg-orange-500' : inputs.band1.value === '4' ? 'bg-yellow-400' : inputs.band1.value === '5' ? 'bg-green-600' : inputs.band1.value === '6' ? 'bg-blue-600' : inputs.band1.value === '7' ? 'bg-purple-600' : inputs.band1.value === '8' ? 'bg-gray-500' : 'bg-white border border-gray-300'}`}></div>
+                          <div className={`w-3 h-8 rounded-sm ${inputs.band2.value === '0' ? 'bg-black' : inputs.band2.value === '1' ? 'bg-amber-800' : inputs.band2.value === '2' ? 'bg-red-600' : inputs.band2.value === '3' ? 'bg-orange-500' : inputs.band2.value === '4' ? 'bg-yellow-400' : inputs.band2.value === '5' ? 'bg-green-600' : inputs.band2.value === '6' ? 'bg-blue-600' : inputs.band2.value === '7' ? 'bg-purple-600' : inputs.band2.value === '8' ? 'bg-gray-500' : 'bg-white border border-gray-300'}`}></div>
+                          {inputs.band3.value !== '' && (
+                            <div className={`w-3 h-8 rounded-sm ${inputs.band3.value === '0' ? 'bg-black' : inputs.band3.value === '1' ? 'bg-amber-800' : inputs.band3.value === '2' ? 'bg-red-600' : inputs.band3.value === '3' ? 'bg-orange-500' : inputs.band3.value === '4' ? 'bg-yellow-400' : inputs.band3.value === '5' ? 'bg-green-600' : inputs.band3.value === '6' ? 'bg-blue-600' : inputs.band3.value === '7' ? 'bg-purple-600' : inputs.band3.value === '8' ? 'bg-gray-500' : 'bg-white border border-gray-300'}`}></div>
+                          )}
+                          <div className={`w-3 h-8 rounded-sm ${inputs.multiplier.value === '1' ? 'bg-black' : inputs.multiplier.value === '10' ? 'bg-amber-800' : inputs.multiplier.value === '100' ? 'bg-red-600' : inputs.multiplier.value === '1000' ? 'bg-orange-500' : inputs.multiplier.value === '10000' ? 'bg-yellow-400' : inputs.multiplier.value === '100000' ? 'bg-green-600' : inputs.multiplier.value === '1000000' ? 'bg-blue-600' : 'bg-amber-400'}`}></div>
+                          <div className={`w-3 h-8 rounded-sm ${inputs.tolerance.value === '1' ? 'bg-amber-800' : inputs.tolerance.value === '2' ? 'bg-red-600' : inputs.tolerance.value === '5' ? 'bg-yellow-500' : 'bg-slate-300'}`}></div>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Band 1 (1st Digit)</Label>
+                        <Select value={inputs.band1.value} onValueChange={(v) => handleInputChange('band1', v)}>
+                          <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">1 - Brown</SelectItem>
+                            <SelectItem value="2">2 - Red</SelectItem>
+                            <SelectItem value="3">3 - Orange</SelectItem>
+                            <SelectItem value="4">4 - Yellow</SelectItem>
+                            <SelectItem value="5">5 - Green</SelectItem>
+                            <SelectItem value="6">6 - Blue</SelectItem>
+                            <SelectItem value="7">7 - Violet</SelectItem>
+                            <SelectItem value="8">8 - Gray</SelectItem>
+                            <SelectItem value="9">9 - White</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Band 2 (2nd Digit)</Label>
+                        <Select value={inputs.band2.value} onValueChange={(v) => handleInputChange('band2', v)}>
+                          <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="0">0 - Black</SelectItem>
+                            <SelectItem value="1">1 - Brown</SelectItem>
+                            <SelectItem value="2">2 - Red</SelectItem>
+                            <SelectItem value="3">3 - Orange</SelectItem>
+                            <SelectItem value="4">4 - Yellow</SelectItem>
+                            <SelectItem value="5">5 - Green</SelectItem>
+                            <SelectItem value="6">6 - Blue</SelectItem>
+                            <SelectItem value="7">7 - Violet</SelectItem>
+                            <SelectItem value="8">8 - Gray</SelectItem>
+                            <SelectItem value="9">9 - White</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Band 3 (Optional 3rd Digit for 5-Band)</Label>
+                        <Select value={inputs.band3.value || 'none'} onValueChange={(v) => handleInputChange('band3', v === 'none' ? '' : v)}>
+                          <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">None (4-Band Resistor)</SelectItem>
+                            <SelectItem value="0">0 - Black</SelectItem>
+                            <SelectItem value="1">1 - Brown</SelectItem>
+                            <SelectItem value="2">2 - Red</SelectItem>
+                            <SelectItem value="3">3 - Orange</SelectItem>
+                            <SelectItem value="4">4 - Yellow</SelectItem>
+                            <SelectItem value="5">5 - Green</SelectItem>
+                            <SelectItem value="6">6 - Blue</SelectItem>
+                            <SelectItem value="7">7 - Violet</SelectItem>
+                            <SelectItem value="8">8 - Gray</SelectItem>
+                            <SelectItem value="9">9 - White</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Multiplier Band</Label>
+                        <Select value={inputs.multiplier.value} onValueChange={(v) => handleInputChange('multiplier', v)}>
+                          <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">× 1 Ω (Black)</SelectItem>
+                            <SelectItem value="10">× 10 Ω (Brown)</SelectItem>
+                            <SelectItem value="100">× 100 Ω (Red)</SelectItem>
+                            <SelectItem value="1000">× 1 kΩ (Orange)</SelectItem>
+                            <SelectItem value="10000">× 10 kΩ (Yellow)</SelectItem>
+                            <SelectItem value="100000">× 100 kΩ (Green)</SelectItem>
+                            <SelectItem value="1000000">× 1 MΩ (Blue)</SelectItem>
+                            <SelectItem value="0.1">× 0.1 Ω (Gold)</SelectItem>
+                            <SelectItem value="0.01">× 0.01 Ω (Silver)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Tolerance Band</Label>
+                        <Select value={inputs.tolerance.value} onValueChange={(v) => handleInputChange('tolerance', v)}>
+                          <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1">± 1% (Brown)</SelectItem>
+                            <SelectItem value="2">± 2% (Red)</SelectItem>
+                            <SelectItem value="5">± 5% (Gold)</SelectItem>
+                            <SelectItem value="10">± 10% (Silver)</SelectItem>
+                            <SelectItem value="20">± 20% (None)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Wheatstone Bridge Calculator */}
+                  {['wheatstone-bridge'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Resistor R1 (Ω)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 100" value={inputs.r1.value} onChange={(e) => handleInputChange('r1', e.target.value)} className="flex-1" />
+                          <Select value={inputs.r1.unit} onValueChange={(v) => handleUnitChange('r1', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ω">Ω</SelectItem><SelectItem value="kΩ">kΩ</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Resistor R2 (Ω)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 200" value={inputs.r2.value} onChange={(e) => handleInputChange('r2', e.target.value)} className="flex-1" />
+                          <Select value={inputs.r2.unit} onValueChange={(v) => handleUnitChange('r2', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ω">Ω</SelectItem><SelectItem value="kΩ">kΩ</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Resistor R3 (Standard Potentiometer / Fixed)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 150" value={inputs.r3.value} onChange={(e) => handleInputChange('r3', e.target.value)} className="flex-1" />
+                          <Select value={inputs.r3.unit} onValueChange={(v) => handleUnitChange('r3', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ω">Ω</SelectItem><SelectItem value="kΩ">kΩ</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Bridge Supply Voltage Vs (Optional for V_out)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 12" value={inputs.supplyVoltage.value} onChange={(e) => handleInputChange('supplyVoltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.supplyVoltage.unit} onValueChange={(v) => handleUnitChange('supplyVoltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="mV">mV</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Capacitance Calculator */}
+                  {['capacitance'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Stored Charge (Q) - Optional</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 50" value={inputs.charge.value} onChange={(e) => handleInputChange('charge', e.target.value)} className="flex-1" />
+                          <Select value={inputs.charge.unit} onValueChange={(v) => handleUnitChange('charge', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="μC">μC</SelectItem><SelectItem value="mC">mC</SelectItem><SelectItem value="C">C</SelectItem><SelectItem value="nC">nC</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Voltage Across Capacitor (V)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 12" value={inputs.voltage.value} onChange={(e) => handleInputChange('voltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.voltage.unit} onValueChange={(v) => handleUnitChange('voltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem><SelectItem value="mV">mV</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Capacitance Value (C) - Or enter Area/Distance below</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 100" value={inputs.capacitance.value} onChange={(e) => handleInputChange('capacitance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.capacitance.unit} onValueChange={(v) => handleUnitChange('capacitance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="μF">μF</SelectItem><SelectItem value="nF">nF</SelectItem><SelectItem value="pF">pF</SelectItem><SelectItem value="mF">mF</SelectItem><SelectItem value="F">F</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Operating Frequency (f) - For Reactance Xc</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 50" value={inputs.frequency.value} onChange={(e) => handleInputChange('frequency', e.target.value)} className="flex-1" />
+                          <Select value={inputs.frequency.unit} onValueChange={(v) => handleUnitChange('frequency', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Hz">Hz</SelectItem><SelectItem value="kHz">kHz</SelectItem><SelectItem value="MHz">MHz</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Inductance Calculator */}
+                  {['inductance'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Inductance (L)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 10" value={inputs.inductance.value} onChange={(e) => handleInputChange('inductance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.inductance.unit} onValueChange={(v) => handleUnitChange('inductance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="mH">mH</SelectItem><SelectItem value="μH">μH</SelectItem><SelectItem value="H">H</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Current (I) - For Stored Energy</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 2.5" value={inputs.current.value} onChange={(e) => handleInputChange('current', e.target.value)} className="flex-1" />
+                          <Select value={inputs.current.unit} onValueChange={(v) => handleUnitChange('current', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="A">A</SelectItem><SelectItem value="mA">mA</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Frequency (f) - For Inductive Reactance Xl</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 50" value={inputs.frequency.value} onChange={(e) => handleInputChange('frequency', e.target.value)} className="flex-1" />
+                          <Select value={inputs.frequency.unit} onValueChange={(v) => handleUnitChange('frequency', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Hz">Hz</SelectItem><SelectItem value="kHz">kHz</SelectItem><SelectItem value="MHz">MHz</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Capacitor Charge Calculator */}
+                  {['capacitor-charge'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Capacitance (C)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 470" value={inputs.capacitance.value} onChange={(e) => handleInputChange('capacitance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.capacitance.unit} onValueChange={(v) => handleUnitChange('capacitance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="μF">μF</SelectItem><SelectItem value="nF">nF</SelectItem><SelectItem value="pF">pF</SelectItem><SelectItem value="F">F</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Supply Voltage (V)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 24" value={inputs.voltage.value} onChange={(e) => handleInputChange('voltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.voltage.unit} onValueChange={(v) => handleUnitChange('voltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Charging Resistance R (Optional for Time Constant)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 10" value={inputs.resistance.value} onChange={(e) => handleInputChange('resistance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.resistance.unit} onValueChange={(v) => handleUnitChange('resistance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="kΩ">kΩ</SelectItem><SelectItem value="Ω">Ω</SelectItem><SelectItem value="MΩ">MΩ</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Impedance Calculator */}
+                  {['impedance'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Resistance (R)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 50" value={inputs.resistance.value} onChange={(e) => handleInputChange('resistance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.resistance.unit} onValueChange={(v) => handleUnitChange('resistance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ω">Ω</SelectItem><SelectItem value="kΩ">kΩ</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Inductance (L)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 100" value={inputs.inductance.value} onChange={(e) => handleInputChange('inductance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.inductance.unit} onValueChange={(v) => handleUnitChange('inductance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="mH">mH</SelectItem><SelectItem value="H">H</SelectItem><SelectItem value="μH">μH</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Capacitance (C)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 10" value={inputs.capacitance.value} onChange={(e) => handleInputChange('capacitance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.capacitance.unit} onValueChange={(v) => handleUnitChange('capacitance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="μF">μF</SelectItem><SelectItem value="nF">nF</SelectItem><SelectItem value="pF">pF</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Frequency (f)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 50" value={inputs.frequency.value} onChange={(e) => handleInputChange('frequency', e.target.value)} className="flex-1" />
+                          <Select value={inputs.frequency.unit} onValueChange={(v) => handleUnitChange('frequency', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Hz">Hz</SelectItem><SelectItem value="kHz">kHz</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* LC Resonant Calculator */}
+                  {['lc-resonant'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Inductance (L)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 10" value={inputs.inductance.value} onChange={(e) => handleInputChange('inductance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.inductance.unit} onValueChange={(v) => handleUnitChange('inductance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="mH">mH</SelectItem><SelectItem value="μH">μH</SelectItem><SelectItem value="H">H</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Capacitance (C)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 100" value={inputs.capacitance.value} onChange={(e) => handleInputChange('capacitance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.capacitance.unit} onValueChange={(v) => handleUnitChange('capacitance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="nF">nF</SelectItem><SelectItem value="μF">μF</SelectItem><SelectItem value="pF">pF</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Series Resistance R (Optional for Q & Bandwidth)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 10" value={inputs.resistance.value} onChange={(e) => handleInputChange('resistance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.resistance.unit} onValueChange={(v) => handleUnitChange('resistance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ω">Ω</SelectItem><SelectItem value="kΩ">kΩ</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* RC Time Constant Calculator */}
+                  {['rc-time'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Resistance (R)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 10" value={inputs.resistance.value} onChange={(e) => handleInputChange('resistance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.resistance.unit} onValueChange={(v) => handleUnitChange('resistance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="kΩ">kΩ</SelectItem><SelectItem value="Ω">Ω</SelectItem><SelectItem value="MΩ">MΩ</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Capacitance (C)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 100" value={inputs.capacitance.value} onChange={(e) => handleInputChange('capacitance', e.target.value)} className="flex-1" />
+                          <Select value={inputs.capacitance.unit} onValueChange={(v) => handleUnitChange('capacitance', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="μF">μF</SelectItem><SelectItem value="nF">nF</SelectItem><SelectItem value="pF">pF</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Supply Voltage (V)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 5" value={inputs.voltage.value} onChange={(e) => handleInputChange('voltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.voltage.unit} onValueChange={(v) => handleUnitChange('voltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Faraday's Law Calculator */}
+                  {['faraday'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Number of Coil Turns (N)</Label>
+                        <Input type="number" placeholder="e.g. 500" value={inputs.turns.value} onChange={(e) => handleInputChange('turns', e.target.value)} className="mt-2" />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Magnetic Flux Change (ΔΦ)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 0.05" value={inputs.magneticFlux.value} onChange={(e) => handleInputChange('magneticFlux', e.target.value)} className="flex-1" />
+                          <Select value={inputs.magneticFlux.unit} onValueChange={(v) => handleUnitChange('magneticFlux', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Wb">Wb</SelectItem><SelectItem value="mWb">mWb</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Time Interval (Δt)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 0.02" value={inputs.timePeriod.value} onChange={(e) => handleInputChange('timePeriod', e.target.value)} className="flex-1" />
+                          <Select value={inputs.timePeriod.unit} onValueChange={(v) => handleUnitChange('timePeriod', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="s">s</SelectItem><SelectItem value="ms">ms</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Lorentz Force Calculator */}
+                  {['lorentz'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Magnetic Field (B)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 1.2" value={inputs.magneticField.value} onChange={(e) => handleInputChange('magneticField', e.target.value)} className="flex-1" />
+                          <Select value={inputs.magneticField.unit} onValueChange={(v) => handleUnitChange('magneticField', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="T">T</SelectItem><SelectItem value="mT">mT</SelectItem><SelectItem value="G">Gauss</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Conductor Current (I)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 15" value={inputs.current.value} onChange={(e) => handleInputChange('current', e.target.value)} className="flex-1" />
+                          <Select value={inputs.current.unit} onValueChange={(v) => handleUnitChange('current', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="A">A</SelectItem><SelectItem value="mA">mA</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Conductor Length (L)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 0.5" value={inputs.conductorLength.value} onChange={(e) => handleInputChange('conductorLength', e.target.value)} className="flex-1" />
+                          <Select value={inputs.conductorLength.unit} onValueChange={(v) => handleUnitChange('conductorLength', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="m">m</SelectItem><SelectItem value="cm">cm</SelectItem><SelectItem value="mm">mm</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Angle between B and Conductor (θ)</Label>
+                        <Input type="number" placeholder="90" value={inputs.angle.value} onChange={(e) => handleInputChange('angle', e.target.value)} className="mt-2" />
+                      </div>
+                    </>
+                  )}
+
+                  {/* Flux Calculator */}
+                  {['flux'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Magnetic Field (B)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 1.5" value={inputs.magneticField.value} onChange={(e) => handleInputChange('magneticField', e.target.value)} className="flex-1" />
+                          <Select value={inputs.magneticField.unit} onValueChange={(v) => handleUnitChange('magneticField', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="T">T</SelectItem><SelectItem value="mT">mT</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Surface Area (A)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 0.04" value={inputs.area.value} onChange={(e) => handleInputChange('area', e.target.value)} className="flex-1" />
+                          <Select value={inputs.area.unit} onValueChange={(v) => handleUnitChange('area', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="m²">m²</SelectItem><SelectItem value="cm²">cm²</SelectItem><SelectItem value="mm²">mm²</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Angle with Surface Normal (θ)</Label>
+                        <Input type="number" placeholder="0" value={inputs.angle.value} onChange={(e) => handleInputChange('angle', e.target.value)} className="mt-2" />
+                      </div>
+                    </>
+                  )}
+
+                  {/* Battery Life Calculator */}
+                  {['battery'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Battery Capacity (Ah)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 100" value={inputs.capacity.value} onChange={(e) => handleInputChange('capacity', e.target.value)} className="flex-1" />
+                          <Select value={inputs.capacity.unit} onValueChange={(v) => handleUnitChange('capacity', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Ah">Ah</SelectItem><SelectItem value="mAh">mAh</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Battery Voltage (V)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 12" value={inputs.voltage.value} onChange={(e) => handleInputChange('voltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.voltage.unit} onValueChange={(v) => handleUnitChange('voltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Load Power (W)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 120" value={inputs.power.value} onChange={(e) => handleInputChange('power', e.target.value)} className="flex-1" />
+                          <Select value={inputs.power.unit} onValueChange={(v) => handleUnitChange('power', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="W">W</SelectItem><SelectItem value="kW">kW</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Discharge Efficiency / Safety Margin (%)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="85" value={inputs.efficiency.value} onChange={(e) => handleInputChange('efficiency', e.target.value)} className="flex-1" />
+                          <Select value={inputs.efficiency.unit} onValueChange={(v) => handleUnitChange('efficiency', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="%">%</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Motor Calculator */}
+                  {['motor'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Motor Power</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 7.5" value={inputs.motorPower.value} onChange={(e) => handleInputChange('motorPower', e.target.value)} className="flex-1" />
+                          <Select value={inputs.motorPower.unit} onValueChange={(v) => handleUnitChange('motorPower', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="kW">kW</SelectItem><SelectItem value="HP">HP</SelectItem><SelectItem value="W">W</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Motor Voltage (V)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="415" value={inputs.motorVoltage.value} onChange={(e) => handleInputChange('motorVoltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.motorVoltage.unit} onValueChange={(v) => handleUnitChange('motorVoltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Power Factor (PF)</Label>
+                        <Input type="number" placeholder="0.85" value={inputs.powerFactor.value} onChange={(e) => handleInputChange('powerFactor', e.target.value)} className="mt-2" />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Efficiency (%)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="90" value={inputs.efficiency.value} onChange={(e) => handleInputChange('efficiency', e.target.value)} className="flex-1" />
+                          <Select value={inputs.efficiency.unit} onValueChange={(v) => handleUnitChange('efficiency', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="%">%</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Rated Speed (RPM)</Label>
+                        <Input type="number" placeholder="1450" value={inputs.motorSpeed.value} onChange={(e) => handleInputChange('motorSpeed', e.target.value)} className="mt-2" />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Phases</Label>
+                        <Select value={inputs.phases.value} onValueChange={(v) => handleInputChange('phases', v)}>
+                          <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                          <SelectContent><SelectItem value="3">3-Phase (415V/400V)</SelectItem><SelectItem value="1">1-Phase (230V/120V)</SelectItem></SelectContent>
+                        </Select>
+                      </div>
+                    </>
+                  )}
+
+                  {/* Cable Capacity Calculator */}
+                  {['cable'].includes(activeCalculator) && (
+                    <>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Operating / Load Current (A)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 45" value={inputs.current.value} onChange={(e) => handleInputChange('current', e.target.value)} className="flex-1" />
+                          <Select value={inputs.current.unit} onValueChange={(v) => handleUnitChange('current', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="A">A</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Circuit Voltage (V)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 230" value={inputs.voltage.value} onChange={(e) => handleInputChange('voltage', e.target.value)} className="flex-1" />
+                          <Select value={inputs.voltage.unit} onValueChange={(v) => handleUnitChange('voltage', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="V">V</SelectItem><SelectItem value="kV">kV</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Cable Route Length (m)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="e.g. 50" value={inputs.length.value} onChange={(e) => handleInputChange('length', e.target.value)} className="flex-1" />
+                          <Select value={inputs.length.unit} onValueChange={(v) => handleUnitChange('length', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="m">m</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Maximum Allowed Voltage Drop (%)</Label>
+                        <div className="flex mt-2 space-x-2">
+                          <Input type="number" placeholder="3" value={inputs.voltageDrop.value} onChange={(e) => handleInputChange('voltageDrop', e.target.value)} className="flex-1" />
+                          <Select value={inputs.voltageDrop.unit} onValueChange={(v) => handleUnitChange('voltageDrop', v)}><SelectTrigger className="w-20"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="%">%</SelectItem></SelectContent></Select>
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-700">Conductor Material</Label>
+                        <Select value={inputs.conductorMaterial.value} onValueChange={(v) => handleInputChange('conductorMaterial', v)}>
+                          <SelectTrigger className="mt-2"><SelectValue /></SelectTrigger>
+                          <SelectContent><SelectItem value="copper">Copper (ρ = 0.0175 Ω·mm²/m)</SelectItem><SelectItem value="aluminum">Aluminum (ρ = 0.0282 Ω·mm²/m)</SelectItem></SelectContent>
+                        </Select>
+                      </div>
+                    </>
+                  )}
+
                 </div>
 
                 {/* Error Display */}
@@ -3855,7 +4466,6 @@ function ElectricalCalculatorInner() {
                   )}
                 </div>
               </>
-            )}
           </CardContent>
         </Card>
 
@@ -4009,10 +4619,10 @@ function ElectricalCalculatorInner() {
   );
 }
 
-export default function ElectricalCalculator() {
+export default function ElectricalCalculator({ initialCalc }: { initialCalc?: string }) {
   return (
     <ElecCalcErrorBoundary>
-      <ElectricalCalculatorInner />
+      <ElectricalCalculatorInner initialCalc={initialCalc} />
     </ElecCalcErrorBoundary>
   );
 }

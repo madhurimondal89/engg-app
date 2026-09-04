@@ -10,8 +10,9 @@ import TransportationCalculator from './civil/transportation-calculator';
 import EnvironmentalCalculator from './civil/environmental-calculator';
 import QuantityCalculator from './civil/quantity-calculator';
 
-export default function CivilCalculator() {
+export default function CivilCalculator({ initialCalc }: { initialCalc?: string }) {
   const [activeCalculator, setActiveCalculator] = useState(() => {
+    if (initialCalc) return initialCalc;
     const params = new URLSearchParams(window.location.search);
     return params.get('mode') || 'menu';
   });
@@ -26,16 +27,19 @@ export default function CivilCalculator() {
     { id: 'quantity', name: 'Qty & Site Util.', icon: Ruler, active: true },
   ];
 
-  // Sync state with URL
   React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (activeCalculator === 'menu') {
-      params.delete('mode');
-    } else {
-      params.set('mode', activeCalculator);
+    if (initialCalc && initialCalc !== activeCalculator) {
+      setActiveCalculator(initialCalc);
     }
-    const newRelativePathQuery = window.location.pathname + '?' + params.toString();
-    window.history.replaceState(null, '', newRelativePathQuery);
+  }, [initialCalc]);
+
+  // Sync state with clean URL
+  React.useEffect(() => {
+    const slug = activeCalculator === 'menu' ? '' : `/${activeCalculator}`;
+    const newPath = `/calculators/civil${slug}`;
+    if (window.location.pathname !== newPath) {
+      window.history.replaceState(null, '', newPath);
+    }
   }, [activeCalculator]);
 
   const renderActiveCalculator = () => {

@@ -17,18 +17,25 @@ import ThermodynamicsCalculator from './thermodynamics-calculator';
 import FluidCalculator from './fluid-calculator';
 import ManufacturingCalculator from './manufacturing-calculator';
 import DynamicsCalculator from './dynamics-calculator';
+import BeamVisualizer from './visualizers/beam-visualizer';
+import MohrCircleVisualizer from './visualizers/mohr-circle-visualizer';
 
-export default function MechanicalCalculator() {
+export default function MechanicalCalculator({ initialCalc }: { initialCalc?: string }) {
   // Machine Design sub-calculator IDs
   const machineDesignCalcs = ['gear-ratio', 'gear-speed', 'bolt-torque', 'shaft-diameter', 'belt-length', 'belt-tension', 'chain-length', 'spring-constant', 'bearing-life', 'flywheel-energy'];
 
   const [initialSubCalc, setInitialSubCalc] = useState<string | null>(() => {
+    if (initialCalc && machineDesignCalcs.includes(initialCalc)) return initialCalc;
     const params = new URLSearchParams(window.location.search);
     const mode = params.get('mode') || 'menu';
     return machineDesignCalcs.includes(mode) ? mode : null;
   });
 
   const [activeCalculator, setActiveCalculator] = useState(() => {
+    if (initialCalc) {
+      if (machineDesignCalcs.includes(initialCalc)) return 'machine-design';
+      return initialCalc;
+    }
     const params = new URLSearchParams(window.location.search);
     const mode = params.get('mode') || 'menu';
     // If it's a machine-design sub-calculator, route to machine-design
@@ -37,14 +44,22 @@ export default function MechanicalCalculator() {
   });
 
   React.useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (activeCalculator === 'menu') {
-      params.delete('mode');
-    } else {
-      params.set('mode', activeCalculator);
+    if (initialCalc && initialCalc !== activeCalculator) {
+      if (machineDesignCalcs.includes(initialCalc)) {
+        setActiveCalculator('machine-design');
+        setInitialSubCalc(initialCalc);
+      } else {
+        setActiveCalculator(initialCalc);
+      }
     }
-    const newRelativePathQuery = window.location.pathname + '?' + params.toString();
-    window.history.replaceState(null, '', newRelativePathQuery);
+  }, [initialCalc]);
+
+  React.useEffect(() => {
+    const slug = activeCalculator === 'menu' ? '' : `/${activeCalculator}`;
+    const newPath = `/calculators/mechanical${slug}`;
+    if (window.location.pathname !== newPath) {
+      window.history.replaceState(null, '', newPath);
+    }
   }, [activeCalculator]);
   const [inputs, setInputs] = useState({
     force: { value: '', unit: 'N' },
@@ -57,6 +72,8 @@ export default function MechanicalCalculator() {
 
   // Grouped calculator types
   const calculatorTypes = [
+    { id: 'beam-analyzer', name: '📊 Beam Analyzer (SFD & BMD)', active: true },
+    { id: 'mohr-stress', name: "🧭 Mohr's Circle 2D Stress", active: true },
     { id: 'force', name: 'Force & Motion', active: true },
     { id: 'torque', name: 'Torque', active: true },
     { id: 'pressure', name: 'Pressure', active: true },
@@ -185,6 +202,28 @@ export default function MechanicalCalculator() {
   );
 
   // If selecting a sub-discipline, render its specific component
+  if (activeCalculator === 'beam-analyzer' || activeCalculator === 'beam-visualizer') return (
+    <>
+      <div className="mb-6">
+        <Button variant="outline" onClick={() => setActiveCalculator('menu')} className="mb-4">
+          ← Back to Mechanical Menu
+        </Button>
+        <BeamVisualizer />
+      </div>
+    </>
+  );
+
+  if (activeCalculator === 'mohr-stress' || activeCalculator === 'mohrs-circle') return (
+    <>
+      <div className="mb-6">
+        <Button variant="outline" onClick={() => setActiveCalculator('menu')} className="mb-4">
+          ← Back to Mechanical Menu
+        </Button>
+        <MohrCircleVisualizer />
+      </div>
+    </>
+  );
+
   if (activeCalculator === 'strength') return (
     <>
       <div className="mb-6">
