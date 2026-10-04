@@ -22,7 +22,9 @@ export function useSeo({
   useEffect(() => {
     // 1. Dynamic Page Title Calculation
     let pageTitle = DEFAULT_TITLE;
-    if (calculator) {
+    if (calculator === 'factor-calculator' || calculator === 'factor') {
+      pageTitle = 'Factor Calculator - Prime Factors, Factor Pairs & GCF/LCM | Engineering SuperHub';
+    } else if (calculator) {
       const formattedCalc = calculator
         .split('-')
         .map(w => w.charAt(0).toUpperCase() + w.slice(1))
@@ -40,11 +42,18 @@ export function useSeo({
     document.title = pageTitle;
 
     // 2. Dynamic Meta Description
-    const pageDesc = description || (calculator
-      ? `Free online ${calculator.replace(/-/g, ' ')} calculator. Compute with step-by-step engineering formulas, governing equations, unit conversions, and IEEE/ASME verified calculation reports.`
-      : (discipline
-        ? `Comprehensive ${discipline} engineering calculations, formulas, 2D visualizers, and standard IEEE / ASME / IS verified tools.`
-        : DEFAULT_DESC));
+    let pageDesc = description;
+    if (!pageDesc) {
+      if (calculator === 'factor-calculator' || calculator === 'factor') {
+        pageDesc = 'Free online Factor Calculator. Find all positive and negative factors, prime factorization tree, factor pairs, GCF, LCM, and quadratic polynomial factoring with instant step-by-step mathematical solutions.';
+      } else if (calculator) {
+        pageDesc = `Free online ${calculator.replace(/-/g, ' ')} calculator. Compute with step-by-step engineering formulas, governing equations, unit conversions, and IEEE/ASME verified calculation reports.`;
+      } else if (discipline) {
+        pageDesc = `Comprehensive ${discipline} engineering calculations, formulas, 2D visualizers, and standard IEEE / ASME / IS verified tools.`;
+      } else {
+        pageDesc = DEFAULT_DESC;
+      }
+    }
 
     let metaDescTag = document.querySelector('meta[name="description"]');
     if (metaDescTag) {

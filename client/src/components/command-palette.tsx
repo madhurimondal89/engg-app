@@ -23,7 +23,8 @@ import {
   Radio,
   Calculator,
   ShieldCheck,
-  Cpu
+  Cpu,
+  Hash
 } from 'lucide-react';
 
 export interface CommandItem {
@@ -134,7 +135,9 @@ export default function CommandPalette({
     { id: 'cop-refrigeration', title: 'Coefficient of Performance (COP) Refrigerator & Heat Pump', category: 'Thermodynamics', icon: Flame, discipline: 'thermodynamics', keywords: ['cop', 'refrigerator', 'heat pump', 'cooling cop', 'hvac'], action: () => onSelectDiscipline('thermodynamics', 'cop') },
     { id: 'boiler-efficiency', title: 'Boiler Thermal Efficiency & Heat Input/Output', category: 'Thermodynamics', icon: Flame, discipline: 'thermodynamics', keywords: ['boiler', 'boiler efficiency', 'heat input', 'steam boiler'], action: () => onSelectDiscipline('thermodynamics', 'boiler-efficiency') },
 
-    // ─── Engineering Math & Grapher ───────────────────────────────────────────
+    // ─── Engineering Math & Factor Calculator ──────────────────────────────────
+    { id: 'factor-calculator', title: 'Factor Calculator & Prime Factorization (All Factors, GCF/LCM, Tree)', category: 'Math', icon: Hash, discipline: 'math', keywords: ['factor', 'factors', 'factor calculator', 'factoring', 'prime factors', 'gcf', 'lcm', 'prime tree', 'factor pairs', 'divisors', 'algebra factor'], action: () => onSelectDiscipline('math', 'factor-calculator') },
+    { id: 'math-150-suite', title: 'Engineering Mathematics & Computation Studio (150+ Math Solvers)', category: 'Math', icon: Calculator, discipline: 'math', keywords: ['math', 'mathematics', 'algebra', 'calculus', 'statistics', 'derivatives', 'integrals', 'polynomial'], action: () => onSelectDiscipline('math', 'catalog') },
     { id: 'mathjs-unit-solver', title: 'Engineering Unit Solver & Expression Evaluator (mathjs)', category: 'Math', icon: LineChart, discipline: 'math', keywords: ['math', 'unit solver', 'evaluator', 'expression', 'mathjs', 'equation', 'scientific'], action: () => onSelectDiscipline('math', 'unit-solver') },
     { id: '2d-function-grapher', title: 'Interactive 2D Function & Response Plotter', category: 'Math', icon: LineChart, discipline: 'math', keywords: ['grapher', 'plotter', '2d graph', 'function plot', 'trig', 'polynomial'], action: () => onSelectDiscipline('math', 'grapher') },
     { id: 'matrix-solver', title: 'Matrix Algebra Solver (Determinant, Inverse, Eigenvalues, Trace)', category: 'Math', icon: LineChart, discipline: 'math', keywords: ['matrix', 'determinant', 'inverse', 'eigenvalue', 'eigenvector', 'linear algebra'], action: () => onSelectDiscipline('math', 'matrix') },

@@ -13,6 +13,7 @@ import { engineeringDisciplines } from '@/lib/formulas';
 import { getHowToUse, getEngineeringExplanation, getPracticalApplications, getFAQs } from '@/lib/calculator-content';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { BookOpen } from 'lucide-react';
+import { QuickReferenceAccordion } from '../quick-reference-accordion';
 
 export default function ConstructionCalculator() {
     const [activeMode, setActiveMode] = useState('concrete');
@@ -201,7 +202,7 @@ export default function ConstructionCalculator() {
                             <Button onClick={performCalculation} className="w-full bg-eng-blue hover:bg-eng-blue/90 text-white font-semibold">
                                 <i className="fas fa-calculator mr-2"></i> Calculate
                             </Button>
-                            <Button variant="outline" onClick={clearInputs} className="w-full text-gray-700 hover:bg-gray-50">
+                            <Button variant="outline" onClick={clearInputs} className="w-full text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700">
                                 <Trash2 className="h-4 w-4 mr-2" /> Clear All
                             </Button>
                         </div>
@@ -287,64 +288,7 @@ export default function ConstructionCalculator() {
 
                     if (!formulaInfo) return null;
 
-                    return (
-                        <Card className="mt-6 border-0 shadow-none bg-transparent">
-                            <CardHeader className="px-0 pt-0">
-                                <CardTitle className="text-lg font-semibold text-charcoal flex items-center">
-                                    <BookOpen className="h-5 w-5 text-eng-blue mr-2" />
-                                    Quick Reference - {formulaInfo.name}
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="px-0">
-                                <Accordion type="single" collapsible className="w-full bg-white rounded-lg border border-gray-200 px-4 shadow-sm">
-                                    <AccordionItem value="how-to-use" className="border-b last:border-0 border-gray-100">
-                                        <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">How to Use This Calculator</AccordionTrigger>
-                                        <AccordionContent className="text-gray-600 pb-4">
-                                            {getHowToUse(formulaInfo, "this tool")}
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                    <AccordionItem value="formula-used" className="border-b last:border-0 border-gray-100">
-                                        <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Formula Used</AccordionTrigger>
-                                        <AccordionContent className="pb-4">
-                                            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 mt-2">
-                                                <div className="font-semibold text-charcoal mb-2">{formulaInfo.name}</div>
-                                                <div className="font-roboto-mono text-sm text-eng-blue mb-2 bg-gray-200 inline-block px-2 py-1 rounded">
-                                                    {formulaInfo.formula}
-                                                </div>
-                                                <div className="text-sm text-gray-600 mb-3">{formulaInfo.description}</div>
-                                                <div className="text-xs text-gray-500 font-medium border-t border-gray-200 pt-2 mt-2">
-                                                    Variables Mapping: {formulaInfo.variables ? Object.entries(formulaInfo.variables).map(([k, v]) => `${k} = ${v}`).join(', ') : 'N/A'}
-                                                </div>
-                                            </div>
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                    <AccordionItem value="explanation" className="border-b last:border-0 border-gray-100">
-                                        <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Engineering Explanation</AccordionTrigger>
-                                        <AccordionContent className="pb-4">
-                                            {getEngineeringExplanation('civil', formulaInfo, "this system")}
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                    <AccordionItem value="applications" className="border-b last:border-0 border-gray-100">
-                                        <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Practical Applications</AccordionTrigger>
-                                        <AccordionContent className="text-gray-600 pb-4">
-                                            {getPracticalApplications('civil', formulaInfo, "these")}
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                    <AccordionItem value="faqs" className="border-b last:border-0 border-gray-100">
-                                        <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">FAQs</AccordionTrigger>
-                                        <AccordionContent className="space-y-4 text-gray-600 pb-4">
-                                            {getFAQs(formulaInfo, "calculator").map((faq, i) => (
-                                                <div key={i} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                                                    <strong className="text-charcoal block mb-1">Q: {faq.question}</strong>
-                                                    <p className="text-sm">A: {faq.answer}</p>
-                                                </div>
-                                            ))}
-                                        </AccordionContent>
-                                    </AccordionItem>
-                                </Accordion>
-                            </CardContent>
-                        </Card>
-                    );
+                    return <QuickReferenceAccordion formulaInfo={formulaInfo} discipline="civil" />;
                 })()}
 
             </div>

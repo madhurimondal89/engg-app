@@ -151,6 +151,7 @@ import {
 import { getHowToUse, getEngineeringExplanation, getPracticalApplications, getFAQs } from '@/lib/calculator-content';
 import { Zap, BarChart3, Edit, Trash2, Save, Share, Printer, AlertTriangle, CheckCircle, ExternalLink, Cpu, Magnet, Activity, Battery, Grid, UtilityPole, Shield, Sun, Scale, ActivitySquare, AlertOctagon, BookOpen } from 'lucide-react';
 import PhasorVisualizer from './visualizers/phasor-visualizer';
+import { QuickReferenceAccordion } from './quick-reference-accordion';
 
 const calculatorTypes = [
   { id: 'phasor-simulator', name: '⚡ AC Phasor & Waveforms Simulator', group: 'Basic', description: 'Interactive voltage/current waveforms, phase angle & power triangle' },
@@ -1329,11 +1330,11 @@ function ElectricalCalculatorInner({ initialCalc }: { initialCalc?: string }) {
 
   // --- Render: Main Menu (Level 0) ---
   if (activeCalculator === 'menu') return (
-    <Card className="mb-6">
+    <Card className="mb-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-semibold text-charcoal flex items-center">
-            <Zap className="h-8 w-8 text-eng-blue mr-3" />
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center font-outfit">
+            <Zap className="h-8 w-8 text-blue-600 dark:text-amber-400 mr-3" />
             Electrical Engineering
           </h2>
         </div>
@@ -1343,14 +1344,14 @@ function ElectricalCalculatorInner({ initialCalc }: { initialCalc?: string }) {
             <Button
               key={group.id}
               variant="outline"
-              className="h-auto py-8 flex flex-col items-center justify-center text-center whitespace-normal hover:border-eng-blue hover:bg-blue-50 transition-all group"
+              className="h-auto py-8 flex flex-col items-center justify-center text-center whitespace-normal border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50/60 dark:hover:bg-blue-950/30 transition-all group rounded-2xl relative"
               onClick={() => setActiveCalculator(`group:${group.id}`)}
             >
-              <div className="bg-blue-100 p-4 rounded-full mb-4 group-hover:bg-blue-200 transition-colors">
-                <group.icon className="h-8 w-8 text-eng-blue" />
+              <div className="bg-blue-100/70 dark:bg-blue-950/80 p-4 rounded-full mb-4 group-hover:bg-blue-200/80 dark:group-hover:bg-blue-900/60 transition-colors">
+                <group.icon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
               </div>
-              <span className="font-bold text-xl text-charcoal">{group.name}</span>
-              <span className="text-sm text-gray-500 mt-2 px-4">{group.description}</span>
+              <span className="font-bold text-xl text-slate-900 dark:text-white font-outfit">{group.name}</span>
+              <span className="text-sm text-slate-500 dark:text-slate-400 mt-2 px-4 leading-relaxed">{group.description}</span>
             </Button>
           ))}
         </div>
@@ -1360,16 +1361,16 @@ function ElectricalCalculatorInner({ initialCalc }: { initialCalc?: string }) {
 
   // --- Render: Group Menu (Level 1) ---
   if (isGroupView && currentGroup) return (
-    <Card className="mb-6">
+    <Card className="mb-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
-            <Button variant="ghost" size="sm" onClick={() => setActiveCalculator('menu')} className="mr-4">
+            <Button variant="ghost" size="sm" onClick={() => setActiveCalculator('menu')} className="mr-4 text-slate-600 dark:text-slate-300">
               <Grid className="h-4 w-4 mr-2" />
               All Groups
             </Button>
-            <h2 className="text-2xl font-semibold text-charcoal flex items-center">
-              <currentGroup.icon className="h-8 w-8 text-eng-blue mr-3" />
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center font-outfit">
+              <currentGroup.icon className="h-8 w-8 text-blue-600 dark:text-blue-400 mr-3" />
               {currentGroup.name}
             </h2>
           </div>
@@ -1380,11 +1381,11 @@ function ElectricalCalculatorInner({ initialCalc }: { initialCalc?: string }) {
             <Button
               key={calc.id}
               variant="outline"
-              className="h-auto py-6 flex flex-col items-center justify-center text-center whitespace-normal hover:border-eng-blue hover:bg-blue-50 transition-all group"
+              className="h-auto py-6 flex flex-col items-center justify-center text-center whitespace-normal border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50/60 dark:hover:bg-blue-950/30 transition-all group rounded-xl"
               onClick={() => setActiveCalculator(calc.id)}
             >
-              <span className="font-semibold text-lg text-charcoal">{calc.name}</span>
-              <span className="text-sm text-gray-500 mt-1">{calc.description || 'Click to open calculator'}</span>
+              <span className="font-bold text-base text-slate-900 dark:text-white font-outfit">{calc.name}</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 px-3 line-clamp-2 leading-relaxed">{calc.description || 'Click to open calculator'}</span>
             </Button>
           ))}
         </div>
@@ -4454,7 +4455,7 @@ function ElectricalCalculatorInner({ initialCalc }: { initialCalc?: string }) {
                     <i className="fas fa-calculator mr-2"></i>
                     Calculate
                   </Button>
-                  <Button variant="outline" onClick={clearInputs} className="w-full text-gray-700 hover:bg-gray-50">
+                  <Button variant="outline" onClick={clearInputs} className="w-full text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700">
                     <Trash2 className="h-4 w-4 mr-2" />
                     Clear All
                   </Button>
@@ -4552,63 +4553,8 @@ function ElectricalCalculatorInner({ initialCalc }: { initialCalc?: string }) {
 
             {/* SEO Required Accordion */}
             {formulaInfo && (
-              <div className="pt-6 border-t border-gray-200">
-                <Card className="mt-6 border-0 shadow-none bg-transparent">
-                  <CardHeader className="px-0 pt-0">
-                    <CardTitle className="text-lg font-semibold text-charcoal flex items-center">
-                      <BookOpen className="h-5 w-5 text-eng-blue mr-2" />
-                      Quick Reference - {formulaInfo.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-0">
-                    <Accordion type="single" collapsible className="w-full bg-white rounded-lg border border-gray-200 px-4 shadow-sm">
-                      <AccordionItem value="how-to-use" className="border-b last:border-0 border-gray-100">
-                        <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">How to Use This Calculator</AccordionTrigger>
-                        <AccordionContent className="text-gray-600 pb-4">
-                          {getHowToUse(formulaInfo, "this tool")}
-                        </AccordionContent>
-                      </AccordionItem>
-                      <AccordionItem value="formula-used" className="border-b last:border-0 border-gray-100">
-                        <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Formula Used</AccordionTrigger>
-                        <AccordionContent className="pb-4">
-                          <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 mt-2">
-                            <div className="font-semibold text-charcoal mb-2">{formulaInfo.name}</div>
-                            <div className="font-roboto-mono text-sm text-eng-blue mb-2 bg-gray-200 inline-block px-2 py-1 rounded">
-                              {formulaInfo.formula}
-                            </div>
-                            <div className="text-sm text-gray-600 mb-3">{formulaInfo.description}</div>
-                            <div className="text-xs text-gray-500 font-medium border-t border-gray-200 pt-2 mt-2">
-                              Variables Mapping: {(formulaInfo as any).variables ? Object.entries((formulaInfo as any).variables).map(([k, v]) => `${k} = ${v}`).join(', ') : 'N/A'}
-                            </div>
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                      <AccordionItem value="explanation" className="border-b last:border-0 border-gray-100">
-                        <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Engineering Explanation</AccordionTrigger>
-                        <AccordionContent className="pb-4">
-                          {getEngineeringExplanation('electrical', formulaInfo, "this system")}
-                        </AccordionContent>
-                      </AccordionItem>
-                      <AccordionItem value="applications" className="border-b last:border-0 border-gray-100">
-                        <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Practical Applications</AccordionTrigger>
-                        <AccordionContent className="text-gray-600 pb-4">
-                          {getPracticalApplications('electrical', formulaInfo, "these")}
-                        </AccordionContent>
-                      </AccordionItem>
-                      <AccordionItem value="faqs" className="border-b last:border-0 border-gray-100">
-                        <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">FAQs</AccordionTrigger>
-                        <AccordionContent className="space-y-4 text-gray-600 pb-4">
-                          {getFAQs(formulaInfo, "calculator").map((faq, i) => (
-                            <div key={i} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                              <strong className="text-charcoal block mb-1">Q: {faq.question}</strong>
-                              <p className="text-sm">A: {faq.answer}</p>
-                            </div>
-                          ))}
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
-                  </CardContent>
-                </Card>
+              <div className="pt-6 border-t border-slate-200 dark:border-slate-800">
+                <QuickReferenceAccordion formulaInfo={formulaInfo} discipline="electrical" />
               </div>
             )}
 

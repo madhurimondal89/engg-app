@@ -64,11 +64,11 @@ export default function CivilCalculator({ initialCalc }: { initialCalc?: string 
   };
 
   if (activeCalculator === 'menu') return (
-    <Card className="mb-6">
+    <Card className="mb-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-semibold text-charcoal flex items-center">
-            <Building className="h-8 w-8 text-eng-blue mr-3" />
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center font-outfit">
+            <Building className="h-8 w-8 text-emerald-600 dark:text-emerald-400 mr-3" />
             Civil Engineering Calculators
           </h2>
         </div>
@@ -78,15 +78,15 @@ export default function CivilCalculator({ initialCalc }: { initialCalc?: string 
             <Button
               key={calc.id}
               variant="outline"
-              className="h-auto py-6 flex flex-col items-center justify-center text-center whitespace-normal hover:border-eng-blue hover:bg-blue-50 transition-all group"
+              className="h-auto py-6 flex flex-col items-center justify-center text-center whitespace-normal border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-400 hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 transition-all group rounded-xl"
               onClick={() => calc.active && setActiveCalculator(calc.id)}
               disabled={!calc.active}
             >
-              <div className="bg-blue-100 p-3 rounded-full mb-3 group-hover:bg-blue-200 transition-colors">
-                <calc.icon className="h-6 w-6 text-eng-blue" />
+              <div className="bg-emerald-100/70 dark:bg-emerald-950/80 p-3 rounded-full mb-3 group-hover:bg-emerald-200/80 dark:group-hover:bg-emerald-900/60 transition-colors">
+                <calc.icon className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <span className="font-semibold text-lg text-charcoal">{calc.name}</span>
-              <span className="text-sm text-gray-500 mt-1">Click to open calculator</span>
+              <span className="font-bold text-base text-slate-900 dark:text-white font-outfit">{calc.name}</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">Click to open calculator</span>
             </Button>
           ))}
         </div>

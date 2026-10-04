@@ -46,8 +46,8 @@ const coreDisciplines = [
     borderColor: 'border-emerald-200/90 dark:border-emerald-800/60 hover:border-emerald-400',
     titleColor: 'text-emerald-900 dark:text-emerald-200',
     countColor: 'text-emerald-600/80 dark:text-emerald-400',
-    iconColor: 'text-purple-500',
-    iconBg: 'bg-purple-500/15',
+    iconColor: 'text-emerald-500',
+    iconBg: 'bg-emerald-500/15',
     desc: "Gear trains, shaft torsion, bolt torque, springs, beam deflection, Mohr's circle stress, statics, and manufacturing.",
     featuredCalcs: [
       { name: 'Beam SFD/BMD', id: 'beam-analyzer' },
@@ -128,18 +128,41 @@ const coreDisciplines = [
     ]
   },
   {
+    id: 'math',
+    name: 'Mathematics & Analysis',
+    tagline: 'Factor Calculator, Algebra, Matrices & Calculus',
+    icon: Calculator,
+    count: '150+ Calculators',
+    status: 'Active',
+    cardBg: 'bg-cyan-50/80 hover:bg-cyan-50/95 dark:bg-cyan-950/30 dark:hover:bg-cyan-950/40',
+    borderColor: 'border-cyan-200/90 dark:border-cyan-800/60 hover:border-cyan-400',
+    titleColor: 'text-cyan-900 dark:text-cyan-200',
+    countColor: 'text-cyan-600/80 dark:text-cyan-400',
+    iconColor: 'text-cyan-500 dark:text-cyan-400',
+    iconBg: 'bg-cyan-500/15',
+    desc: "Factor calculator (all factors, prime factors, GCF/LCM), polynomial factoring, matrix algebra, 2D graphing, integrals, and statistical models.",
+    featuredCalcs: [
+      { name: 'Factor Calculator ⭐', id: 'factor-calculator' },
+      { name: 'Prime Factorization', id: 'prime-factors' },
+      { name: 'GCF & LCM Solver', id: 'gcf-lcm' },
+      { name: 'Quadratic Equation', id: 'quadratic' },
+      { name: '2D Graphing Studio', id: 'grapher' },
+      { name: 'Matrix Solver', id: 'matrix' },
+    ]
+  },
+  {
     id: 'mechanical',
     name: 'Machine Design',
     tagline: 'Flywheels, Torsion, Gear Trains & Fasteners',
     icon: Wrench,
     count: '22+ Calculators',
     status: 'Coming Soon',
-    cardBg: 'bg-slate-50/90 hover:bg-purple-50/50 dark:bg-slate-900/50 dark:hover:bg-purple-950/30',
-    borderColor: 'border-slate-200/90 dark:border-slate-800/60 hover:border-purple-300',
+    cardBg: 'bg-slate-50/90 hover:bg-cyan-50/50 dark:bg-slate-900/50 dark:hover:bg-cyan-950/30',
+    borderColor: 'border-slate-200/90 dark:border-slate-800/60 hover:border-cyan-300',
     titleColor: 'text-slate-800 dark:text-slate-200',
     countColor: 'text-slate-500 dark:text-slate-400',
-    iconColor: 'text-purple-500',
-    iconBg: 'bg-purple-500/15',
+    iconColor: 'text-slate-500 dark:text-cyan-400',
+    iconBg: 'bg-cyan-500/15',
     desc: "Flywheels, brakes, clutches, spring stiffness, shaft keyways, belt drives, and fatigue endurance limit.",
     featuredCalcs: [
       { name: 'Gear Train Ratio', id: 'gear-ratio' },
@@ -205,8 +228,8 @@ const formulas = [
 ];
 
 const stats = [
-  { value: '180+', label: 'Engineering Calculations', icon: Calculator, color: 'text-blue-500' },
-  { value: '6', label: 'Core Disciplines', icon: Layers, color: 'text-indigo-500' },
+  { value: '330+', label: 'Calculations & Formulas', icon: Calculator, color: 'text-blue-500' },
+  { value: '7', label: 'Core Disciplines', icon: Layers, color: 'text-indigo-500' },
   { value: '3', label: 'Interactive Visualizers', icon: Sparkles, color: 'text-cyan-500' },
   { value: '100%', label: 'IEEE / ASME / IEC Verified', icon: Star, color: 'text-amber-500' },
 ];
@@ -479,6 +502,19 @@ const allSearchItems = [
   { name: 'Excavation Calculator', discipline: 'Civil', id: 'quantity' },
   { name: 'Plinth Area', discipline: 'Civil', id: 'quantity' },
   { name: 'Carpet Area', discipline: 'Civil', id: 'quantity' },
+  // Mathematics & Computation Suite
+  { name: 'Factor Calculator', discipline: 'Math', id: 'factor-calculator' },
+  { name: 'Factors of a Number', discipline: 'Math', id: 'factor-calculator' },
+  { name: 'Prime Factorization Tree', discipline: 'Math', id: 'factor-calculator' },
+  { name: 'GCF & LCM Solver', discipline: 'Math', id: 'factor-calculator' },
+  { name: 'Polynomial Factoring', discipline: 'Math', id: 'factor-calculator' },
+  { name: 'Quadratic Equation Solver', discipline: 'Math', id: 'catalog' },
+  { name: '2D Function Grapher', discipline: 'Math', id: 'grapher' },
+  { name: 'Matrix Solver & Determinant', discipline: 'Math', id: 'matrix' },
+  { name: 'Numerical Derivative', discipline: 'Math', id: 'catalog' },
+  { name: 'Definite Integral Simpson', discipline: 'Math', id: 'catalog' },
+  { name: 'Standard Deviation & Variance', discipline: 'Math', id: 'catalog' },
+  { name: 'Z-Score Normal Distribution', discipline: 'Math', id: 'catalog' },
 ];
 
 // ─── Component ────────────────────────────────────────────────────────────────

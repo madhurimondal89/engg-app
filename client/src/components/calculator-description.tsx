@@ -44,15 +44,15 @@ export const CalculatorDescription: React.FC<CalculatorDescriptionProps> = ({ ac
     };
 
     return (
-        <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="mt-8 bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800">
             <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="description" className="border-b-0">
-                    <AccordionTrigger className="px-6 py-4 text-lg font-semibold text-charcoal dark:text-gray-100 hover:text-eng-blue hover:no-underline">
+                    <AccordionTrigger className="px-6 py-4 text-lg font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-cyan-400 font-outfit hover:no-underline">
                         <div className="flex items-center">
                             <span>Learn More about {activeCalculator.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</span>
                         </div>
                     </AccordionTrigger>
-                    <AccordionContent className="px-6 pb-6 text-gray-600 dark:text-gray-300 leading-relaxed">
+                    <AccordionContent className="px-6 pb-6 text-slate-600 dark:text-slate-300 leading-relaxed">
                         <div className="prose dark:prose-invert max-w-none">
                             {renderContent(description)}
                         </div>

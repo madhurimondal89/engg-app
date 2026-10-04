@@ -38,7 +38,9 @@ import {
   Activity,
   Layers,
   TrendingUp,
-  ExternalLink
+  ExternalLink,
+  Calculator,
+  Hash
 } from 'lucide-react';
 
 const DISCIPLINES = [
@@ -47,10 +49,11 @@ const DISCIPLINES = [
   { id: 'civil', name: 'Civil & Structural', icon: Building2, color: 'text-emerald-400' },
   { id: 'fluid', name: 'Fluid Mechanics', icon: Droplets, color: 'text-cyan-400' },
   { id: 'thermodynamics', name: 'Thermodynamics & Heat', icon: Flame, color: 'text-orange-400' },
-  { id: 'math', name: 'Math & 2D Grapher', icon: LineChart, color: 'text-purple-400' },
+  { id: 'math', name: 'Mathematics (150+ Tools)', icon: Calculator, color: 'text-cyan-400' },
 ];
 
 const QUICK_SIMULATORS = [
+  { id: 'factor-calculator', name: 'Factor Calculator', icon: Hash, badge: '⭐ 10k Top' },
   { id: 'beam-visualizer', name: 'Beam SFD & BMD', icon: Layers, badge: 'Interactive' },
   { id: 'mohrs-circle', name: "Mohr's Circle Stress", icon: Compass, badge: '2D Tensor' },
   { id: 'phasor-visualizer', name: 'AC Phasor & Waves', icon: Activity, badge: '3-Phase' },
@@ -135,6 +138,18 @@ export default function CalculatorLayout() {
         return <ThermodynamicsCalculator initialCalc={activeSubMode} />;
       case 'math':
         return <MathCalculator initialCalc={activeSubMode} />;
+      case 'factor-calculator':
+      case 'factor':
+      case 'factors':
+        return <MathCalculator initialCalc="factor-calculator" />;
+      case 'grapher':
+      case 'grapher-studio':
+      case 'graphing-studio':
+        return <MathCalculator initialCalc="grapher-studio" />;
+      case 'unit-solver':
+      case 'unit-solver-studio':
+      case 'solver':
+        return <MathCalculator initialCalc="unit-solver-studio" />;
       case 'beam-visualizer':
       case 'beam-analyzer':
         return <BeamVisualizer />;
@@ -255,10 +270,10 @@ export default function CalculatorLayout() {
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowHistoryModal(true)}
-                className="text-xs h-8 px-2 sm:px-2.5 gap-1.5 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-500/10"
+                className="text-xs h-8 px-2 sm:px-2.5 gap-1.5 text-slate-700 dark:text-slate-300 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-cyan-50 dark:hover:bg-cyan-500/10"
                 title="History & Bookmarks"
               >
-                <History className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                <History className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
                 <span className="hidden 2xl:inline">History</span>
               </Button>
 

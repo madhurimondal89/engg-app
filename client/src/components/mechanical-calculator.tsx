@@ -19,6 +19,7 @@ import ManufacturingCalculator from './manufacturing-calculator';
 import DynamicsCalculator from './dynamics-calculator';
 import BeamVisualizer from './visualizers/beam-visualizer';
 import MohrCircleVisualizer from './visualizers/mohr-circle-visualizer';
+import { QuickReferenceAccordion } from './quick-reference-accordion';
 
 export default function MechanicalCalculator({ initialCalc }: { initialCalc?: string }) {
   // Machine Design sub-calculator IDs
@@ -163,11 +164,11 @@ export default function MechanicalCalculator({ initialCalc }: { initialCalc?: st
   const formulaInfo = getFormulaInfo();
 
   if (activeCalculator === 'menu') return (
-    <Card className="mb-6">
+    <Card className="mb-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-semibold text-charcoal flex items-center">
-            <Settings className="h-8 w-8 text-eng-blue mr-3" />
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center font-outfit">
+            <Settings className="h-8 w-8 text-blue-600 dark:text-blue-400 mr-3" />
             Mechanical Engineering Calculators
           </h2>
         </div>
@@ -177,23 +178,23 @@ export default function MechanicalCalculator({ initialCalc }: { initialCalc?: st
             <Button
               key={calc.id}
               variant="outline"
-              className="h-auto py-6 flex flex-col items-center justify-center text-center whitespace-normal hover:border-eng-blue hover:bg-blue-50 transition-all group"
+              className="h-auto py-6 flex flex-col items-center justify-center text-center whitespace-normal border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50/60 dark:hover:bg-blue-950/30 transition-all group rounded-xl"
               onClick={() => calc.active && setActiveCalculator(calc.id)}
               disabled={!calc.active}
             >
-              <div className="bg-blue-100 p-3 rounded-full mb-3 group-hover:bg-blue-200 transition-colors">
-                {calc.id === 'force' && <i className="fas fa-apple-alt text-eng-blue text-xl"></i>}
-                {calc.id === 'torque' && <i className="fas fa-sync-alt text-eng-blue text-xl"></i>}
-                {calc.id === 'pressure' && <i className="fas fa-compress-arrows-alt text-eng-blue text-xl"></i>}
-                {calc.id === 'strength' && <i className="fas fa-dumbbell text-eng-blue text-xl"></i>}
-                {calc.id === 'machine-design' && <i className="fas fa-cogs text-eng-blue text-xl"></i>}
-                {calc.id === 'thermodynamics' && <i className="fas fa-thermometer-half text-eng-blue text-xl"></i>}
-                {calc.id === 'fluid-mechanics' && <i className="fas fa-water text-eng-blue text-xl"></i>}
-                {calc.id === 'manufacturing' && <i className="fas fa-industry text-eng-blue text-xl"></i>}
-                {calc.id === 'dynamics' && <i className="fas fa-running text-eng-blue text-xl"></i>}
+              <div className="bg-blue-100/70 dark:bg-blue-950/80 p-3 rounded-full mb-3 group-hover:bg-blue-200/80 dark:group-hover:bg-blue-900/60 transition-colors">
+                {calc.id === 'force' && <i className="fas fa-apple-alt text-blue-600 dark:text-blue-400 text-xl"></i>}
+                {calc.id === 'torque' && <i className="fas fa-sync-alt text-blue-600 dark:text-blue-400 text-xl"></i>}
+                {calc.id === 'pressure' && <i className="fas fa-compress-arrows-alt text-blue-600 dark:text-blue-400 text-xl"></i>}
+                {calc.id === 'strength' && <i className="fas fa-dumbbell text-blue-600 dark:text-blue-400 text-xl"></i>}
+                {calc.id === 'machine-design' && <i className="fas fa-cogs text-blue-600 dark:text-blue-400 text-xl"></i>}
+                {calc.id === 'thermodynamics' && <i className="fas fa-thermometer-half text-blue-600 dark:text-blue-400 text-xl"></i>}
+                {calc.id === 'fluid-mechanics' && <i className="fas fa-water text-blue-600 dark:text-blue-400 text-xl"></i>}
+                {calc.id === 'manufacturing' && <i className="fas fa-industry text-blue-600 dark:text-blue-400 text-xl"></i>}
+                {calc.id === 'dynamics' && <i className="fas fa-running text-blue-600 dark:text-blue-400 text-xl"></i>}
               </div>
-              <span className="font-semibold text-lg text-charcoal">{calc.name}</span>
-              <span className="text-sm text-gray-500 mt-1">Click to open calculator</span>
+              <span className="font-bold text-base text-slate-900 dark:text-white font-outfit">{calc.name}</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-1">Click to open calculator</span>
             </Button>
           ))}
         </div>
@@ -292,19 +293,19 @@ export default function MechanicalCalculator({ initialCalc }: { initialCalc?: st
 
   return (
     <>
-      <Card className="mb-6">
+      <Card className="mb-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
-              <Button variant="ghost" size="icon" onClick={() => setActiveCalculator('menu')} className="mr-2">
+              <Button variant="ghost" size="icon" onClick={() => setActiveCalculator('menu')} className="mr-2 text-slate-600 dark:text-slate-300">
                 <span className="text-xl">←</span>
               </Button>
-              <h2 className="text-xl font-semibold text-charcoal flex items-center">
-                <Settings className="h-6 w-6 text-eng-blue mr-3" />
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-white flex items-center font-outfit">
+                <Settings className="h-6 w-6 text-blue-600 dark:text-blue-400 mr-3" />
                 Mechanical Engineering - {calculatorTypes.find(c => c.id === activeCalculator)?.name}
               </h2>
             </div>
-            <Button variant="outline" size="sm" className="text-gray-500 hover:text-eng-blue">
+            <Button variant="outline" size="sm" className="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
               <i className="fas fa-book mr-2"></i>
               Formulas
             </Button>
@@ -317,8 +318,8 @@ export default function MechanicalCalculator({ initialCalc }: { initialCalc?: st
                 variant={activeCalculator === calc.id ? "default" : "outline"}
                 size="sm"
                 className={`${activeCalculator === calc.id
-                  ? 'bg-eng-blue text-white hover:bg-eng-blue'
-                  : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                  ? 'bg-blue-600 text-white hover:bg-blue-600'
+                  : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
                   } ${!calc.active ? 'opacity-50 cursor-not-allowed' : ''}`}
                 onClick={() => calc.active && setActiveCalculator(calc.id)}
                 disabled={!calc.active}
@@ -474,7 +475,7 @@ export default function MechanicalCalculator({ initialCalc }: { initialCalc?: st
                 <i className="fas fa-calculator mr-2"></i>
                 Calculate
               </Button>
-              <Button variant="outline" onClick={clearInputs} className="w-full text-gray-700 hover:bg-gray-50">
+              <Button variant="outline" onClick={clearInputs} className="w-full text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border-slate-200 dark:border-slate-700">
                 <Trash2 className="h-4 w-4 mr-2" />
                 Clear All
               </Button>
@@ -544,68 +545,7 @@ export default function MechanicalCalculator({ initialCalc }: { initialCalc?: st
         </Card>
 
         {/* Dynamic Contextual Accordion */}
-        {(() => {
-          if (!formulaInfo) return null;
-
-          return (
-            <Card className="mt-6 border-0 shadow-none bg-transparent">
-              <CardHeader className="px-0 pt-0">
-                <CardTitle className="text-lg font-semibold text-charcoal flex items-center">
-                  <BookOpen className="h-5 w-5 text-eng-blue mr-2" />
-                  Quick Reference - {formulaInfo.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="px-0">
-                <Accordion type="single" collapsible className="w-full bg-white rounded-lg border border-gray-200 px-4 shadow-sm">
-                  <AccordionItem value="how-to-use" className="border-b last:border-0 border-gray-100">
-                    <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">How to Use This Calculator</AccordionTrigger>
-                    <AccordionContent className="text-gray-600 pb-4">
-                      {getHowToUse(formulaInfo, "this tool")}
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="formula-used" className="border-b last:border-0 border-gray-100">
-                    <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Formula Used</AccordionTrigger>
-                    <AccordionContent className="pb-4">
-                      <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 mt-2">
-                        <div className="font-semibold text-charcoal mb-2">{formulaInfo.name}</div>
-                        <div className="font-roboto-mono text-sm text-eng-blue mb-2 bg-gray-200 inline-block px-2 py-1 rounded">
-                          {formulaInfo.formula}
-                        </div>
-                        <div className="text-sm text-gray-600 mb-3">{formulaInfo.description}</div>
-                        <div className="text-xs text-gray-500 font-medium border-t border-gray-200 pt-2 mt-2">
-                          Variables Mapping: {(formulaInfo as any).variables ? Object.entries((formulaInfo as any).variables).map(([k, v]) => `${k} = ${v}`).join(', ') : 'N/A'}
-                        </div>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="explanation" className="border-b last:border-0 border-gray-100">
-                    <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Engineering Explanation</AccordionTrigger>
-                    <AccordionContent className="pb-4">
-                      {getEngineeringExplanation('mechanical', formulaInfo, "this system")}
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="applications" className="border-b last:border-0 border-gray-100">
-                    <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">Practical Applications</AccordionTrigger>
-                    <AccordionContent className="text-gray-600 pb-4">
-                      {getPracticalApplications('mechanical', formulaInfo, "these")}
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="faqs" className="border-b last:border-0 border-gray-100">
-                    <AccordionTrigger className="text-base font-semibold text-charcoal py-4 hover:no-underline hover:text-eng-blue">FAQs</AccordionTrigger>
-                    <AccordionContent className="space-y-4 text-gray-600 pb-4">
-                      {getFAQs(formulaInfo, "calculator").map((faq, i) => (
-                        <div key={i} className="bg-gray-50 p-3 rounded-lg border border-gray-100">
-                          <strong className="text-charcoal block mb-1">Q: {faq.question}</strong>
-                          <p className="text-sm">A: {faq.answer}</p>
-                        </div>
-                      ))}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </CardContent>
-            </Card>
-          );
-        })()}
+        <QuickReferenceAccordion formulaInfo={formulaInfo} discipline="mechanical" />
 
       </div>
     </>

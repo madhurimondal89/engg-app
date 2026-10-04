@@ -1,519 +1,606 @@
 import React, { useState, useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
 import GraphingStudio from './visualizers/graphing-studio';
-import { LineChart, Calculator, Sparkles, Layers, RotateCcw, Sigma, Variable, BookOpen } from 'lucide-react';
+import FactorCalculatorView from './math/factor-calculator-view';
+import UnitSolverView from './math/unit-solver-view';
+import {
+  Calculator, Hash, Variable, Compass, Grid, TrendingUp,
+  BarChart3, Activity, LineChart, Sparkles, ChevronRight,
+  ArrowLeft, Copy, Check, Search, X
+} from 'lucide-react';
 import * as math from 'mathjs';
+import {
+  MATH_CALCULATORS,
+  MATH_SUBCATEGORIES,
+  type MathCalculatorItem
+} from '@/lib/math-data';
+
+interface MathGroup {
+  id: string;
+  name: string;
+  icon: React.ComponentType<{ className?: string }>;
+  description: string;
+  badge?: string;
+}
+
+const MATH_GROUPS: MathGroup[] = [
+  {
+    id: 'factors-arithmetic',
+    name: 'Number Theory & Factors',
+    icon: Hash,
+    description: 'All factors, prime factorization, GCF/LCM, and sequences',
+    badge: '⭐ 10k Top Query'
+  },
+  {
+    id: 'algebra',
+    name: 'Algebra & Polynomials',
+    icon: Variable,
+    description: 'Polynomial factoring, quadratic & cubic roots, series & systems'
+  },
+  {
+    id: 'geometry-trig',
+    name: 'Geometry & Trigonometry',
+    icon: Compass,
+    description: 'Triangles, circles, 2D/3D shapes, and trig identities'
+  },
+  {
+    id: 'linear-algebra',
+    name: 'Linear Algebra & Matrices',
+    icon: Grid,
+    description: 'Matrix operations, determinants, inverses, eigenvalues & vectors'
+  },
+  {
+    id: 'calculus',
+    name: 'Calculus & Differential Eq',
+    icon: TrendingUp,
+    description: 'Derivatives, numerical integrals, limits, Taylor series & ODEs'
+  },
+  {
+    id: 'statistics',
+    name: 'Probability & Statistics',
+    icon: BarChart3,
+    description: 'Distributions, regression, variance, permutations & combinations'
+  },
+  {
+    id: 'complex-applied',
+    name: 'Complex & Applied Math',
+    icon: Activity,
+    description: 'Complex numbers, polar phasors, decibels & interpolation'
+  },
+  {
+    id: 'grapher-studio',
+    name: '2D Graphing Studio',
+    icon: LineChart,
+    description: 'Interactive 2D function plotter and mathematical waveforms'
+  },
+  {
+    id: 'unit-solver-studio',
+    name: 'Unit & Equation Solver',
+    icon: Sparkles,
+    description: 'Evaluate multi-variable algebraic expressions and physical units'
+  },
+];
 
 export default function MathCalculator({ initialCalc }: { initialCalc?: string }) {
-  const [activeTab, setActiveTab] = useState(() => {
-    if (initialCalc) return initialCalc;
-    return 'grapher';
+  const resolveActive = (calcId?: string) => {
+    if (!calcId || calcId === 'menu') return 'menu';
+    const cleanId = calcId.replace(/^group[:-]/i, '').trim().toLowerCase();
+    if (cleanId === 'factor-calculator' || cleanId === 'factor' || cleanId === 'factors') {
+      return 'factor-calculator';
+    }
+    if (
+      cleanId === 'grapher-studio' ||
+      cleanId === 'grapher' ||
+      cleanId === '2d-function-grapher' ||
+      cleanId === 'graphing-studio'
+    ) {
+      return 'grapher-studio';
+    }
+    if (
+      cleanId === 'unit-solver-studio' ||
+      cleanId === 'unit-solver' ||
+      cleanId === 'solver' ||
+      cleanId === 'mathjs-unit-solver' ||
+      cleanId === 'equation-solver'
+    ) {
+      return 'unit-solver-studio';
+    }
+    const matchedGroup = MATH_GROUPS.find(
+      g => g.id.toLowerCase() === cleanId && g.id !== 'grapher-studio' && g.id !== 'unit-solver-studio'
+    );
+    if (matchedGroup) return `group:${matchedGroup.id}`;
+    const matchedCalc = MATH_CALCULATORS.find(c => c.id.toLowerCase() === cleanId);
+    if (matchedCalc) return matchedCalc.id;
+    return cleanId;
+  };
+
+  const [activeCalculator, setActiveCalculator] = useState<string>(() => {
+    if (initialCalc) return resolveActive(initialCalc);
+    const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
+    const mode = params.get('mode');
+    return mode ? resolveActive(mode) : 'menu';
   });
 
   React.useEffect(() => {
-    if (initialCalc && initialCalc !== activeTab) {
-      setActiveTab(initialCalc);
+    if (initialCalc) {
+      setActiveCalculator(resolveActive(initialCalc));
     }
   }, [initialCalc]);
 
+  // Sync state with clean URL
   React.useEffect(() => {
-    const slug = activeTab ? `/${activeTab}` : '';
+    let slug = '';
+    if (activeCalculator && activeCalculator !== 'menu') {
+      slug = `/${activeCalculator.replace(/^group:/, 'group-')}`;
+    }
     const newPath = `/calculators/math${slug}`;
     if (window.location.pathname !== newPath) {
       window.history.replaceState(null, '', newPath);
     }
-  }, [activeTab]);
+  }, [activeCalculator]);
 
-  // Matrix Solver State
-  const [matA, setMatA] = useState<number[][]>([[4, 2], [3, 1]]);
-  const [matB, setMatB] = useState<number[][]>([[1, 5], [2, 6]]);
-  const [matrixSize, setMatrixSize] = useState<2 | 3>(2);
+  // Search inside group or general
+  const [searchQuery, setSearchQuery] = useState('');
 
-  // Complex Phasor State
-  const [realPart, setRealPart] = useState<number>(3);
-  const [imagPart, setImagPart] = useState<number>(4);
-  const [magPart, setMagPart] = useState<number>(5);
-  const [degPart, setDegPart] = useState<number>(53.13);
+  // Runner state for Level 2 (Specific Calculator)
+  const currentCalcItem = useMemo(() => {
+    return MATH_CALCULATORS.find(c => c.id === activeCalculator);
+  }, [activeCalculator]);
 
-  // Polynomial Solver State
-  const [polyA, setPolyA] = useState<number>(1);
-  const [polyB, setPolyB] = useState<number>(-5);
-  const [polyC, setPolyC] = useState<number>(6);
-
-  // Matrix calculations
-  const matrixResults = useMemo(() => {
-    try {
-      const a = matA.slice(0, matrixSize).map(r => r.slice(0, matrixSize));
-      const detA = math.det(a);
-      let invA: number[][] | null = null;
-      if (detA !== 0) {
-        invA = math.inv(a) as number[][];
-      }
-      return {
-        detA: typeof detA === 'number' ? parseFloat(detA.toFixed(4)) : null,
-        invA,
-        error: null,
-      };
-    } catch (err: any) {
-      return { detA: null, invA: null, error: err.message };
-    }
-  }, [matA, matrixSize]);
-
-  // Quadratic roots
-  const polyRoots = useMemo(() => {
-    const a = polyA;
-    const b = polyB;
-    const c = polyC;
-    if (a === 0) return { r1: 'Linear equation', r2: (-c / b).toFixed(3) };
-    const disc = b * b - 4 * a * c;
-    if (disc > 0) {
-      const r1 = (-b + Math.sqrt(disc)) / (2 * a);
-      const r2 = (-b - Math.sqrt(disc)) / (2 * a);
-      return { r1: r1.toFixed(3), r2: r2.toFixed(3), disc: disc.toFixed(2), type: 'Real & Distinct' };
-    } else if (disc === 0) {
-      const r = -b / (2 * a);
-      return { r1: r.toFixed(3), r2: r.toFixed(3), disc: '0', type: 'Real & Equal' };
-    } else {
-      const real = (-b / (2 * a)).toFixed(3);
-      const imag = (Math.sqrt(-disc) / (2 * a)).toFixed(3);
-      return {
-        r1: `${real} + ${imag}j`,
-        r2: `${real} - ${imag}j`,
-        disc: disc.toFixed(2),
-        type: 'Complex Conjugate',
-      };
-    }
-  }, [polyA, polyB, polyC]);
-
-  // Expression & Unit Solver State
-  const [expressionInput, setExpressionInput] = useState('500 kW / (3 * 230 V) to A');
-  const [expressionResult, setExpressionResult] = useState<string | null>(null);
-  const [expressionError, setExpressionError] = useState<string | null>(null);
-
-  const evaluateExpression = (expr: string) => {
-    try {
-      const res = math.evaluate(expr);
-      setExpressionResult(res ? res.toString() : '0');
-      setExpressionError(null);
-    } catch (err: any) {
-      setExpressionError(err.message || 'Syntax error in expression');
-      setExpressionResult(null);
-    }
-  };
+  const [calculatorInputs, setCalculatorInputs] = useState<Record<string, string>>({});
+  const [copiedResult, setCopiedResult] = useState(false);
 
   React.useEffect(() => {
-    evaluateExpression(expressionInput);
-  }, [expressionInput]);
+    if (currentCalcItem) {
+      const initial: Record<string, string> = {};
+      currentCalcItem.inputs.forEach(inp => {
+        initial[inp.key] = inp.defaultValue;
+      });
+      setCalculatorInputs(initial);
+    }
+  }, [currentCalcItem]);
 
-  return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800 backdrop-blur-xl">
-        <div>
-          <h2 className="text-2xl font-outfit font-bold text-white flex items-center gap-2">
-            <LineChart className="w-6 h-6 text-purple-400" />
-            Engineering Mathematics & Analysis Studio
-          </h2>
-          <p className="text-slate-400 text-xs mt-1">
-            2D function graphing, matrix operations, unit expression solvers, complex phasors, and polynomial roots
-          </p>
-        </div>
+  const calcOutput = useMemo(() => {
+    if (!currentCalcItem) return null;
+    try {
+      return currentCalcItem.calculate(calculatorInputs);
+    } catch (err: any) {
+      return {
+        result: 'Computation Error',
+        steps: [err.message || 'Error executing calculation'],
+        explanation: undefined
+      };
+    }
+  }, [currentCalcItem, calculatorInputs]);
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
-          <TabsList className="bg-slate-950 border border-slate-800">
-            <TabsTrigger value="grapher" className="text-xs">
-              📊 2D Grapher
-            </TabsTrigger>
-            <TabsTrigger value="solver" className="text-xs">
-              ⚡ Unit & Eq Solver
-            </TabsTrigger>
-            <TabsTrigger value="matrix" className="text-xs">
-              🔢 Matrix Solver
-            </TabsTrigger>
-            <TabsTrigger value="phasor" className="text-xs">
-              ⚡ Complex / Phasors
-            </TabsTrigger>
-            <TabsTrigger value="polynomial" className="text-xs">
-              📐 Polynomial Roots
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </div>
+  const isGroupView = activeCalculator.startsWith('group:');
+  const currentGroupId = isGroupView ? activeCalculator.replace('group:', '') : null;
+  const currentGroup = currentGroupId ? MATH_GROUPS.find(g => g.id === currentGroupId) : null;
 
-      {activeTab === 'grapher' && <GraphingStudio />}
+  // Find parent group for Level 2 back button
+  const parentGroup = useMemo(() => {
+    if (activeCalculator === 'factor-calculator') {
+      return MATH_GROUPS.find(g => g.id === 'factors-arithmetic');
+    }
+    if (currentCalcItem) {
+      return MATH_GROUPS.find(g => g.id === currentCalcItem.subcategoryId);
+    }
+    return null;
+  }, [activeCalculator, currentCalcItem]);
 
-      {activeTab === 'solver' && (
-        <Card className="border border-slate-800 bg-slate-900/80 backdrop-blur-xl text-white">
-          <CardHeader>
-            <CardTitle className="text-lg font-outfit font-bold text-amber-400 flex items-center gap-2">
-              <Calculator className="w-5 h-5" />
-              Engineering Unit & Equation Solver
-            </CardTitle>
-            <CardDescription className="text-slate-400 text-xs">
-              Evaluate multi-variable algebraic expressions, unit conversions, physical constants, and trigonometric functions in real-time
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label className="text-xs text-slate-300">Engineering Expression / Formula</Label>
-              <Input
-                type="text"
-                value={expressionInput}
-                onChange={e => setExpressionInput(e.target.value)}
-                placeholder="e.g. 500 kW / (3 * 230 V) to A or (100 bar * 0.02 m^3) to kJ"
-                className="h-12 text-sm bg-slate-950 border-slate-700 text-cyan-300 font-mono focus:border-amber-500"
-              />
+  // ─────────────────────────────────────────────────────────────────────────────
+  // LEVEL 0: MAIN MENU (Subcategories Grid Layout matching user screenshot)
+  // ─────────────────────────────────────────────────────────────────────────────
+  if (activeCalculator === 'menu') {
+    return (
+      <Card className="mb-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
+        <CardContent className="p-6 sm:p-8">
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center font-outfit">
+              <Calculator className="h-8 w-8 text-cyan-600 dark:text-cyan-400 mr-3" />
+              Engineering Mathematics
+            </h2>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold px-3 py-1 rounded-full bg-cyan-50 text-cyan-700 dark:bg-cyan-950/60 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800">
+                150+ Math Solvers
+              </span>
+            </div>
+          </div>
+
+          {/* Subcategories Grid (Exact style as Electrical in screenshot) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {MATH_GROUPS.map((group) => {
+              const Icon = group.icon;
+              return (
+                <Button
+                  key={group.id}
+                  variant="outline"
+                  className="h-auto py-8 flex flex-col items-center justify-center text-center whitespace-normal border-slate-200 dark:border-slate-800 hover:border-cyan-500 dark:hover:border-cyan-400 hover:bg-cyan-50/60 dark:hover:bg-cyan-950/30 transition-all group rounded-2xl relative"
+                  onClick={() => {
+                    if (group.id === 'grapher-studio') {
+                      setActiveCalculator('grapher-studio');
+                    } else if (group.id === 'unit-solver-studio') {
+                      setActiveCalculator('unit-solver-studio');
+                    } else {
+                      setActiveCalculator(`group:${group.id}`);
+                    }
+                  }}
+                >
+                  {group.badge && (
+                    <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30">
+                      {group.badge}
+                    </span>
+                  )}
+                  <div className="bg-cyan-100/70 dark:bg-cyan-950/80 p-4 rounded-full mb-4 group-hover:bg-cyan-200/80 dark:group-hover:bg-cyan-900/60 transition-colors">
+                    <Icon className="h-8 w-8 text-cyan-600 dark:text-cyan-400" />
+                  </div>
+                  <span className="font-bold text-xl text-slate-900 dark:text-white font-outfit">
+                    {group.name}
+                  </span>
+                  <span className="text-sm text-slate-500 dark:text-slate-400 mt-2 px-4 leading-relaxed">
+                    {group.description}
+                  </span>
+                </Button>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // LEVEL 1: GROUP MENU (Calculators Inside Selected Subcategory)
+  // ─────────────────────────────────────────────────────────────────────────────
+  if (isGroupView && currentGroup) {
+    const GroupIcon = currentGroup.icon;
+    const groupCalculators = MATH_CALCULATORS.filter(c => c.subcategoryId === currentGroup.id);
+    const filteredInGroup = searchQuery.trim()
+      ? groupCalculators.filter(c =>
+          c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          c.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          c.keywords.some(k => k.toLowerCase().includes(searchQuery.toLowerCase()))
+        )
+      : groupCalculators;
+
+    return (
+      <Card className="mb-6 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm">
+        <CardContent className="p-6 sm:p-8">
+          {/* Header & Back Button */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+            <div className="flex items-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveCalculator('menu')}
+                className="mr-4 text-slate-600 dark:text-slate-300"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                All Categories
+              </Button>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center font-outfit">
+                <GroupIcon className="h-7 w-7 text-cyan-600 dark:text-cyan-400 mr-3" />
+                {currentGroup.name}
+              </h2>
             </div>
 
-            {/* Quick Example Chips */}
-            <div className="space-y-2">
-              <Label className="text-xs text-slate-400">Quick Engineering Presets (Click to calculate):</Label>
-              <div className="flex flex-wrap gap-2">
-                {[
-                  { label: '⚡ Electrical Current: 500kW 3-Phase', expr: '500 kW / (sqrt(3) * 415 V * 0.85) to A' },
-                  { label: '💧 Hydrostatic Pressure', expr: '(1000 kg/m^3 * 9.81 m/s^2 * 35 m) to bar' },
-                  { label: '⚙️ Stress: 250kN on 50mm Shaft', expr: '250 kN / (pi * (25 mm)^2) to MPa' },
-                  { label: '🔥 Thermal Energy Work', expr: '(150 bar * 0.04 m^3) to kJ' },
-                  { label: '🚀 Torricelli Velocity', expr: 'sqrt(2 * 9.81 m/s^2 * 20 m) to m/s' },
-                  { label: '🌡️ Temp: 100°F to °C', expr: '(100 degF - 32) * 5/9 to degC' },
-                  { label: '⚡ HP to kW', expr: '75 hp to kW' },
-                ].map(ex => (
-                  <button
-                    key={ex.label}
-                    onClick={() => setExpressionInput(ex.expr)}
-                    className="text-[11px] font-mono bg-slate-950/80 hover:bg-slate-800 text-slate-300 hover:text-amber-400 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-amber-500/40 transition-colors"
-                  >
-                    {ex.label}
-                  </button>
+            {/* Search within group */}
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+              <Input
+                type="text"
+                placeholder={`Search in ${currentGroup.name}...`}
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="pl-9 h-10 text-xs bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Calculators Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredInGroup.map((calc) => {
+              const isFactor = calc.id === 'factor-calculator';
+              return (
+                <Button
+                  key={calc.id}
+                  variant="outline"
+                  className={`h-auto py-6 flex flex-col items-center justify-center text-center whitespace-normal transition-all group rounded-xl relative ${
+                    isFactor
+                      ? 'border-cyan-500 bg-cyan-50/40 dark:bg-cyan-950/40 hover:bg-cyan-100/50'
+                      : 'border-slate-200 dark:border-slate-800 hover:border-cyan-500 dark:hover:border-cyan-400 hover:bg-cyan-50/50 dark:hover:bg-cyan-950/20'
+                  }`}
+                  onClick={() => {
+                    if (calc.id === 'factor-calculator') {
+                      setActiveCalculator('factor-calculator');
+                    } else if (calc.id === 'gcf-lcm') {
+                      setActiveCalculator('gcf-lcm');
+                    } else {
+                      setActiveCalculator(calc.id);
+                    }
+                  }}
+                >
+                  {isFactor && (
+                    <span className="absolute top-2.5 right-2.5 text-[9px] font-bold px-2 py-0.5 rounded-full bg-cyan-600 text-white shadow-sm">
+                      TOP QUERY ⭐
+                    </span>
+                  )}
+                  <span className="font-bold text-base text-slate-900 dark:text-white font-outfit">
+                    {calc.name}
+                  </span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 mt-1.5 px-3 line-clamp-2 leading-relaxed">
+                    {calc.description}
+                  </span>
+                  <span className="text-[11px] font-mono text-cyan-600 dark:text-cyan-400 mt-2 font-medium">
+                    {calc.formula}
+                  </span>
+                </Button>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // LEVEL 2: DEDICATED FACTOR & HCF/GCF/LCM STUDIO
+  // ─────────────────────────────────────────────────────────────────────────────
+  if (activeCalculator === 'factor-calculator' || activeCalculator === 'gcf-lcm' || activeCalculator === 'hcf-lcm' || activeCalculator === 'lcm' || activeCalculator === 'hcf') {
+    const initialTab = (activeCalculator === 'gcf-lcm' || activeCalculator === 'hcf-lcm' || activeCalculator === 'lcm' || activeCalculator === 'hcf') ? 'gcf' : 'number';
+    return (
+      <div className="space-y-4">
+        {/* Navigation Breadcrumb Buttons */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setActiveCalculator('menu')}
+            className="text-xs"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
+            All Math Categories
+          </Button>
+          {parentGroup && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setActiveCalculator(`group:${parentGroup.id}`)}
+              className="text-xs"
+            >
+              <parentGroup.icon className="h-3.5 w-3.5 mr-1.5 text-cyan-500 dark:text-cyan-400" />
+              Back to {parentGroup.name}
+            </Button>
+          )}
+        </div>
+
+        {/* The rich Factor Calculator Component */}
+        <FactorCalculatorView initialTab={initialTab} />
+      </div>
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // LEVEL 2: 2D GRAPHING STUDIO
+  // ─────────────────────────────────────────────────────────────────────────────
+  if (
+    activeCalculator === 'grapher-studio' ||
+    activeCalculator === 'grapher' ||
+    activeCalculator === '2d-function-grapher' ||
+    activeCalculator === 'graphing-studio'
+  ) {
+    return (
+      <div className="space-y-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setActiveCalculator('menu')}
+          className="text-xs mb-2"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
+          All Math Categories
+        </Button>
+        <GraphingStudio />
+      </div>
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // LEVEL 2: UNIT & EQUATION SOLVER
+  // ─────────────────────────────────────────────────────────────────────────────
+  if (
+    activeCalculator === 'unit-solver-studio' ||
+    activeCalculator === 'unit-solver' ||
+    activeCalculator === 'solver' ||
+    activeCalculator === 'mathjs-unit-solver' ||
+    activeCalculator === 'equation-solver'
+  ) {
+    return (
+      <div className="space-y-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setActiveCalculator('menu')}
+          className="text-xs mb-2"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
+          All Math Categories
+        </Button>
+        <UnitSolverView />
+      </div>
+    );
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────────
+  // LEVEL 2: ACTIVE MATH CALCULATOR WORKBENCH (For any of the 150 calculators)
+  // ─────────────────────────────────────────────────────────────────────────────
+  if (currentCalcItem) {
+    return (
+      <div className="space-y-4">
+        {/* Navigation Breadcrumbs */}
+        <div className="flex flex-wrap items-center gap-2 mb-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setActiveCalculator('menu')}
+            className="text-xs"
+          >
+            <ArrowLeft className="h-3.5 w-3.5 mr-1.5" />
+            All Math Categories
+          </Button>
+          {parentGroup && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setActiveCalculator(`group:${parentGroup.id}`)}
+              className="text-xs"
+            >
+              <parentGroup.icon className="h-3.5 w-3.5 mr-1.5 text-cyan-500 dark:text-cyan-400" />
+              Back to {parentGroup.name}
+            </Button>
+          )}
+        </div>
+
+        {/* Workbench Card */}
+        <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm max-w-4xl mx-auto">
+          <CardContent className="p-6 sm:p-8 space-y-6">
+            <div className="border-b border-slate-100 dark:border-slate-800 pb-4">
+              <div className="flex items-center gap-2 mb-1.5">
+                <Badge className="bg-cyan-50 text-cyan-700 dark:bg-cyan-950/60 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800">
+                  {currentCalcItem.subcategory}
+                </Badge>
+              </div>
+              <h2 className="text-2xl font-bold font-outfit text-slate-900 dark:text-white">
+                {currentCalcItem.name}
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                {currentCalcItem.description}
+              </p>
+            </div>
+
+            {/* Inputs */}
+            <div className="space-y-4">
+              <Label className="text-xs uppercase tracking-wider text-slate-400 font-semibold font-mono">
+                Input Parameters
+              </Label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {currentCalcItem.inputs.map(inp => (
+                  <div key={inp.key} className="space-y-1.5">
+                    <Label className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                      {inp.label}
+                    </Label>
+                    <Input
+                      type={inp.type || 'text'}
+                      value={calculatorInputs[inp.key] ?? inp.defaultValue}
+                      placeholder={inp.placeholder}
+                      onChange={e =>
+                        setCalculatorInputs(prev => ({ ...prev, [inp.key]: e.target.value }))
+                      }
+                      className="h-11 font-mono text-sm bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-cyan-600 dark:text-cyan-300"
+                    />
+                  </div>
                 ))}
               </div>
             </div>
 
-            {/* Result Box */}
-            <div className="p-5 rounded-2xl bg-slate-950 border border-slate-800">
-              <div className="text-xs text-slate-400 font-mono mb-1">Computed Solution:</div>
-              {expressionResult !== null && !expressionError && (
-                <div className="text-2xl sm:text-3xl font-mono font-extrabold text-amber-400 break-all">
-                  {expressionResult}
-                </div>
+            {/* Output Solution */}
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-xs font-mono uppercase text-slate-400">Calculated Output:</span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    if (calcOutput) {
+                      navigator.clipboard.writeText(calcOutput.result);
+                      setCopiedResult(true);
+                      setTimeout(() => setCopiedResult(false), 2000);
+                    }
+                  }}
+                  className="text-xs text-slate-500 hover:text-slate-900 dark:hover:text-white"
+                >
+                  {copiedResult ? <Check className="w-3.5 h-3.5 mr-1 text-emerald-500" /> : <Copy className="w-3.5 h-3.5 mr-1" />}
+                  {copiedResult ? 'Copied' : 'Copy Result'}
+                </Button>
+              </div>
+
+              <div className="text-2xl sm:text-3xl font-mono font-extrabold text-amber-500 dark:text-amber-400 break-words">
+                {calcOutput?.result}
+              </div>
+
+              {calcOutput?.explanation && (
+                <p className="text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-200/60 dark:border-slate-800">
+                  {calcOutput.explanation}
+                </p>
               )}
-              {expressionError && (
-                <div className="text-sm font-mono text-rose-400">
-                  ⚠️ {expressionError}
-                </div>
-              )}
             </div>
-          </CardContent>
-        </Card>
-      )}
 
-      {activeTab === 'matrix' && (
-        <Card className="border border-slate-800 bg-slate-900/80 backdrop-blur-xl text-white">
-          <CardHeader>
-            <CardTitle className="text-lg font-outfit font-bold text-purple-400 flex items-center gap-2">
-              <Sigma className="w-5 h-5" />
-              Matrix Operations (Determinant & Inverse)
-            </CardTitle>
-            <CardDescription className="text-slate-400 text-xs">
-              Solve systems of linear engineering equations, stiffness matrices, and admittance matrices
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
-                <span className="text-xs font-semibold uppercase text-slate-400 block font-mono">
-                  Input Matrix [A] (2x2)
+            {/* Step-by-Step Derivation */}
+            {calcOutput?.steps && calcOutput.steps.length > 0 && (
+              <div className="space-y-2">
+                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 font-mono">
+                  Step-by-Step Mathematical Derivation:
                 </span>
-                <div className="grid grid-cols-2 gap-2 max-w-xs">
-                  <Input
-                    type="number"
-                    value={matA[0][0]}
-                    onChange={e => {
-                      const copy = [...matA];
-                      copy[0][0] = parseFloat(e.target.value) || 0;
-                      setMatA(copy);
-                    }}
-                    className="h-10 text-center font-mono text-sm bg-slate-900 border-slate-700"
-                  />
-                  <Input
-                    type="number"
-                    value={matA[0][1]}
-                    onChange={e => {
-                      const copy = [...matA];
-                      copy[0][1] = parseFloat(e.target.value) || 0;
-                      setMatA(copy);
-                    }}
-                    className="h-10 text-center font-mono text-sm bg-slate-900 border-slate-700"
-                  />
-                  <Input
-                    type="number"
-                    value={matA[1][0]}
-                    onChange={e => {
-                      const copy = [...matA];
-                      copy[1][0] = parseFloat(e.target.value) || 0;
-                      setMatA(copy);
-                    }}
-                    className="h-10 text-center font-mono text-sm bg-slate-900 border-slate-700"
-                  />
-                  <Input
-                    type="number"
-                    value={matA[1][1]}
-                    onChange={e => {
-                      const copy = [...matA];
-                      copy[1][1] = parseFloat(e.target.value) || 0;
-                      setMatA(copy);
-                    }}
-                    className="h-10 text-center font-mono text-sm bg-slate-900 border-slate-700"
-                  />
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
-                <span className="text-xs font-semibold uppercase text-slate-400 block font-mono">
-                  Calculated Matrix Properties
-                </span>
-                <div className="space-y-3">
-                  <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
-                    <span className="text-xs text-slate-400 block">Determinant det(A):</span>
-                    <span className="text-xl font-mono font-bold text-purple-400">
-                      {matrixResults.detA !== null ? matrixResults.detA : 'Error'}
-                    </span>
-                  </div>
-
-                  {matrixResults.invA && (
-                    <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-                      <span className="text-xs text-slate-400 block mb-1">Inverse Matrix [A]⁻¹:</span>
-                      <div className="font-mono text-xs text-cyan-300">
-                        [{matrixResults.invA[0].map(v => v.toFixed(3)).join(', ')}]
-                        <br />
-                        [{matrixResults.invA[1].map(v => v.toFixed(3)).join(', ')}]
-                      </div>
+                <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 font-mono text-xs space-y-1.5 text-slate-600 dark:text-slate-400">
+                  {calcOutput.steps.map((st, idx) => (
+                    <div key={idx} className="flex items-start gap-2">
+                      <span className="text-cyan-500 font-bold">•</span>
+                      <span>{st}</span>
                     </div>
-                  )}
+                  ))}
                 </div>
               </div>
+            )}
+
+            {/* Formula Reference */}
+            <div className="p-3 rounded-xl bg-cyan-50 dark:bg-cyan-950/20 border border-cyan-200 dark:border-cyan-800/30 text-xs font-mono text-cyan-700 dark:text-cyan-300">
+              <span className="font-semibold block text-slate-500 dark:text-slate-400 mb-1">
+                Governing Equation:
+              </span>
+              <div>{currentCalcItem.formula}</div>
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {activeTab === 'phasor' && (
-        <Card className="border border-slate-800 bg-slate-900/80 backdrop-blur-xl text-white">
-          <CardHeader>
-            <CardTitle className="text-lg font-outfit font-bold text-amber-400 flex items-center gap-2">
-              <Variable className="w-5 h-5" />
-              Complex Number & Phasor Conversion
-            </CardTitle>
-            <CardDescription className="text-slate-400 text-xs">
-              Convert between Cartesian (Rectangular a + jb) and Polar Form (r ∠ θ)
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Rectangular to Polar */}
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
-                <span className="text-xs font-semibold uppercase text-slate-400 block font-mono">
-                  Rectangular Form: Z = R + jX
-                </span>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs text-slate-400">Real (R)</Label>
-                    <Input
-                      type="number"
-                      value={realPart}
-                      onChange={e => setRealPart(parseFloat(e.target.value) || 0)}
-                      className="h-9 text-xs bg-slate-900 border-slate-700"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs text-slate-400">Imaginary (X)</Label>
-                    <Input
-                      type="number"
-                      value={imagPart}
-                      onChange={e => setImagPart(parseFloat(e.target.value) || 0)}
-                      className="h-9 text-xs bg-slate-900 border-slate-700"
-                    />
-                  </div>
-                </div>
-
-                {(() => {
-                  const mag = Math.sqrt(realPart * realPart + imagPart * imagPart);
-                  const angleRad = Math.atan2(imagPart, realPart);
-                  const angleDeg = (angleRad * 180) / Math.PI;
-                  return (
-                    <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs font-mono space-y-1">
-                      <div className="text-slate-400 text-[10px] uppercase font-bold">Equivalent Polar Form</div>
-                      <div className="text-lg text-amber-400 font-bold">
-                        {mag.toFixed(3)} ∠ {angleDeg.toFixed(2)}°
-                      </div>
-                      <div className="text-slate-400">{mag.toFixed(3)} e^(j{angleRad.toFixed(3)} rad)</div>
-                    </div>
-                  );
-                })()}
-              </div>
-
-              {/* Polar to Rectangular */}
-              <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
-                <span className="text-xs font-semibold uppercase text-slate-400 block font-mono">
-                  Polar Form: Z = |Z| ∠ θ°
-                </span>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs text-slate-400">Magnitude (|Z|)</Label>
-                    <Input
-                      type="number"
-                      value={magPart}
-                      onChange={e => setMagPart(parseFloat(e.target.value) || 0)}
-                      className="h-9 text-xs bg-slate-900 border-slate-700"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs text-slate-400">Angle (θ deg)</Label>
-                    <Input
-                      type="number"
-                      value={degPart}
-                      onChange={e => setDegPart(parseFloat(e.target.value) || 0)}
-                      className="h-9 text-xs bg-slate-900 border-slate-700"
-                    />
-                  </div>
-                </div>
-
-                {(() => {
-                  const rad = (degPart * Math.PI) / 180;
-                  const r = magPart * Math.cos(rad);
-                  const x = magPart * Math.sin(rad);
-                  return (
-                    <div className="p-3 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-xs font-mono space-y-1">
-                      <div className="text-slate-400 text-[10px] uppercase font-bold">Equivalent Rectangular Form</div>
-                      <div className="text-lg text-cyan-400 font-bold">
-                        {r.toFixed(3)} {x >= 0 ? '+' : '-'} {Math.abs(x).toFixed(3)}j
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {activeTab === 'polynomial' && (
-        <Card className="border border-slate-800 bg-slate-900/80 backdrop-blur-xl text-white">
-          <CardHeader>
-            <CardTitle className="text-lg font-outfit font-bold text-emerald-400 flex items-center gap-2">
-              <Sparkles className="w-5 h-5" />
-              Quadratic & Characteristic Equation Solver
-            </CardTitle>
-            <CardDescription className="text-slate-400 text-xs">
-              Solve $ax^2 + bx + c = 0$ for natural frequencies, damping poles, and root locus analysis
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-3 gap-4 p-4 rounded-xl bg-slate-950 border border-slate-800">
-              <div>
-                <Label className="text-xs text-slate-400">Coefficient a</Label>
-                <Input
-                  type="number"
-                  value={polyA}
-                  onChange={e => setPolyA(parseFloat(e.target.value) || 0)}
-                  className="h-9 text-xs bg-slate-900 border-slate-700 font-mono"
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-slate-400">Coefficient b</Label>
-                <Input
-                  type="number"
-                  value={polyB}
-                  onChange={e => setPolyB(parseFloat(e.target.value) || 0)}
-                  className="h-9 text-xs bg-slate-900 border-slate-700 font-mono"
-                />
-              </div>
-              <div>
-                <Label className="text-xs text-slate-400">Coefficient c</Label>
-                <Input
-                  type="number"
-                  value={polyC}
-                  onChange={e => setPolyC(parseFloat(e.target.value) || 0)}
-                  className="h-9 text-xs bg-slate-900 border-slate-700 font-mono"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                <span className="text-xs text-slate-400 block">Root 1 (x₁)</span>
-                <span className="text-xl font-mono font-bold text-emerald-400">{polyRoots.r1}</span>
-              </div>
-              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                <span className="text-xs text-slate-400 block">Root 2 (x₂)</span>
-                <span className="text-xl font-mono font-bold text-emerald-400">{polyRoots.r2}</span>
-              </div>
-              <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                <span className="text-xs text-slate-400 block">Discriminant (Δ = b² - 4ac)</span>
-                <span className="text-xl font-mono font-bold text-purple-400">{polyRoots.disc}</span>
-                <span className="text-[11px] text-slate-400 block mt-0.5">{polyRoots.type}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Quick Reference Section */}
-      <div className="pt-6 border-t border-slate-200 dark:border-slate-800">
-        <Card className="border-0 shadow-none bg-transparent">
-          <CardHeader className="px-0 pt-0">
-            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-              <BookOpen className="h-5 w-5 text-blue-600 dark:text-cyan-400 mr-2" />
-              Quick Reference - {activeTab === 'grapher' ? '2D Function Plotter' : activeTab === 'matrix' ? 'Matrix Operations & Determinants' : activeTab === 'complex' ? 'Complex Numbers & Phasors' : 'Polynomial Roots & Quadratics'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="px-0">
-            <Accordion type="single" collapsible className="w-full bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 px-4 shadow-sm">
-              <AccordionItem value="how-to-use" className="border-b last:border-0 border-slate-100 dark:border-slate-800">
-                <AccordionTrigger className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white py-4 hover:no-underline hover:text-blue-600 dark:hover:text-cyan-400">
-                  How to Use This Calculator
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm pb-4 leading-relaxed">
-                  Enter your input mathematical expressions, matrices, or polynomial coefficients into the input fields above. The computation engine computes solutions in real-time with step-by-step mathematical precision.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="formula-used" className="border-b last:border-0 border-slate-100 dark:border-slate-800">
-                <AccordionTrigger className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white py-4 hover:no-underline hover:text-blue-600 dark:hover:text-cyan-400">
-                  Formula Used
-                </AccordionTrigger>
-                <AccordionContent className="pb-4">
-                  <div className="border border-slate-200 dark:border-slate-700 rounded-lg p-4 bg-slate-50 dark:bg-slate-950 mt-2 font-mono text-xs text-blue-700 dark:text-cyan-300 space-y-2">
-                    {activeTab === 'matrix' && <div>Determinant 2x2: det(A) = ad - bc | Inverse: A⁻¹ = (1/det(A)) * adj(A)</div>}
-                    {activeTab === 'complex' && <div>Rectangular to Polar: r = √(a² + b²), θ = atan2(b, a) | Polar to Rectangular: a = r·cos(θ), b = r·sin(θ)</div>}
-                    {activeTab === 'roots' && <div>Quadratic Formula: x = (-b ± √(b² - 4ac)) / (2a) | Discriminant: Δ = b² - 4ac</div>}
-                    {activeTab === 'grapher' && <div>2D Function Canvas: y = f(x) evaluated continuously over range [x_min, x_max] with numerical sampling</div>}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="engineering-explanation" className="border-b last:border-0 border-slate-100 dark:border-slate-800">
-                <AccordionTrigger className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white py-4 hover:no-underline hover:text-blue-600 dark:hover:text-cyan-400">
-                  Engineering Explanation
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm pb-4 leading-relaxed">
-                  Mathematical modeling is fundamental to all branches of engineering. Linear algebra is used in finite element analysis, circuit mesh equations, and structural stiffness matrices. Complex phasor calculus simplifies sinusoidal AC power analysis into algebraic arithmetic.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="applications" className="border-b last:border-0 border-slate-100 dark:border-slate-800">
-                <AccordionTrigger className="text-sm sm:text-base font-semibold text-slate-900 dark:text-white py-4 hover:no-underline hover:text-blue-600 dark:hover:text-cyan-400">
-                  Practical Applications
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm pb-4 leading-relaxed">
-                  Structural analysis (truss joint equilibrium, stiffness matrices), electrical network nodal analysis, control systems pole-zero stability, signal processing FFT/phasors, and optimization.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
           </CardContent>
         </Card>
       </div>
-    </div>
+    );
+  }
+
+  // Safe fallback if no calculator matches
+  return (
+    <Card className="bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 shadow-sm max-w-xl mx-auto my-8">
+      <CardContent className="p-8 text-center space-y-4">
+        <div className="w-12 h-12 rounded-full bg-cyan-100 dark:bg-cyan-950/80 text-cyan-600 dark:text-cyan-400 flex items-center justify-center mx-auto">
+          <Calculator className="w-6 h-6" />
+        </div>
+        <h3 className="text-lg font-bold font-outfit text-slate-900 dark:text-white">
+          Calculator Not Found
+        </h3>
+        <p className="text-xs text-slate-500 dark:text-slate-400">
+          The selected tool or subcategory could not be located. Browse from 150+ math calculators.
+        </p>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setActiveCalculator('menu')}
+          className="text-xs gap-1.5"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          All Math Categories
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
