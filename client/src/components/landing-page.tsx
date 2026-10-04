@@ -4,7 +4,7 @@ import {
   CheckCircle2, Star, TrendingUp, BookOpen, ChevronRight, Bolt,
   BarChart3, FlaskConical, Layers, Shield, Clock, Users, Calculator,
   Activity, Wrench, Gauge, X, ExternalLink, Sparkles, Award, Globe, LineChart, Compass,
-  Sun, Moon, Radio, Mail, Image as ImageIcon
+  Sun, Moon, Radio, Mail, Image as ImageIcon, Utensils
 } from 'lucide-react';
 import { LiveEngineeringFeed } from './live-engineering-feed';
 import { useSeo } from '@/lib/seo';
@@ -1190,6 +1190,22 @@ export default function LandingPage() {
                     </div>
                   </a>
                 </li>
+                <li>
+                  <a
+                    href="https://rannabanna.co.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-start gap-2 text-slate-300 hover:text-orange-400 transition-colors"
+                  >
+                    <Utensils className="w-3.5 h-3.5 text-orange-500 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                    <div>
+                      <div className="font-semibold flex items-center gap-1">
+                        Bengali Recipe <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                      </div>
+                      <div className="text-[11px] text-slate-500">Authentic Bengali Food & Cooking Recipes</div>
+                    </div>
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -1293,6 +1309,15 @@ export default function LandingPage() {
                 className="text-emerald-400 hover:underline"
               >
                 Image Compress
+              </a>{' '}
+              •{' '}
+              <a
+                href="https://rannabanna.co.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-orange-400 hover:underline"
+              >
+                Bengali Recipe
               </a>
             </div>
           </div>

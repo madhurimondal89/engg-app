@@ -42,7 +42,8 @@ import {
   Calculator,
   Hash,
   Mail,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Utensils
 } from 'lucide-react';
 
 const DISCIPLINES = [
@@ -518,6 +519,18 @@ export default function CalculatorLayout() {
                     <ExternalLink className="w-2.5 h-2.5 opacity-60" />
                   </a>
                 </li>
+                <li>
+                  <a
+                    href="https://rannabanna.co.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-1.5 text-slate-300 hover:text-orange-400 transition-colors"
+                  >
+                    <Utensils className="w-3.5 h-3.5 text-orange-500 group-hover:scale-110 transition-transform" />
+                    <span className="font-medium">Bengali Recipe</span>
+                    <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -599,6 +612,15 @@ export default function CalculatorLayout() {
                 className="text-emerald-400 hover:underline"
               >
                 Image Compress
+              </a>{' '}
+              •{' '}
+              <a
+                href="https://rannabanna.co.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-orange-400 hover:underline"
+              >
+                Bengali Recipe
               </a>
             </div>
           </div>
