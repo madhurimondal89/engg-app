@@ -606,31 +606,29 @@ export default function LandingPage() {
               <a href="#formulas" className="hover:text-blue-600 dark:hover:text-cyan-400 transition-colors">Formula Library</a>
             </nav>
             <div className="flex items-center gap-2.5">
-              {/* Web Tools Quick Switchers */}
+              {/* SuperHub Ecosystem Quick Switchers */}
               <div className="hidden lg:flex items-center gap-2 mr-1">
                 <a
-                  href="https://calculatorfree.in/"
+                  href="https://financialhub.calculatorfree.in/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-50 hover:bg-cyan-100 dark:bg-cyan-950/40 dark:hover:bg-cyan-900/60 border border-cyan-200/80 dark:border-cyan-800/60 text-cyan-700 dark:text-cyan-300 text-xs font-semibold transition-all hover:scale-105 shadow-xs"
-                  title="Open CalculatorFree - Free Online Calculators"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs font-semibold transition-all hover:scale-105 shadow-xs"
+                  title="Open Financial Hub - Financial Intelligence & Wealth Engine"
                 >
-                  <Calculator className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
-                  <span>CalculatorFree</span>
+                  <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>Financial Hub</span>
                   <ExternalLink className="w-3 h-3 opacity-60" />
                 </a>
 
                 <a
-                  href="https://freeyoutubetools.com/"
+                  href="https://health-hub.calculatorfree.in/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/60 border border-red-200/80 dark:border-red-800/60 text-red-700 dark:text-red-300 text-xs font-semibold transition-all hover:scale-105 shadow-xs"
-                  title="Open Free YouTube Tools"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs font-semibold transition-all hover:scale-105 shadow-xs"
+                  title="Open Health Hub - Health Analytics & Vitals Engine"
                 >
-                  <svg className="w-3.5 h-3.5 text-red-600 dark:text-red-400 fill-current" viewBox="0 0 24 24">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                  </svg>
-                  <span>YouTube Tools</span>
+                  <Activity className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                  <span>Health Hub</span>
                   <ExternalLink className="w-3 h-3 opacity-60" />
                 </a>
               </div>
