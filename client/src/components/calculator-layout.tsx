@@ -40,7 +40,9 @@ import {
   TrendingUp,
   ExternalLink,
   Calculator,
-  Hash
+  Hash,
+  Mail,
+  Image as ImageIcon
 } from 'lucide-react';
 
 const DISCIPLINES = [
@@ -206,29 +208,31 @@ export default function CalculatorLayout() {
 
             {/* Actions Bar */}
             <div className="flex items-center space-x-1.5 sm:space-x-2 flex-shrink-0">
-              {/* SuperHub Ecosystem Quick Switchers */}
+              {/* Web Tools Quick Switchers */}
               <div className="hidden md:flex items-center gap-1.5 mr-0.5">
                 <a
-                  href="https://financialhub.calculatorfree.in/"
+                  href="https://calculatorfree.in/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/60 border border-emerald-200/80 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-xs font-semibold transition-all hover:scale-105 shadow-2xs h-8"
-                  title="Open Financial Hub - Financial Intelligence & Wealth Engine"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-cyan-50 hover:bg-cyan-100 dark:bg-cyan-950/40 dark:hover:bg-cyan-900/60 border border-cyan-200/80 dark:border-cyan-800/60 text-cyan-700 dark:text-cyan-300 text-xs font-semibold transition-all hover:scale-105 shadow-2xs h-8"
+                  title="Open CalculatorFree - Free Online Calculators"
                 >
-                  <TrendingUp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                  <span>FinHub</span>
+                  <Calculator className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+                  <span>CalculatorFree</span>
                   <ExternalLink className="w-2.5 h-2.5 opacity-60 ml-0.5" />
                 </a>
 
                 <a
-                  href="https://health-hub.calculatorfree.in/"
+                  href="https://freeyoutubetools.com/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/60 border border-rose-200/80 dark:border-rose-800/60 text-rose-700 dark:text-rose-300 text-xs font-semibold transition-all hover:scale-105 shadow-2xs h-8"
-                  title="Open Health Hub - Health Analytics & Vitals Engine"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/60 border border-red-200/80 dark:border-red-800/60 text-red-700 dark:text-red-300 text-xs font-semibold transition-all hover:scale-105 shadow-2xs h-8"
+                  title="Open Free YouTube Tools"
                 >
-                  <Activity className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
-                  <span>HealthHub</span>
+                  <svg className="w-3.5 h-3.5 text-red-600 dark:text-red-400 fill-current" viewBox="0 0 24 24">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                  </svg>
+                  <span>YouTube Tools</span>
                   <ExternalLink className="w-2.5 h-2.5 opacity-60 ml-0.5" />
                 </a>
               </div>
@@ -460,41 +464,61 @@ export default function CalculatorLayout() {
               </ul>
             </div>
 
-            {/* Column 3: SuperHub Suite Ecosystem */}
+            {/* Column 3: Web Tools Ecosystem */}
             <div className="space-y-2">
               <h4 className="font-mono font-bold uppercase tracking-wider text-slate-200 text-xs">
-                SuperHub Suite
+                Web Tools
               </h4>
               <ul className="space-y-2 text-xs">
                 <li>
                   <a
-                    href="https://financialhub.calculatorfree.in/"
+                    href="https://calculatorfree.in/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-1.5 text-slate-300 hover:text-emerald-400 transition-colors"
+                    className="group flex items-center gap-1.5 text-slate-300 hover:text-cyan-400 transition-colors"
                   >
-                    <TrendingUp className="w-3.5 h-3.5 text-emerald-500 group-hover:scale-110 transition-transform" />
-                    <span className="font-medium">Financial Hub</span>
+                    <Calculator className="w-3.5 h-3.5 text-cyan-500 group-hover:scale-110 transition-transform" />
+                    <span className="font-medium">CalculatorFree</span>
                     <ExternalLink className="w-2.5 h-2.5 opacity-60" />
                   </a>
                 </li>
                 <li>
                   <a
-                    href="https://health-hub.calculatorfree.in/"
+                    href="https://freeyoutubetools.com/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-1.5 text-slate-300 hover:text-rose-400 transition-colors"
+                    className="group flex items-center gap-1.5 text-slate-300 hover:text-red-400 transition-colors"
                   >
-                    <Activity className="w-3.5 h-3.5 text-rose-500 group-hover:scale-110 transition-transform" />
-                    <span className="font-medium">Health Hub</span>
+                    <svg className="w-3.5 h-3.5 text-red-500 fill-current group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                    <span className="font-medium">Free YouTube Tools</span>
                     <ExternalLink className="w-2.5 h-2.5 opacity-60" />
                   </a>
                 </li>
                 <li>
-                  <span className="flex items-center gap-1.5 text-cyan-400 font-medium">
-                    <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                    <span>EnggHub</span>
-                  </span>
+                  <a
+                    href="https://mytempmails.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-1.5 text-slate-300 hover:text-amber-400 transition-colors"
+                  >
+                    <Mail className="w-3.5 h-3.5 text-amber-500 group-hover:scale-110 transition-transform" />
+                    <span className="font-medium">My Temp Mails</span>
+                    <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://imagecompress.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-1.5 text-slate-300 hover:text-emerald-400 transition-colors"
+                  >
+                    <ImageIcon className="w-3.5 h-3.5 text-emerald-500 group-hover:scale-110 transition-transform" />
+                    <span className="font-medium">Image Compress</span>
+                    <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                  </a>
                 </li>
               </ul>
             </div>
@@ -541,33 +565,43 @@ export default function CalculatorLayout() {
               — All Rights Reserved.
             </div>
             <div className="text-slate-400">
-              Part of the{' '}
+              Part of our{' '}
+              <span className="text-slate-300 font-medium">Web Tools Network:</span>{' '}
               <a
-                href="https://www.calculatorfree.in/"
+                href="https://calculatorfree.in/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-cyan-400 hover:underline"
+                className="text-cyan-400 hover:underline font-medium"
               >
-                Main Suite
+                CalculatorFree
               </a>{' '}
-              (<a
-                href="https://financialhub.calculatorfree.in/"
+              •{' '}
+              <a
+                href="https://freeyoutubetools.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-red-400 hover:underline"
+              >
+                Free YouTube Tools
+              </a>{' '}
+              •{' '}
+              <a
+                href="https://mytempmails.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-amber-400 hover:underline"
+              >
+                My Temp Mails
+              </a>{' '}
+              •{' '}
+              <a
+                href="https://imagecompress.in/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-emerald-400 hover:underline"
               >
-                Financial Hub
-              </a>{' '}
-              •{' '}
-              <a
-                href="https://health-hub.calculatorfree.in/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-rose-400 hover:underline"
-              >
-                Health Hub
-              </a>{' '}
-              • <span className="text-blue-400">EnggHub</span>)
+                Image Compress
+              </a>
             </div>
           </div>
         </div>
