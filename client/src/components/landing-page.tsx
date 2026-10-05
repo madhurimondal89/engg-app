@@ -3,7 +3,7 @@ import {
   Zap, Cpu, Building2, Droplets, Flame, Cog, Search, ArrowRight,
   CheckCircle2, Star, TrendingUp, BookOpen, ChevronRight, Bolt,
   BarChart3, FlaskConical, Layers, Shield, Clock, Users, Calculator,
-  Activity, Wrench, Gauge, X, ExternalLink, Sparkles, Award, Globe, LineChart, Compass,
+  Activity, Gauge, X, ExternalLink, Sparkles, Award, Globe, LineChart, Compass,
   Sun, Moon, Radio, Mail, Image as ImageIcon, Utensils
 } from 'lucide-react';
 import { LiveEngineeringFeed } from './live-engineering-feed';
@@ -149,30 +149,7 @@ const coreDisciplines = [
       { name: '2D Graphing Studio', id: 'grapher' },
       { name: 'Matrix Solver', id: 'matrix' },
     ]
-  },
-  {
-    id: 'mechanical',
-    name: 'Machine Design',
-    tagline: 'Flywheels, Torsion, Gear Trains & Fasteners',
-    icon: Wrench,
-    count: '22+ Calculators',
-    status: 'Coming Soon',
-    cardBg: 'bg-slate-50/90 hover:bg-cyan-50/50 dark:bg-slate-900/50 dark:hover:bg-cyan-950/30',
-    borderColor: 'border-slate-200/90 dark:border-slate-800/60 hover:border-cyan-300',
-    titleColor: 'text-slate-800 dark:text-slate-200',
-    countColor: 'text-slate-500 dark:text-slate-400',
-    iconColor: 'text-slate-500 dark:text-cyan-400',
-    iconBg: 'bg-cyan-500/15',
-    desc: "Flywheels, brakes, clutches, spring stiffness, shaft keyways, belt drives, and fatigue endurance limit.",
-    featuredCalcs: [
-      { name: 'Gear Train Ratio', id: 'gear-ratio' },
-      { name: 'Shaft Key Design', id: 'torque' },
-      { name: 'Spring Stiffness', id: 'strength' },
-      { name: 'Bolt Preload', id: 'pressure' },
-      { name: 'Flywheel Energy', id: 'dynamics' },
-      { name: 'Belt Drive Tension', id: 'power-trans' },
-    ]
-  },
+  }
 ];
 
 const interactiveStudios = [
