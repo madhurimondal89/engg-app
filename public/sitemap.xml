@@ -4,423 +4,2132 @@
         xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
         http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <!-- ─── Core Pages ────────────────────────────────────────────────────────── -->
+  <!-- ─── Core Pages (2 URLs) ────────────────────────── -->
   <url>
     <loc>https://engineering.calculatorfree.in/</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
 
-  <!-- ─── Interactive 2D Simulation Studios ───────────────────────────────── -->
+  <!-- ─── Interactive 2D Studios (4 URLs) ────────────────────────── -->
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/beam-visualizer</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/mohrs-circle</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/phasor-visualizer</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/factor-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.98</priority>
+  </url>
 
-  <!-- ─── 6 Core Disciplines Main Hubs ────────────────────────────────────── -->
+  <!-- ─── Discipline Hubs (6 URLs) ────────────────────────── -->
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/electrical</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/mechanical</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/civil</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/fluid</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/thermodynamics</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/math</loc>
-    <lastmod>2026-10-04</lastmod>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/math/factor-calculator</loc>
-    <lastmod>2026-10-04</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.98</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/factor-calculator</loc>
-    <lastmod>2026-10-04</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.98</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/math/prime-factors</loc>
-    <lastmod>2026-10-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/math/gcf-lcm</loc>
-    <lastmod>2026-10-04</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>
 
-  <!-- ─── Electrical Engineering Calculators ──────────────────────────────── -->
+  <!-- ─── Electrical Engineering Calculators (141 URLs) ────────────────────────── -->
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/phasor-simulator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/electrical/ohms-law</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/tan-delta</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/voltage</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/oil-bdv</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/current</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/oil-dga</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/resistance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/ratio-test</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/power</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/winding-res</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/energy-consumption</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/core-loss</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/electrical-cost</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/flc</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/watt-to-amp</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/cable-size</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/amp-to-watt</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/solar-panel</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/battery-bank</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/motor-slip</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/electrical/motor-current</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/volt-to-watt</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/electrical/resistor-color-code</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/electrical/wheatstone-bridge</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/capacitance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/inductance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/capacitor-charge</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/ac-power</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/electrical/power-factor</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/apparent-power</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/reactive-power</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/rms-voltage</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/rms-current</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/impedance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/phase-angle</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/frequency</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/ac-current</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/electrical/lc-resonant</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/rc-time</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/dc-power</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/dc-current</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/dc-voltage-drop</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/battery-capacity</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/battery-backup</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/battery-charging</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/series-resistance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/parallel-resistance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/voltage-divider</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/current-divider</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/short-circuit-current</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/fault-current</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/transformer-efficiency</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/transformer-turns-ratio</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/transformer-loss</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/transmission-line-loss</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/voltage-regulation</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/load-demand</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/diversity-factor</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/load-factor</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/percent-impedance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/open-circuit-loss</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/motor-power</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/motor-torque</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/motor-speed</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/slip</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/motor-efficiency</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/motor-current</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/star-delta-starter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/single-phase-motor</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/three-phase-motor</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/synchronous-speed</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/rc-time-adv</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/rl-time</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/rlc-circuit</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/capacitor-charging</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/capacitor-discharging</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/inductor-energy</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/diode-voltage-drop</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/zener-diode</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/transistor-gain</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/op-amp-gain</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/rectifier-efficiency</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/ripple-factor</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/inverter-power</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/converter-efficiency</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/dc-to-ac-inverter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/pwm-duty-cycle</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/thyristor-firing-angle</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/buck-converter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/boost-converter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/buck-boost-converter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/cable-size</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/wire-gauge</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/voltage-drop-wiring</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/earthing-resistance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/fuse-rating</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/mcb-rating</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/mccb-rating</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/short-circuit-protection</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/grounding</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/lightning-protection</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/solar-panel</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/solar-power-output</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/solar-inverter-size</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/battery-bank-size-solar</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/solar-charge-controller</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/solar-load</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/solar-panel-tilt</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/solar-energy-production</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/off-grid-solar</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/on-grid-solar</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/kva-to-kw</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/kw-to-hp</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/hp-to-kw</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/va-to-watt</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/db-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/freq-to-rpm</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/rpm-to-freq</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/electrical-units</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/phase-converter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/power-loss</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/insulation-resistance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/min-insulation-resistance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/megger-test-voltage</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/insulation-test-duration</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/leakage-current</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/dielectric-strength</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/dielectric-loss</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/polarization-index</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/dar-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/insulation-power-factor</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/line-phase-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/faraday</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/lorentz</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/flux</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/battery</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/motor</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/cable</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/ir-test</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/pi-transformer</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/ttr-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/winding-resistance-temp</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/tan-delta</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/oil-bdv</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/oil-dga</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/ct-ratio</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/earth-resistance-test</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/full-load-current-transformer</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/magnetic-balance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/vector-group</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/core-loss</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/electrical/copper-loss</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
 
-  <!-- ─── Mechanical Engineering Calculators ──────────────────────────────── -->
+  <!-- ─── Mechanical Engineering Calculators (11 URLs) ────────────────────────── -->
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/mechanical/beam-analyzer</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/mechanical/mohr-stress</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/force</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/mechanical/torque</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/mechanical/gear-ratio</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/pressure</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/mechanical/bolt-torque</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/mechanical/spring-constant</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/mechanical/bearing-life</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/mechanical/belt-length</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/mechanical/chain-length</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/mechanical/flywheel-energy</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/mechanical/strength</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/machine-design</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/thermodynamics</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/fluid-mechanics</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/mechanical/manufacturing</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/mechanical/dynamics</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
 
-  <!-- ─── Civil Engineering Calculators ───────────────────────────────────── -->
+  <!-- ─── Mechanical Engineering - Strength of Materials (10 URLs) ────────────────────────── -->
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/stress</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/strain</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/youngs-modulus</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/shear-stress</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/shear-strain</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/bending-stress</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/bending-moment</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/torsional-stress</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/beam-deflection</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/fos</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- ─── Mechanical Engineering - Machine Design (10 URLs) ────────────────────────── -->
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/bolt-torque</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/shaft-diameter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/gear-ratio</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/gear-speed</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/belt-length</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/belt-tension</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/chain-length</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/spring-constant</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/bearing-life</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/flywheel-energy</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- ─── Mechanical Engineering - Manufacturing Engineering (8 URLs) ────────────────────────── -->
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/cutting-speed</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/feed-rate</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/machining-time</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/mrr</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/surface-roughness</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/welding-heat</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/solidification-time</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/tool-life</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- ─── Mechanical Engineering - Engineering Dynamics (2 URLs) ────────────────────────── -->
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/angular-velocity</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/mechanical/centripetal</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- ─── Civil Engineering Calculators (7 URLs) ────────────────────────── -->
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/civil/construction</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/civil/structural</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/civil/geotechnical</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/civil/surveying</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/civil/transportation</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/civil/environmental</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/civil/concrete-mix</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/civil/brick-calculator</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/civil/quantity</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
-  <!-- ─── Fluid Mechanics Calculators ─────────────────────────────────────── -->
+  <!-- ─── Fluid Mechanics Calculators (12 URLs) ────────────────────────── -->
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/fluid/reynolds</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/fluid/mannings-flow</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/fluid/weir-discharge</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/fluid/flow-rate</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/fluid/fluid-velocity</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/fluid/pressure-drop</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/fluid/head-loss</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/fluid/darcy-friction</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/fluid/bernoulli</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/fluid/pipe-diameter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/fluid/pump-power</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/fluid/manning</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/fluid/hydraulic-power</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/fluid/bernoulli</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
-  <!-- ─── Thermodynamics & HVAC Calculators ───────────────────────────────── -->
+  <!-- ─── Thermodynamics & Heat Calculators (13 URLs) ────────────────────────── -->
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/heat-transfer</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/steam-tables</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.95</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/psychrometrics</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.95</priority>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/duct-sizing</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/heat-transfer</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/ideal-gas</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/thermal-efficiency</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/carnot-efficiency</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/specific-heat</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/heat-loss</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/entropy-change</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/work-done</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/cop</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/thermodynamics/boiler-efficiency</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
-  <!-- ─── Engineering Math & Solvers ──────────────────────────────────────── -->
+  <!-- ─── Mathematics & Solvers (100 URLs) ────────────────────────── -->
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/math/unit-solver</loc>
-    <lastmod>2026-09-05</lastmod>
-    <changefreq>monthly</changefreq>
+    <loc>https://engineering.calculatorfree.in/calculators/math/factor-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/prime-factors</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/gcf-lcm</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/prime-checker</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/coprime-checker</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/divisibility-test</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/modulo-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/modular-inverse</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/percentage-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/fraction-simplifier</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/ratio-proportion</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/fibonacci-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/factorial-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/scientific-notation</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/significant-figures</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/radicals-nth-root</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/perfect-squares-cubes</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/sum-of-divisors</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/collatz-conjecture</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/base-converter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/double-factorial</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/arithmetic-mean-geometric</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/prime-counting-pi</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/pythagorean-triples</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/lucas-numbers</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/polynomial-factoring</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/quadratic-equation</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/cubic-solver</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/system-2-linear</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/system-3-linear</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/completing-the-square</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/arithmetic-progression</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/geometric-progression</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/binomial-theorem</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/logarithm-rules</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/exponential-growth-decay</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/compound-interest-math</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/vietas-formulas</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/discriminant-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/linear-inequality</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/direct-inverse-variation</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/harmonic-progression</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/remainder-factor-theorem</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/partial-fraction-linear</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/absolute-value-equation</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/sum-of-squares-cubes</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/polynomial-multiplication</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/cross-multiplication</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/quartic-solver-info</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/matrix-determinant-2x2</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/pythagorean-theorem</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/circle-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/herons-formula</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/law-of-sines</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/law-of-cosines</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/cylinder-volume-surface</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/sphere-volume-surface</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/cone-frustum-volume</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/trapezoid-parallelogram</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/distance-midpoint-2d</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/slope-line-equation</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/trig-function-evaluator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/deg-rad-grad-converter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/ellipse-area-perimeter</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/regular-polygon-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/point-to-line-distance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/angle-between-two-lines</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/pyramid-volume-area</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/hyperbolic-functions</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/inverse-trig-functions</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/elevation-depression-angle</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/polygon-diagonals</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/tetrahedron-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/great-circle-distance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/torus-volume-surface</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/matrix-multiplication-3x3</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/matrix-determinant-3x3</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/matrix-inverse-3x3</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/matrix-trace</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/vector-dot-product</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/vector-cross-product</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/vector-magnitude-normalizer</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/eigenvalues-2x2</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/matrix-transpose</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/vector-projection</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/numerical-derivative</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/simpson-numerical-integral</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/limit-calculator-approx</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/taylor-series-expander</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/newton-raphson-solver</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/mean-median-mode</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/standard-deviation-variance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/z-score-probability</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/combinations-permutations</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/binomial-distribution-prob</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/complex-polar-rectangular</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/decibel-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/linear-interpolation-math</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/math/unit-solver</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
     <loc>https://engineering.calculatorfree.in/calculators/math/grapher</loc>
-    <lastmod>2026-09-05</lastmod>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- ─── Standalone Interactive HTML Calculators (24 URLs) ────────────────────────── -->
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/battery-life</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://engineering.calculatorfree.in/calculators/math/matrix</loc>
-    <lastmod>2026-09-05</lastmod>
+    <loc>https://engineering.calculatorfree.in/calculators/beam-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.80</priority>
   </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/cable-capacity</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/capacitance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/capacitor-charge</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/concrete-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/faradays-law</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/flux-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/force-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/impedance-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/inductance</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/lc-resonant</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/lorentz-force</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/motor-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/ohms-law</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/parallel-resistor</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/power-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/pressure-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/rc-time-constant</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/resistor-color-code</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/stress-strain</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/torque-calculator</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/torque-conversion</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://engineering.calculatorfree.in/calculators/wheatstone-bridge</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
 </urlset>
