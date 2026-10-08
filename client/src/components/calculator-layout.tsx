@@ -43,7 +43,9 @@ import {
   Hash,
   Mail,
   Image as ImageIcon,
-  Utensils
+  Utensils,
+  CloudSun,
+  FileText
 } from 'lucide-react';
 
 const DISCIPLINES = [
@@ -232,6 +234,30 @@ export default function CalculatorLayout() {
                 >
                   <Activity className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                   <span>HealthHub</span>
+                  <ExternalLink className="w-2.5 h-2.5 opacity-60 ml-0.5" />
+                </a>
+
+                <a
+                  href="https://snowdaycalculatorfree.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/40 dark:hover:bg-sky-900/60 border border-sky-200/80 dark:border-sky-800/60 text-sky-700 dark:text-sky-300 text-xs font-semibold transition-all hover:scale-105 shadow-2xs h-8"
+                  title="Open Weather Hub (Snow Day Calculator)"
+                >
+                  <CloudSun className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                  <span>WeatherHub</span>
+                  <ExternalLink className="w-2.5 h-2.5 opacity-60 ml-0.5" />
+                </a>
+
+                <a
+                  href="https://invoicegenius.in/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 text-xs font-semibold transition-all hover:scale-105 shadow-2xs h-8"
+                  title="Open Invoice Genius - Free Online Invoice Generator"
+                >
+                  <FileText className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                  <span>InvoiceGenius</span>
                   <ExternalLink className="w-2.5 h-2.5 opacity-60 ml-0.5" />
                 </a>
               </div>
@@ -531,6 +557,18 @@ export default function CalculatorLayout() {
                     <ExternalLink className="w-2.5 h-2.5 opacity-60" />
                   </a>
                 </li>
+                <li>
+                  <a
+                    href="https://invoicegenius.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-1.5 text-slate-300 hover:text-indigo-400 transition-colors"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-indigo-500 group-hover:scale-110 transition-transform" />
+                    <span className="font-medium">Invoice Genius</span>
+                    <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -621,6 +659,15 @@ export default function CalculatorLayout() {
                 className="text-orange-400 hover:underline"
               >
                 Bengali Recipe
+              </a>{' '}
+              •{' '}
+              <a
+                href="https://invoicegenius.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-400 hover:underline"
+              >
+                Invoice Genius
               </a>
             </div>
           </div>

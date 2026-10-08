@@ -4,7 +4,7 @@ import {
   CheckCircle2, Star, TrendingUp, BookOpen, ChevronRight, Bolt,
   BarChart3, FlaskConical, Layers, Shield, Clock, Users, Calculator,
   Activity, Gauge, X, ExternalLink, Sparkles, Award, Globe, LineChart, Compass,
-  Sun, Moon, Radio, Mail, Image as ImageIcon, Utensils
+  Sun, Moon, Radio, Mail, Image as ImageIcon, Utensils, CloudSun, FileText
 } from 'lucide-react';
 import { LiveEngineeringFeed } from './live-engineering-feed';
 import { useSeo } from '@/lib/seo';
@@ -572,7 +572,7 @@ export default function LandingPage() {
                 </span>
               </div>
             </div>
-            <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
+            <nav className="hidden xl:flex items-center gap-6 text-sm font-medium text-slate-600 dark:text-slate-300">
               <a href="#live-telemetry" className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 Live Telemetry
@@ -606,6 +606,30 @@ export default function LandingPage() {
                 >
                   <Activity className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                   <span>Health Hub</span>
+                  <ExternalLink className="w-3 h-3 opacity-60" />
+                </a>
+
+                <a
+                  href="https://snowdaycalculatorfree.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/40 dark:hover:bg-sky-900/60 border border-sky-200/80 dark:border-sky-800/60 text-sky-700 dark:text-sky-300 text-xs font-semibold transition-all hover:scale-105 shadow-xs"
+                  title="Open Weather Hub - Snow Day & Climate Predictor"
+                >
+                  <CloudSun className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                  <span>Weather Hub</span>
+                  <ExternalLink className="w-3 h-3 opacity-60" />
+                </a>
+
+                <a
+                  href="https://invoicegenius.in/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/60 border border-indigo-200/80 dark:border-indigo-800/60 text-indigo-700 dark:text-indigo-300 text-xs font-semibold transition-all hover:scale-105 shadow-xs"
+                  title="Open Invoice Genius - Free Online Invoice & Billing Generator"
+                >
+                  <FileText className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                  <span>Invoice Genius</span>
                   <ExternalLink className="w-3 h-3 opacity-60" />
                 </a>
               </div>
@@ -1183,6 +1207,22 @@ export default function LandingPage() {
                     </div>
                   </a>
                 </li>
+                <li>
+                  <a
+                    href="https://invoicegenius.in/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-start gap-2 text-slate-300 hover:text-indigo-400 transition-colors"
+                  >
+                    <FileText className="w-3.5 h-3.5 text-indigo-500 mt-0.5 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                    <div>
+                      <div className="font-semibold flex items-center gap-1">
+                        Invoice Genius <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                      </div>
+                      <div className="text-[11px] text-slate-500">Free Professional Invoice & Receipt Generator</div>
+                    </div>
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -1295,6 +1335,15 @@ export default function LandingPage() {
                 className="text-orange-400 hover:underline"
               >
                 Bengali Recipe
+              </a>{' '}
+              •{' '}
+              <a
+                href="https://invoicegenius.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-400 hover:underline"
+              >
+                Invoice Genius
               </a>
             </div>
           </div>
